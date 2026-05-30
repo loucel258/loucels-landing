@@ -1,0 +1,83 @@
+"use client";
+
+import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
+import type { Dictionary } from "@/i18n/dictionaries/en";
+import { SectionRay } from "./section-ray";
+
+export function SubpageServices({
+  data,
+  accent = "cyan",
+}: {
+  data: Dictionary["webFoundation"]["services"];
+  accent?: "cyan" | "violet";
+}) {
+  const isViolet = accent === "violet";
+  const accentVar = isViolet ? "var(--accent-violet)" : "var(--accent-cyan)";
+  const eyebrowClass = isViolet ? "text-violet" : "text-cyan";
+  const indexClass = isViolet ? "text-violet" : "text-cyan";
+  const hoverBorder = isViolet ? "hover:border-violet/40" : "hover:border-cyan/40";
+  const lineGradient = isViolet
+    ? "bg-gradient-to-r from-violet/40 to-transparent"
+    : "bg-gradient-to-r from-cyan/40 to-transparent";
+
+  return (
+    <section className="relative isolate overflow-hidden py-24 md:py-32">
+      <SectionRay color="cyan" direction="lr" delay={0.6} />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border-soft to-transparent"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-32 top-1/2 size-[420px] -translate-y-1/2 rounded-full opacity-25 blur-[140px]"
+        style={{
+          background: `radial-gradient(circle, color-mix(in oklab, ${accentVar} 55%, transparent), transparent 70%)`,
+        }}
+      />
+
+      <div className="container-page relative z-10">
+        <Reveal className="flex max-w-2xl flex-col gap-5">
+          <span className={`text-micro ${eyebrowClass}`}>// {data.eyebrow}</span>
+          <h2 className="text-display-2 text-balance text-text-primary">
+            {data.title}
+          </h2>
+        </Reveal>
+
+        <StaggerGroup className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+          {data.items.map((item, i) => (
+            <StaggerItem key={item.name}>
+              <article
+                className={`group relative flex h-full flex-col gap-5 rounded-2xl border border-border-soft bg-surface/60 p-7 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:bg-surface-2 md:p-9 ${hoverBorder}`}
+                style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
+              >
+                {/* Accent hover ring */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  style={{
+                    boxShadow: `0 0 0 1px ${accentVar}, 0 0 40px -4px color-mix(in oklab, ${accentVar} 45%, transparent), 0 8px 32px -8px color-mix(in oklab, ${accentVar} 25%, transparent)`,
+                  }}
+                />
+                <div className="flex items-center gap-4">
+                  <span className={`text-mono-xs tabular-nums ${indexClass}`}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    aria-hidden
+                    className={`h-px flex-1 ${lineGradient}`}
+                  />
+                </div>
+                <h3 className="text-h3 text-balance text-text-primary">
+                  {item.name}
+                </h3>
+                <p className="text-body text-pretty text-text-secondary">
+                  {item.desc}
+                </p>
+              </article>
+            </StaggerItem>
+          ))}
+        </StaggerGroup>
+      </div>
+    </section>
+  );
+}

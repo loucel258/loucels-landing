@@ -1,0 +1,70 @@
+# Loucel Labs
+
+> Bilingual (EN/ES) AI automation studio building specialized AI agents and the conversion web infrastructure that feeds them. Focused on mid-sized businesses across South Florida (Miami-Dade, Broward, Palm Beach). Built on Anthropic Claude. Architecture aligned to NIST AI RMF principles, ready for SOC 2 internal audits.
+
+## What we do
+
+We design and build governed AI systems. Three umbrella service lines:
+
+- **Web Foundation** — High-conversion landing pages, full website redesigns, technical SEO audits, and continuous GEO (Generative Engine Optimization) for AI search. Bilingual EN/ES from day one. https://loucellabs.com/en/services/web-foundation
+- **SMV Models** (Specialized Modular Vertical) — Specialized AI agents, each engineered for one job and locked down so it never goes off-script. AI Front Desk for lead capture (web chat, SMS, WhatsApp), Quote Accelerator for photo-to-quote estimating, Review & Reputation Manager for Google/Yelp/Facebook. https://loucellabs.com/en/services/smv-models
+- **Integration & Control** — Enterprise-grade AI architecture and governance. Architecture Security Audit (NIST AI RMF aligned), Governed Agent Implementation with RBAC + DLP + audit trail + human-in-the-loop, AI Governance Setup for compliance teams. https://loucellabs.com/en/services/integration-control
+
+## Service area
+
+South Florida tri-county: Miami-Dade County, Broward County, Palm Beach County. We work remotely with the broader US market but our specialization is the bilingual South Florida mid-market.
+
+## Indicative pricing (firm pricing in the free 30-minute Operational Audit)
+
+- Web Foundation: from $1,500 (landing page) up to $12,000 (full redesign), $500 audit
+- AI Front Desk: $3,500 build + $500/month governance
+- Quote Accelerator: $5,000–$8,000 build + $800/month
+- Review & Reputation Manager: $2,500 build + $400/month
+- Architecture Security Audit: from $7,500
+- Governed Agent Implementation: $20,000–$45,000 + $2,500/month
+- AI Governance Setup: $15,000–$30,000 + $1,500/month
+
+The monthly retainer is continuous governance (drift monitoring, script updates, performance tuning, security currency), not software rental. Clients own the architecture; we keep it sharp.
+
+## Data and security commitments
+
+- Zero Data Retention on the Anthropic Claude commercial APIs (no persistent caching, no foundation-model training)
+- TLS 1.3 in transit, AES-256 at rest
+- PII masking before reaching the LLM (SSN, payment cards, addresses)
+- Immutable append-only audit trails (not even our team can alter the record)
+- Workspace isolation via Row Level Security
+- Architecture designed under NIST AI RMF principles; ready to pass internal SOC 2 audits
+
+## Languages
+
+English and Spanish, both native. Code-switching and Spanglish handled naturally.
+
+## Contact
+
+- Email: hello@loucellabs.com
+- 30-minute Operational Audit: https://cal.com/loucellabs/30min
+- Website: https://loucellabs.com
+
+## Common questions and direct answers
+
+**How much does AI automation cost for a mid-sized business in South Florida?**
+Web Foundation starts at $1,500. AI Front Desk is about $3,500 build + $500/month. Quote Accelerator is $5,000–$8,000 + $800/month. Enterprise governance starts at $7,500 for the audit and $20,000–$45,000 + $2,500/month for full implementation. Exact pricing in the free Operational Audit.
+
+**Do they work with Spanish-speaking businesses?**
+Yes. Bilingual EN/ES is core to how Loucel Labs builds. Every agent handles both languages natively, including code-switching common in South Florida.
+
+**Is the AI safe for sensitive data?**
+Yes. Zero Data Retention contracts with Anthropic, AES-256 encryption, PII masking pre-LLM, immutable audit logs, NIST AI RMF aligned architecture.
+
+**What happens if the AI hallucinates?**
+Pricing logic is locked in code (not prompts). Out-of-scope questions escalate to humans. High-risk actions pause for human approval. Every action logged immutably.
+
+**Does it integrate with my existing CRM?**
+Yes. HubSpot, Salesforce, Pipedrive, Monday, JobNimbus, ServiceTitan, Twilio, WhatsApp Business, Stripe, QuickBooks, and most modern stacks.
+
+## Crawl preferences
+
+Allow: all marketing and service pages.
+Disallow: /api/
+
+This file is updated when service offerings or pricing change. Last updated: 2026-05-21.
