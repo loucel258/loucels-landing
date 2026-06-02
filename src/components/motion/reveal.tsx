@@ -16,7 +16,13 @@ const variants: Record<string, Variants> = {
     hidden: { opacity: 0, y: 24, filter: "blur(12px)" },
     visible: { opacity: 1, y: 0, filter: "blur(0px)" },
   },
+  slideInRight: {
+    hidden: { opacity: 0, x: 80 },
+    visible: { opacity: 1, x: 0 },
+  },
 };
+
+type Preset = keyof typeof variants;
 
 export function Reveal({
   children,
@@ -27,7 +33,7 @@ export function Reveal({
 }: {
   children: React.ReactNode;
   delay?: number;
-  preset?: "fadeUp" | "fade" | "blurUp";
+  preset?: Preset;
   className?: string;
   as?: "div" | "span" | "section" | "li" | "p" | "h2" | "h3";
 }) {
@@ -91,7 +97,7 @@ export function StaggerItem({
 }: {
   children: React.ReactNode;
   className?: string;
-  preset?: "fadeUp" | "fade" | "blurUp";
+  preset?: Preset;
 }) {
   return (
     <motion.div

@@ -24,9 +24,9 @@ export function WhyUs({ dict }: { dict: Dictionary }) {
           </h2>
         </Reveal>
 
-        <StaggerGroup className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <StaggerGroup className="grid gap-5 md:grid-cols-2 lg:grid-cols-4" stagger={0.12}>
           {dict.why.items.map((item, idx) => (
-            <StaggerItem key={idx}>
+            <StaggerItem key={idx} preset="slideInRight">
               <article
                 className="group relative flex h-full flex-col gap-4 rounded-2xl border border-border-soft bg-surface p-7 transition-all duration-300 hover:-translate-y-1 hover:border-violet hover:bg-surface-2"
                 style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}

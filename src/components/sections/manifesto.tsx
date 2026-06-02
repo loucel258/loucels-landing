@@ -98,10 +98,10 @@ export function Manifesto({ dict }: { dict: Dictionary }) {
               </h2>
             </Reveal>
 
-            {/* Claim cards — "trust by" style, compact */}
-            <StaggerGroup className="flex flex-col gap-3">
+            {/* Claim cards — slide in from the right, cascaded */}
+            <StaggerGroup className="flex flex-col gap-3" stagger={0.14}>
               {dict.manifesto.cards.map((line, i) => (
-                <StaggerItem key={i}>
+                <StaggerItem key={i} preset="slideInRight">
                   <ClaimCard line={line} index={i} />
                 </StaggerItem>
               ))}

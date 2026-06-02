@@ -7,6 +7,7 @@ import { Nav } from "@/components/nav";
 import { Hero } from "@/components/sections/hero";
 import { Manifesto } from "@/components/sections/manifesto";
 import { Offer } from "@/components/sections/offer";
+import { Templates } from "@/components/sections/templates";
 import { WhyUs } from "@/components/sections/why-us";
 import { Process } from "@/components/sections/process";
 import { Architecture } from "@/components/sections/architecture";
@@ -31,6 +32,7 @@ export default async function HomePage({
       <main className="relative bg-bg">
         <Hero dict={dict} />
         <Offer dict={dict} />
+        <Templates dict={dict} />
         <Manifesto dict={dict} />
         <WhyUs dict={dict} />
         <Process dict={dict} />

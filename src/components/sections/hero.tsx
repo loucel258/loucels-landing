@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
+import { Cluster3D } from "@/components/hero/cluster-3d";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
 /**
@@ -66,15 +66,7 @@ export function Hero({ dict }: { dict: Dictionary }) {
             "radial-gradient(ellipse 75% 65% at 65% 50%, black 0%, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0.55) 60%, transparent 95%)",
         }}
       >
-        <Image
-          src="/hero/01-cluster.webp"
-          alt=""
-          fill
-          priority
-          quality={90}
-          sizes="(max-width: 1024px) 100vw, 62vw"
-          className="object-cover object-center"
-        />
+        <Cluster3D imageSrc="/hero/01-cluster.webp" glareIntensity={0.22} />
       </motion.div>
 
       {/* Bottom fade — dissolves image edge into next section */}
@@ -193,38 +185,6 @@ export function Hero({ dict }: { dict: Dictionary }) {
               </a>
             </motion.div>
 
-            {/* Trust line / meta */}
-            <motion.div
-              className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4 text-mono-xs text-text-tertiary"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 1.8 }}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <span
-                  aria-hidden
-                  className="relative inline-flex size-1.5"
-                >
-                  <span className="absolute inset-0 rounded-full bg-cyan-glow" />
-                  <span className="absolute inset-0 animate-ping rounded-full bg-cyan-glow opacity-60" />
-                </span>
-                ANTHROPIC CLAUDE
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span
-                  aria-hidden
-                  className="size-1.5 rounded-full bg-violet"
-                />
-                NIST AI RMF · SOC 2 READY
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span
-                  aria-hidden
-                  className="size-1.5 rounded-full bg-text-tertiary"
-                />
-                BILINGUAL · EN / ES
-              </span>
-            </motion.div>
           </div>
 
           {/* MOBILE-only image — floating, frameless (on lg+, the absolute image above takes over) */}
@@ -244,15 +204,7 @@ export function Hero({ dict }: { dict: Dictionary }) {
                   "radial-gradient(ellipse 80% 75% at 50% 50%, black 38%, transparent 92%)",
               }}
             >
-              <Image
-                src="/hero/01-cluster.webp"
-                alt=""
-                fill
-                priority
-                quality={85}
-                sizes="100vw"
-                className="object-cover"
-              />
+              <Cluster3D imageSrc="/hero/01-cluster.webp" glareIntensity={0.20} />
             </div>
           </motion.div>
         </div>
