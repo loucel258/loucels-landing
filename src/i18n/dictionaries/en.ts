@@ -27,7 +27,7 @@ export const en: Dictionary = {
     title: "Governed AI. No Experiments.",
     cards: [
       "Autonomous operations. Absolute control.",
-      "Seamless integration. Zero risk to your current operations.",
+      "Your tools stay. The AI joins them.",
       "We don't sell tools, we build your competitive advantage.",
     ],
   },
@@ -69,7 +69,7 @@ export const en: Dictionary = {
       label: "Operational Automation",
       tagline: "An AI agent is an assistant. An SMV model is an entire department operating in milliseconds.",
       description:
-        "AI Front Desk • Automatic Quote Accelerator • Review Manager and Customer Reactivation.",
+        "Your Twilio. Your CRM. Your existing tools. The AI talks to them — with an audit trail.",
       ctaLabel: "Explore agents",
       items: [
         {
@@ -109,7 +109,7 @@ export const en: Dictionary = {
         {
           name: "AI Governance Setup",
           price: "$15K–$30K + $1.5K/mo",
-          desc: "AI inventory, NIST AI RMF profile, policies, vendor framework, SOC 2 evidence package. Govern AI before it scales beyond control.",
+          desc: "AI inventory, NIST AI RMF profile, policies, vendor framework, and an evidence kit that supports your own SOC 2 readiness work. Govern AI before it scales beyond control.",
         },
       ],
     },
@@ -123,8 +123,8 @@ export const en: Dictionary = {
         desc: "Most US businesses serve a diverse demographic. We build AI agents that natively and fluently handle both English and Spanish customer interactions, capturing every lead.",
       },
       {
-        title: "Custom Architecture, No Templates",
-        desc: "We don't rely on fragile «no-code» patches or cheap templates. We build robust, custom software infrastructures designed specifically to scale with your operations.",
+        title: "Custom Architecture, No Duct Tape",
+        desc: "Our vertical templates are starting points, not the whole product. Underneath every one of them is custom code — no fragile no-code flows, no Zapier-shop patches. Software engineered to scale with your operations.",
       },
       {
         title: "Fixed ROI, No Hourly Traps",
@@ -216,8 +216,99 @@ export const en: Dictionary = {
     ],
   },
   footer: {
-    tagline: "Automation for businesses that mean it.",
+    tagline:
+      "Your Twilio. Your CRM. Your existing tools. The AI talks to them — with an audit trail.",
     rights: "All rights reserved.",
+  },
+  templates: {
+    eyebrow: "Templates",
+    title: "Built for your industry.",
+    intro:
+      "Every engagement starts from a template specific to your vertical and the tools you already use. Pick the closest fit — we calibrate from there.",
+    ctaHint: "Click any template to ask the AI about it →",
+    items: [
+      {
+        slug: "medspa-front-desk",
+        vertical: "MedSpas & Aesthetic Clinics",
+        service: "AI Front Desk",
+        description:
+          "Bilingual 24/7 patient intake that pre-qualifies inquiries before any PHI touches the model.",
+        tools: ["Boulevard", "Twilio", "Stripe"],
+        chatPrompt: "Tell me about the AI Front Desk template for MedSpas.",
+      },
+      {
+        slug: "dental-front-desk",
+        vertical: "Dental Practices",
+        service: "AI Front Desk",
+        description:
+          "Patient intake, appointment confirmations, and insurance verification — audit trail on every payer touch.",
+        tools: ["Weave", "Dentrix", "Twilio"],
+        chatPrompt: "Tell me about the AI Front Desk template for dental practices.",
+      },
+      {
+        slug: "roofing-quote-accelerator",
+        vertical: "Roofing & HVAC",
+        service: "Quote Accelerator",
+        description:
+          "Customer describes the job, the agent drafts the quote from your price book, you approve before it sends.",
+        tools: ["JobNimbus", "QuickBooks", "Twilio"],
+        chatPrompt:
+          "Tell me about the Quote Accelerator template for roofing and HVAC.",
+      },
+      {
+        slug: "restaurant-review-manager",
+        vertical: "Restaurants & Food",
+        service: "Review Manager",
+        description:
+          "Bilingual review-reply drafts that match your tone, with HITL approval before anything goes public.",
+        tools: ["Toast", "Google Business Profile", "Mailchimp"],
+        chatPrompt: "Tell me about the Review Manager template for restaurants.",
+      },
+      {
+        slug: "hotel-front-desk",
+        vertical: "Boutique Hotels",
+        service: "AI Front Desk",
+        description:
+          "Night-shift bilingual coverage on inquiries and booking changes — audit log on every guest-data touch.",
+        tools: ["Mews", "Google Business Profile", "Twilio"],
+        chatPrompt: "Tell me about the AI Front Desk template for boutique hotels.",
+      },
+      {
+        slug: "wealth-compliance-intake",
+        vertical: "Wealth Management & RIAs",
+        service: "Compliance Intake",
+        description:
+          "Client onboarding intake that masks PII before any model call, defensible log of every interaction.",
+        tools: ["Wealthbox", "Smarsh", "DocuSign"],
+        chatPrompt:
+          "Tell me about the Compliance Intake template for wealth management.",
+      },
+    ],
+  },
+  chat: {
+    bubbleLabel: "Open chat",
+    panelTitle: "Loucel Labs · AI Front Desk",
+    panelSubtitle: "Live demo of what we build for clients",
+    greeting:
+      "Hi — I'm the AI front desk for Loucel Labs. Tell me about your business and the pain you're trying to fix, and I'll help you figure out if we're a fit.",
+    placeholder: "Ask anything…",
+    send: "Send",
+    thinking: "Thinking…",
+    retry: "Retry",
+    bookCta: "Book your call",
+    privacy: "Privacy",
+    errorGeneric: "Something went wrong. Please try again.",
+    errorUnavailable:
+      "Chat is temporarily unavailable. Please email hello@loucellabs.com.",
+    errorRateLimited:
+      "Too many messages in a short time — give it a minute and try again.",
+    close: "Close",
+    auditTrail: "Audit trail",
+    auditTitle: "Trust Stack · audit trail",
+    auditSubtitle:
+      "Every event in this conversation was written to an immutable Postgres log with PII redacted before model invocation. This is what we ship inside every client engagement.",
+    auditEmpty: "No audit events yet — send a message first.",
+    auditBack: "Back to chat",
   },
   webFoundation: {
     meta: {
@@ -415,7 +506,7 @@ export const en: Dictionary = {
     meta: {
       title: "Integration & Control — Loucel Labs",
       description:
-        "Enterprise-grade AI architecture and governance. Secure, functioning agents in weeks, not 6-month consulting engagements. NIST AI RMF and SOC 2 aligned.",
+        "Mid-market AI architecture and governance. Secure, functioning agents in weeks, not 6-month consulting engagements. Designed under the principles of NIST AI RMF and ISO 42001.",
     },
     backLabel: "Back to home",
     hero: {
@@ -426,7 +517,7 @@ export const en: Dictionary = {
       primaryCta: "Schedule your Audit",
       secondaryCta: "See the architecture",
       trustStrip:
-        "Our architecture is designed under NIST AI RMF principles and ready to pass your internal SOC 2 audits.",
+        "Architecture designed under the principles of NIST AI RMF and ISO 42001. Structured to support a client-led SOC 2 readiness exercise. Loucel Labs is not independently SOC 2 certified.",
     },
     problem: {
       eyebrow: "The Risks",
@@ -463,7 +554,7 @@ export const en: Dictionary = {
         },
         {
           name: "Institutional AI Governance Setup",
-          desc: "AI inventory, NIST AI RMF profile, governance policies, vendor framework, and SOC 2 evidence package. Govern your AI before it scales beyond control.",
+          desc: "AI inventory, NIST AI RMF profile, governance policies, vendor framework, and an evidence kit that supports your own SOC 2 readiness exercise. Govern your AI before it scales beyond control.",
         },
       ],
     },
@@ -502,7 +593,7 @@ export const en: Dictionary = {
         },
         {
           title: "Owned by You. Governed by Us.",
-          desc: "Your infrastructure, your data. Our ongoing retainer ensures your systems stay compliant with evolving SOC 2 and NIST AI RMF standards.",
+          desc: "Your infrastructure, your data. Our ongoing retainer keeps your governance controls aligned with current NIST AI RMF principles and supports your own SOC 2 readiness work.",
         },
       ],
     },
@@ -559,6 +650,41 @@ export type Dictionary = {
     bullets: Array<{ n: string; text: string }>;
   };
   footer: { tagline: string; rights: string };
+  templates: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+    ctaHint: string;
+    items: Array<{
+      slug: string;
+      vertical: string;
+      service: string;
+      description: string;
+      tools: string[];
+      chatPrompt: string;
+    }>;
+  };
+  chat: {
+    bubbleLabel: string;
+    panelTitle: string;
+    panelSubtitle: string;
+    greeting: string;
+    placeholder: string;
+    send: string;
+    thinking: string;
+    retry: string;
+    bookCta: string;
+    privacy: string;
+    errorGeneric: string;
+    errorUnavailable: string;
+    errorRateLimited: string;
+    close: string;
+    auditTrail: string;
+    auditTitle: string;
+    auditSubtitle: string;
+    auditEmpty: string;
+    auditBack: string;
+  };
   webFoundation: SubpageDict;
   smvModels: SubpageDict;
   integrationControl: SubpageDict;

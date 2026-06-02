@@ -36,12 +36,12 @@ export function Footer({
             <p className="flex items-center gap-2 text-mono-xs text-text-tertiary">
               <span aria-hidden className="size-1 rounded-full bg-cyan" />
               {isES
-                ? "Basados en el sur de Florida · Atendiendo el mid-market bilingüe"
-                : "Based in South Florida · Serving the bilingual mid-market"}
+                ? "Basados en el sur de Florida · Atendiendo el mid-market"
+                : "Based in South Florida · Serving the mid-market"}
             </p>
           </div>
 
-          <div className="grid gap-6 text-[13px] md:grid-cols-3 md:gap-12">
+          <div className="grid gap-6 text-[13px] md:grid-cols-2 md:gap-16">
             <FooterCol title={isES ? "Servicios" : "Services"}>
               <FooterLink href={`/${locale}/services`}>
                 {isES ? "Ver todos" : "View all"}
@@ -52,18 +52,6 @@ export function Footer({
               <FooterLink href={`/${locale}#agents`}>AI Agents</FooterLink>
               <FooterLink href={`/${locale}#enterprise`}>
                 Enterprise
-              </FooterLink>
-            </FooterCol>
-
-            <FooterCol title={isES ? "Compañía" : "Company"}>
-              <FooterLink href={`/${locale}#philosophy`}>
-                {isES ? "Filosofía" : "Philosophy"}
-              </FooterLink>
-              <FooterLink href={`/${locale}#process`}>
-                {isES ? "Proceso" : "Process"}
-              </FooterLink>
-              <FooterLink href={`/${locale}#contact`}>
-                {isES ? "Contacto" : "Contact"}
               </FooterLink>
             </FooterCol>
 
