@@ -58,6 +58,45 @@ export default async function PrivacyPage({
             de privacidad.
           </p>
 
+          <h2>Chat widget de esta landing</h2>
+          <p>
+            El widget de chat en la esquina inferior derecha es un demo en
+            vivo del mismo Trust Stack que entregamos a clientes. Por
+            transparencia, esto es lo que registra:
+          </p>
+          <ul>
+            <li>
+              Cada mensaje (tuyo y del agente) se escribe en un audit log
+              Postgres <strong>append-only</strong>, identificado por un
+              session_id aleatorio generado en tu navegador (no es una
+              cookie de tracking; vive solo en sessionStorage de tu tab).
+            </li>
+            <li>
+              El contenido literal de los mensajes <strong>NO se guarda</strong>
+              {" "} — solo un hash SHA-256 del texto sanitizado. La conversación
+              en sí vive únicamente en la memoria de tu navegador.
+            </li>
+            <li>
+              Si pegas accidentalmente PII de alto riesgo (SSN, tarjeta,
+              cuenta bancaria, API key), el sistema la detecta y rechaza
+              el mensaje <strong>antes</strong> de enviarlo al modelo.
+            </li>
+            <li>
+              Puedes ver tu propio audit trail en cualquier momento desde el
+              botón &quot;Audit trail&quot; en el pie del chat — verás solo
+              tus eventos, nunca los de otros visitantes.
+            </li>
+            <li>
+              El log se conserva indefinidamente para mantener la integridad
+              de la hash chain. Si quieres que purguemos los eventos atados
+              a tu session_id, escríbenos a{" "}
+              <a href={`mailto:${siteConfig.contactEmail}`}>
+                {siteConfig.contactEmail}
+              </a>
+              .
+            </li>
+          </ul>
+
           <h2>Datos procesados por sistemas de IA (clientes activos)</h2>
           <p>
             Cuando Loucel Labs opera agentes de IA para un cliente, los datos
@@ -141,6 +180,45 @@ export default async function PrivacyPage({
             for hosting (Vercel), scheduling (Cal.com), and email. Each has
             its own privacy policy.
           </p>
+
+          <h2>Landing chat widget</h2>
+          <p>
+            The chat widget in the bottom-right corner is a live demo of the
+            same Trust Stack we deploy for clients. For transparency, this
+            is what it records:
+          </p>
+          <ul>
+            <li>
+              Every message (yours and the agent&apos;s) is written to an
+              <strong> append-only</strong> Postgres audit log, identified by
+              a random session_id generated in your browser (not a tracking
+              cookie; lives only in your tab&apos;s sessionStorage).
+            </li>
+            <li>
+              The literal content of messages is <strong>NOT stored</strong>
+              {" "}— only a SHA-256 hash of the sanitized text. The
+              conversation itself lives only in your browser&apos;s memory.
+            </li>
+            <li>
+              If you accidentally paste high-risk PII (SSN, credit card,
+              bank account, API key), the system detects and rejects the
+              message <strong>before</strong> sending it to the model.
+            </li>
+            <li>
+              You can view your own audit trail at any time via the
+              &quot;Audit trail&quot; button in the chat footer — you only
+              see your events, never anyone else&apos;s.
+            </li>
+            <li>
+              The log is retained indefinitely to preserve hash-chain
+              integrity. To request deletion of events tied to your
+              session_id, email{" "}
+              <a href={`mailto:${siteConfig.contactEmail}`}>
+                {siteConfig.contactEmail}
+              </a>
+              .
+            </li>
+          </ul>
 
           <h2>Data processed by AI systems (active clients)</h2>
           <p>

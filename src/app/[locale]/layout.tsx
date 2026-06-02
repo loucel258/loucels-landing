@@ -4,6 +4,7 @@ import { locales, isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { siteConfig } from "@/lib/site-config";
 import { StructuredData } from "@/components/structured-data";
+import { ChatWidget } from "@/components/chat/chat-widget";
 
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -78,10 +79,13 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
+  const dict = getDictionary(locale);
+
   return (
     <>
       <StructuredData locale={locale} />
       {children}
+      <ChatWidget locale={locale} dict={dict.chat} />
     </>
   );
 }

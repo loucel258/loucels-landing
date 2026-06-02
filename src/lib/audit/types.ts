@@ -1,4 +1,4 @@
-export type AuditSource = "dlp" | "rbac" | "hitl" | "vault";
+export type AuditSource = "dlp" | "rbac" | "hitl" | "vault" | "chat";
 
 export type AuditDecision = "ALLOW" | "DENY";
 
