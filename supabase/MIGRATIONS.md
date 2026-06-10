@@ -36,4 +36,4 @@ encrypted transcripts → leads).
 | 038 | audit source 'agent' |
 | 039 | Multi-tenant table grants sweep |
 | 040–041 | Decouple audit_chain_head + audit_logs from legacy clients FK |
-| 042 | ⚠️ **PENDING** — monthly token budgets: `monthly_token_budget` column, `agent_usage_monthly` table, `increment_agent_usage` RPC |
+| 042 | Monthly token budgets: `monthly_token_budget` column, `agent_usage_monthly` table, `increment_agent_usage` RPC (applied 2026-06-10) |
