@@ -15,16 +15,49 @@ type Approval = {
   created_at: string;
 };
 
-const ACTION_LABELS: Record<string, string> = {
-  send_message: "Enviar mensaje",
-  send_quote: "Enviar cotización",
-  send_refund: "Procesar reembolso",
-  reply_review: "Responder reseña",
-};
-
 const REAL_TIME_ACTIONS = new Set(["send_message"]);
 
-export function ApprovalCard({ approval, slug }: { approval: Approval; slug: string }) {
+/**
+ * Labels arrive pre-translated from the server page (strings.ts is
+ * server-only, so the dictionary cannot be imported here). Keys mirror
+ * the ra.* namespace.
+ */
+export type ApprovalLabels = {
+  actions: Record<string, string>;
+  riskHigh: string;
+  riskMedium: string;
+  proposedLabel: string;
+  originalMessage: string;
+  editLabel: string;
+  rejectLabel: string;
+  rejectPlaceholder: string;
+  btnApprove: string;
+  btnModify: string;
+  btnReject: string;
+  btnApproveEdited: string;
+  btnConfirmReject: string;
+  btnCancel: string;
+  btnBack: string;
+  realtimeHint: string;
+  stubHint: string;
+  approvedRealtime: string;
+  approvedStub: string;
+  approvedRealtimeDesc: string;
+  approvedStubDesc: string;
+  rejected: string;
+  rejectedDesc: string;
+  errorText: string;
+};
+
+export function ApprovalCard({
+  approval,
+  slug,
+  labels,
+}: {
+  approval: Approval;
+  slug: string;
+  labels: ApprovalLabels;
+}) {
   const router = useRouter();
   const [mode, setMode] = useState<"view" | "edit" | "reject">("view");
   const [editedText, setEditedText] = useState(approval.edited_text || approval.proposed_text);
@@ -39,7 +72,7 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
 
   const isHighRisk = (approval.risk_score ?? 0) >= 70;
   const isMediumRisk = (approval.risk_score ?? 0) >= 40;
-  const actionLabel = ACTION_LABELS[approval.action_type] ?? approval.action_type;
+  const actionLabel = labels.actions[approval.action_type] ?? approval.action_type;
   const isRealTime = REAL_TIME_ACTIONS.has(approval.action_type);
 
   async function callApprove(text: string | undefined) {
@@ -91,12 +124,10 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
           </span>
           <div>
             <p className="text-sm font-bold text-emerald-900">
-              {result.realtime ? "Enviado" : "Aprobado"}
+              {result.realtime ? labels.approvedRealtime : labels.approvedStub}
             </p>
             <p className="text-xs text-emerald-700">
-              {result.realtime
-                ? "El mensaje salió al instante."
-                : "Loucels lo está ejecutando — confirmación en 1 hora hábil."}
+              {result.realtime ? labels.approvedRealtimeDesc : labels.approvedStubDesc}
             </p>
           </div>
         </div>
@@ -112,8 +143,8 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
             <XCircle className="size-5" />
           </span>
           <div>
-            <p className="text-sm font-bold text-neutral-900">Rechazado</p>
-            <p className="text-xs text-neutral-600">El agente no enviará esta acción.</p>
+            <p className="text-sm font-bold text-neutral-900">{labels.rejected}</p>
+            <p className="text-xs text-neutral-600">{labels.rejectedDesc}</p>
           </div>
         </div>
       </div>
@@ -144,12 +175,12 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
           {isHighRisk && (
             <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-rose-700 ring-1 ring-rose-200">
               <AlertTriangle className="size-3" />
-              Riesgo alto
+              {labels.riskHigh}
             </span>
           )}
           {!isHighRisk && isMediumRisk && (
             <span className="rounded-md bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-700 ring-1 ring-amber-200">
-              Riesgo medio
+              {labels.riskMedium}
             </span>
           )}
           {approval.risk_flags.slice(0, 3).map((f) => (
@@ -164,7 +195,7 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
         {mode === "edit" ? (
           <div>
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
-              Edita el mensaje
+              {labels.editLabel}
             </p>
             <textarea
               value={editedText}
@@ -176,7 +207,7 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
         ) : (
           <div>
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
-              {mode === "reject" ? "Mensaje que el agente quería enviar" : "El agente quiere enviar:"}
+              {mode === "reject" ? labels.originalMessage : labels.proposedLabel}
             </p>
             <p className="whitespace-pre-wrap rounded-lg bg-neutral-50 px-4 py-3 text-sm leading-relaxed text-neutral-800">
               {approval.proposed_text}
@@ -187,12 +218,12 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
         {mode === "reject" && (
           <div className="mt-4">
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
-              ¿Por qué? (opcional)
+              {labels.rejectLabel}
             </p>
             <input
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Lo escribiré yo / información incorrecta / no estoy listo todavía"
+              placeholder={labels.rejectPlaceholder}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-800 outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
             />
           </div>
@@ -209,7 +240,7 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
               className="inline-flex flex-1 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-500/30 transition-all hover:shadow-emerald-500/40 disabled:opacity-50"
             >
               {pending ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}
-              Aprobar y enviar
+              {labels.btnApprove}
             </button>
             <button
               type="button"
@@ -217,7 +248,7 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
               onClick={() => setMode("edit")}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-neutral-700 ring-1 ring-neutral-300 transition-colors hover:bg-neutral-50 disabled:opacity-50"
             >
-              <Pencil className="size-4" /> Modificar
+              <Pencil className="size-4" /> {labels.btnModify}
             </button>
             <button
               type="button"
@@ -225,16 +256,16 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
               onClick={() => setMode("reject")}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-rose-700 ring-1 ring-rose-200 transition-colors hover:bg-rose-50 disabled:opacity-50"
             >
-              <XCircle className="size-4" /> Rechazar
+              <XCircle className="size-4" /> {labels.btnReject}
             </button>
             {isRealTime && (
               <p className="ml-auto text-[10px] text-neutral-500">
-                Se envía al instante vía Resend
+                {labels.realtimeHint}
               </p>
             )}
             {!isRealTime && (
               <p className="ml-auto text-[10px] text-neutral-500">
-                Confirmación en 1 hora hábil
+                {labels.stubHint}
               </p>
             )}
           </div>
@@ -249,7 +280,7 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
               className="inline-flex flex-1 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-500/30 disabled:opacity-50"
             >
               {pending ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}
-              Aprobar versión editada
+              {labels.btnApproveEdited}
             </button>
             <button
               type="button"
@@ -257,7 +288,7 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
               onClick={() => { setMode("view"); setEditedText(approval.proposed_text); }}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-neutral-700 ring-1 ring-neutral-300 disabled:opacity-50"
             >
-              Cancelar
+              {labels.btnCancel}
             </button>
           </div>
         )}
@@ -271,7 +302,7 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
               className="inline-flex flex-1 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 px-5 py-3 text-sm font-bold text-white shadow-md shadow-rose-500/30 disabled:opacity-50"
             >
               {pending ? <Loader2 className="size-4 animate-spin" /> : <XCircle className="size-4" />}
-              Confirmar rechazo
+              {labels.btnConfirmReject}
             </button>
             <button
               type="button"
@@ -279,14 +310,14 @@ export function ApprovalCard({ approval, slug }: { approval: Approval; slug: str
               onClick={() => { setMode("view"); setRejectReason(""); }}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-neutral-700 ring-1 ring-neutral-300 disabled:opacity-50"
             >
-              Atrás
+              {labels.btnBack}
             </button>
           </div>
         )}
 
         {result?.kind === "error" && (
           <p className="mt-2 text-xs text-rose-600">
-            No pudimos procesar la acción ({result.message}). Inténtalo de nuevo o escribe a steven@loucels.com.
+            {labels.errorText.replace("{reason}", result.message)}
           </p>
         )}
       </footer>

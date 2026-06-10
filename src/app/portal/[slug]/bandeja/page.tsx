@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Inbox, Search, Filter } from "lucide-react";
+import { Inbox, Filter } from "lucide-react";
 import { isPortalAuthed } from "@/lib/portal/auth";
 import { getServiceClient } from "@/lib/audit/client";
 import { decryptMessage, encryptionAvailable } from "@/lib/portal/encrypt";
@@ -223,12 +223,6 @@ export default async function BandejaPage({
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
         {/* Conversation list */}
         <aside className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
-          <div className="border-b border-neutral-200 bg-neutral-50/60 px-4 py-2.5">
-            <div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-[11px] text-neutral-400">
-              <Search className="size-3.5" />
-              <span>{t(lang, "inbox.search_soon")}</span>
-            </div>
-          </div>
           <ul className="max-h-[calc(100vh-260px)] overflow-y-auto divide-y divide-neutral-100">
             {sessionList.map(([sid, group]) => {
               const active = sid === sessionId;

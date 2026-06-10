@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { getServiceClient } from "@/lib/audit/client";
-import { Sidebar, MobileBrandBar } from "@/components/shell/sidebar";
+import { Sidebar } from "@/components/shell/sidebar";
+import { MobileNav } from "@/components/shell/mobile-nav";
 import { getPathname } from "@/lib/shell/pathname";
 import { resolvePortalLang } from "@/lib/portal/lang";
 import { t } from "@/lib/portal/strings";
@@ -173,7 +174,7 @@ export default async function PortalLayout({
     .join("");
 
   return (
-    <div className="flex min-h-screen bg-neutral-50 text-neutral-900">
+    <div data-shell className="flex min-h-screen bg-neutral-50 text-neutral-900">
       <Sidebar
         brand={{
           workspaceName: displayName,
@@ -186,14 +187,18 @@ export default async function PortalLayout({
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <MobileBrandBar
+        <MobileNav
           brand={{
             workspaceName: displayName,
             subtitle: "Loucels portal",
             initials,
           }}
+          sections={sections}
+          footer={<PortalSidebarFooter slug={slug} lang={lang} />}
+          openLabel={t(lang, "nav.open_menu")}
+          closeLabel={t(lang, "nav.close_menu")}
         />
-        <main className="flex-1 px-6 py-6 lg:px-8 lg:py-8">{children}</main>
+        <main className="flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">{children}</main>
         <footer className="border-t border-neutral-200/70 bg-white px-6 py-4 text-[10px] text-neutral-500 lg:px-8">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p>

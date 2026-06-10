@@ -210,6 +210,11 @@ const EN: Dict = {
   "btn.save": "Save",
   "common.relative_now": "now",
   "common.confirmation_pending": "Confirmation in 1 business hour",
+
+
+  // Mobile nav
+  "nav.open_menu": "Open menu",
+  "nav.close_menu": "Close menu",
 };
 
 const ES: Dict = {
@@ -317,7 +322,7 @@ const ES: Dict = {
   "ra.approved_realtime": "Enviado",
   "ra.approved_stub": "Aprobado",
   "ra.approved_realtime_desc": "El mensaje salió al instante.",
-  "ra.approved_stub_desc": "Loucels lo está ejecutando — confirmación en 1 hora hábil.",
+  "ra.approved_stub_desc": "Loucels lo está ejecutando; confirmación en 1 hora hábil.",
   "ra.rejected": "Rechazado",
   "ra.rejected_desc": "El agente no enviará esta acción.",
   "ra.error": "No pudimos procesar la acción ({reason}). Inténtalo de nuevo o escribe a steven@loucels.com.",
@@ -394,6 +399,11 @@ const ES: Dict = {
   "btn.save": "Guardar",
   "common.relative_now": "ahora",
   "common.confirmation_pending": "Confirmación en 1 hora hábil",
+
+
+  // Mobile nav
+  "nav.open_menu": "Abrir menú",
+  "nav.close_menu": "Cerrar menú",
 };
 
 const DICTS: Record<PortalLang, Dict> = { en: EN, es: ES };

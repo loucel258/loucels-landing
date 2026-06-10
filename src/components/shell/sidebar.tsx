@@ -77,20 +77,6 @@ export function Sidebar({
         </Link>
       </div>
 
-      {/* Search placeholder (cosmetic for v1; wire later) */}
-      <div className="px-3 pt-3">
-        <div className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900/60 px-2.5 py-1.5 text-[11px] text-neutral-500">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3.5">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-          <span className="flex-1">Search</span>
-          <kbd className="rounded border border-neutral-700 bg-neutral-900 px-1 py-px text-[9px] text-neutral-400">
-            ⌘K
-          </kbd>
-        </div>
-      </div>
-
       {/* Sections */}
       <nav className="flex-1 overflow-y-auto px-2 pt-4">
         {sections.map((section, sIdx) => (

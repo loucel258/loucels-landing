@@ -2,9 +2,11 @@ import { notFound, redirect } from "next/navigation";
 import { ShieldCheck, CheckCircle2, Clock } from "lucide-react";
 import { isPortalAuthed } from "@/lib/portal/auth";
 import { getServiceClient } from "@/lib/audit/client";
+import { resolvePortalLang } from "@/lib/portal/lang";
+import { t, pl, type PortalLang } from "@/lib/portal/strings";
 import { Panel } from "@/components/workspace/panel";
 import { EmptyPanel } from "@/components/workspace/empty-panel";
-import { ApprovalCard } from "./approval-card";
+import { ApprovalCard, type ApprovalLabels } from "./approval-card";
 import { daysAgo } from "@/lib/admin/format";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +28,41 @@ type ApprovalRow = {
   risk_flags: string[];
 };
 
+/** strings.ts is server-only; the client card receives its copy as props. */
+function buildApprovalLabels(lang: PortalLang): ApprovalLabels {
+  return {
+    actions: {
+      send_message: t(lang, "ra.action.send_message"),
+      send_quote: t(lang, "ra.action.send_quote"),
+      send_refund: t(lang, "ra.action.send_refund"),
+      reply_review: t(lang, "ra.action.reply_review"),
+    },
+    riskHigh: t(lang, "ra.high_risk"),
+    riskMedium: t(lang, "ra.medium_risk"),
+    proposedLabel: t(lang, "ra.proposed_label"),
+    originalMessage: t(lang, "ra.proposed_label"),
+    editLabel: t(lang, "ra.edit_label"),
+    rejectLabel: t(lang, "ra.reject_label"),
+    rejectPlaceholder: t(lang, "ra.reject_placeholder"),
+    btnApprove: t(lang, "ra.btn_approve"),
+    btnModify: t(lang, "ra.btn_modify"),
+    btnReject: t(lang, "ra.btn_reject"),
+    btnApproveEdited: t(lang, "ra.btn_approve_edited"),
+    btnConfirmReject: t(lang, "ra.btn_confirm_reject"),
+    btnCancel: t(lang, "ra.btn_cancel"),
+    btnBack: t(lang, "ra.btn_back"),
+    realtimeHint: t(lang, "ra.realtime_hint"),
+    stubHint: t(lang, "ra.stub_hint"),
+    approvedRealtime: t(lang, "ra.approved_realtime"),
+    approvedStub: t(lang, "ra.approved_stub"),
+    approvedRealtimeDesc: t(lang, "ra.approved_realtime_desc"),
+    approvedStubDesc: t(lang, "ra.approved_stub_desc"),
+    rejected: t(lang, "ra.rejected"),
+    rejectedDesc: t(lang, "ra.rejected_desc"),
+    errorText: t(lang, "ra.error"),
+  };
+}
+
 export default async function RequiereAccionPage({
   params,
 }: {
@@ -36,6 +73,8 @@ export default async function RequiereAccionPage({
 
   const sb = getServiceClient();
   if (!sb) return null;
+  const lang = await resolvePortalLang(slug);
+  const labels = buildApprovalLabels(lang);
 
   const { data: access } = await sb
     .from("client_portal_access")
@@ -53,12 +92,12 @@ export default async function RequiereAccionPage({
   if (wsIds.length === 0) {
     return (
       <div className="space-y-6">
-        <Header empty />
+        <Header empty lang={lang} />
         <Panel>
           <EmptyPanel
             icon={<ShieldCheck className="size-5" />}
-            title="Sin agentes activos"
-            description="Cuando despleguemos un agente para ti, las acciones que requieran tu aprobación aparecerán aquí."
+            title={t(lang, "ra.clear_title")}
+            description={t(lang, "ra.subtitle_no_agent")}
           />
         </Panel>
       </div>
@@ -85,7 +124,7 @@ export default async function RequiereAccionPage({
 
   return (
     <div className="space-y-6">
-      <Header pendingCount={pending.length} />
+      <Header pendingCount={pending.length} lang={lang} />
 
       {pending.length === 0 ? (
         <Panel tone="success">
@@ -94,25 +133,23 @@ export default async function RequiereAccionPage({
               <CheckCircle2 className="size-7" />
             </span>
             <div>
-              <p className="text-lg font-bold text-neutral-900">Todo bajo control</p>
-              <p className="text-sm text-neutral-600">
-                Tu agente actuó dentro de las reglas. No hay nada esperando tu aprobación.
-              </p>
+              <p className="text-lg font-bold text-neutral-900">{t(lang, "ra.clear_title")}</p>
+              <p className="text-sm text-neutral-600">{t(lang, "ra.clear_desc")}</p>
             </div>
           </div>
         </Panel>
       ) : (
         <div className="space-y-4">
           {pending.map((p) => (
-            <ApprovalCard key={p.id} approval={p} slug={slug} />
+            <ApprovalCard key={p.id} approval={p} slug={slug} labels={labels} />
           ))}
         </div>
       )}
 
       {recent.length > 0 && (
         <Panel
-          title="Historial de decisiones"
-          eyebrow="Últimas 20"
+          title={t(lang, "ra.history_title")}
+          eyebrow={t(lang, "ra.history_eyebrow")}
           icon={<Clock className="size-4" />}
         >
           <ul className="divide-y divide-neutral-100">
@@ -127,9 +164,11 @@ export default async function RequiereAccionPage({
                           : "bg-rose-50 text-rose-700"
                       }`}
                     >
-                      {r.status === "approved" ? "Aprobado" : "Rechazado"}
+                      {r.status === "approved" ? t(lang, "ra.approved_stub") : t(lang, "ra.rejected")}
                     </span>
-                    <span className="text-neutral-700">{r.action_type.replace(/_/g, " ")}</span>
+                    <span className="text-neutral-700">
+                      {labels.actions[r.action_type] ?? r.action_type.replace(/_/g, " ")}
+                    </span>
                   </div>
                   <p className="mt-0.5 line-clamp-1 max-w-md text-[11px] text-neutral-500">
                     {r.proposed_text}
@@ -147,16 +186,29 @@ export default async function RequiereAccionPage({
   );
 }
 
-function Header({ pendingCount, empty }: { pendingCount?: number; empty?: boolean }) {
+function Header({
+  pendingCount,
+  empty,
+  lang,
+}: {
+  pendingCount?: number;
+  empty?: boolean;
+  lang: PortalLang;
+}) {
   return (
     <header>
-      <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Requiere acción</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
+        {t(lang, "ra.title")}
+      </h1>
       <p className="mt-1 text-sm text-neutral-600">
         {empty
-          ? "Espacio reservado para futuras aprobaciones."
+          ? t(lang, "ra.subtitle_no_agent")
           : pendingCount && pendingCount > 0
-            ? `${pendingCount} acción${pendingCount === 1 ? "" : "es"} esperando tu visto bueno antes de salir.`
-            : "Tu agente está despachando solo. Nada que decidir."}
+            ? t(lang, "ra.subtitle_pending", {
+                n: pendingCount,
+                plural: pl(pendingCount, "s", "es", lang),
+              })
+            : t(lang, "ra.subtitle_empty")}
       </p>
     </header>
   );
