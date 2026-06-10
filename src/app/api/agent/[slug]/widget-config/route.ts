@@ -92,7 +92,7 @@ export async function GET(
 
   const cors = corsHeadersFor(req);
   const ip = getClientIp(req);
-  const rl = rateLimit(`agent-cfg:${slug}:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
+  const rl = await rateLimit(`agent-cfg:${slug}:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
   if (!rl.allowed) {
     return NextResponse.json(
       { ok: false, error: "rate_limited" },

@@ -178,7 +178,7 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
   }
 
   // 2) Rate limit per IP
-  const rl = rateLimit(`chat:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
+  const rl = await rateLimit(`chat:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
   if (!rl.allowed) {
     logChatEvent({ kind: "rate_limited", ip, retryAfterSec: rl.retryAfterSec });
     // Permanent audit row so rate-limit denies are observable cross-deploy

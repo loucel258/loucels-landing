@@ -11,6 +11,7 @@ import { getServiceClient } from "@/lib/audit/client";
 import { persistTurn } from "@/lib/portal/transcripts";
 import { resolveAgent, originAllowedForAgent, type ResolvedAgent } from "@/lib/agents/resolver";
 import { buildAgentSystemPrompt } from "@/lib/agents/safety-prompt";
+import { isBudgetExhausted, recordUsage } from "@/lib/agents/budget";
 import {
   REQUEST_BOOKING_TOOL,
   ESCALATE_TO_HUMAN_TOOL,
@@ -313,7 +314,7 @@ export async function POST(
 
   // 3a. Per-slug GLOBAL ceiling first — bounds the per-tenant blast
   //     radius regardless of how many IPs an attacker rotates through.
-  const rlGlobal = rateLimit(`agent:${slug}:global`, GLOBAL_SLUG_CAPACITY, GLOBAL_SLUG_REFILL_PER_SEC);
+  const rlGlobal = await rateLimit(`agent:${slug}:global`, GLOBAL_SLUG_CAPACITY, GLOBAL_SLUG_REFILL_PER_SEC);
   if (!rlGlobal.allowed) {
     await audit(agent, preSession, ip, {
       decision: "DENY",
@@ -330,7 +331,7 @@ export async function POST(
   }
 
   // 3b. Rate limit per (slug, IP) — the normal per-visitor bucket.
-  const rl = rateLimit(`agent:${slug}:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
+  const rl = await rateLimit(`agent:${slug}:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
   if (!rl.allowed) {
     await audit(agent, preSession, ip, {
       decision: "DENY",
@@ -407,6 +408,21 @@ export async function POST(
     return NextResponse.json({ ok: true, reply: standdown }, { headers: cors });
   }
 
+  // 6b. Monthly token budget gate (migration 042). Once a tenant's
+  //     month is exhausted we degrade gracefully — polite reply, audit
+  //     DENY — instead of burning more Anthropic spend.
+  if (await isBudgetExhausted(agent.workspaceId, agent.monthlyTokenBudget)) {
+    await audit(agent, sessionId, ip, {
+      decision: "DENY",
+      blocked_by: "budget_exhausted",
+      reason: `monthly_budget=${agent.monthlyTokenBudget}`,
+    });
+    const busy = agent.language === "es"
+      ? "Estamos recibiendo un volumen alto de consultas este mes. Déjanos tu correo en el formulario de contacto y el equipo te responderá directamente."
+      : "We're handling a high volume of inquiries this month. Please leave your email through the contact form and the team will get back to you directly.";
+    return NextResponse.json({ ok: true, reply: busy }, { headers: cors });
+  }
+
   // 7. Get Claude client
   const client = getClaudeClient();
   if (!client) {
@@ -443,6 +459,14 @@ export async function POST(
         content: m.content,
       })),
     });
+
+    // Track spend against the monthly budget regardless of which branch
+    // the reply takes below.
+    await recordUsage(
+      agent.workspaceId,
+      first.usage?.input_tokens ?? 0,
+      first.usage?.output_tokens ?? 0,
+    );
 
     const toolUseRaw = first.content.find(
       (b): b is Extract<typeof b, { type: "tool_use" }> => b.type === "tool_use",
@@ -609,6 +633,12 @@ export async function POST(
         },
       ],
     });
+
+    await recordUsage(
+      agent.workspaceId,
+      followUp.usage?.input_tokens ?? 0,
+      followUp.usage?.output_tokens ?? 0,
+    );
 
     const followText = followUp.content
       .filter((b): b is Extract<typeof b, { type: "text" }> => b.type === "text")

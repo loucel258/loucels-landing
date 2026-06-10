@@ -30,7 +30,7 @@ export async function POST(
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 
-  const rl = rateLimit(`portal_hitl_approve:${slug}:${ip}`, 20, 20 / 3600);
+  const rl = await rateLimit(`portal_hitl_approve:${slug}:${ip}`, 20, 20 / 3600);
   if (!rl.allowed) {
     return NextResponse.json(
       { ok: false, error: "rate_limited" },

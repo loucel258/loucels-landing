@@ -29,7 +29,7 @@ const VALID_ROLES: Role[] = ["front_desk_agent", "compliance_officer"];
 export async function POST(req: Request) {
   // Rate limit: 60 evaluations per minute per IP. Each one runs the
   // Layer 2 Claude classifier — keep a script from emptying the budget.
-  const rl = rateLimit(`rbac-eval:${clientKey(req)}`, 60, 60 / 60);
+  const rl = await rateLimit(`rbac-eval:${clientKey(req)}`, 60, 60 / 60);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests", retry_after_seconds: rl.retryAfterSec },

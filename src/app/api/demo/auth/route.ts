@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   // ~1 mint per 5 minutes (token TTL); 30/min still leaves room for
   // multiple tabs and re-mints, while killing a script that tries to
   // farm tokens to flood our downstream LLM budget.
-  const rl = rateLimit(`auth-mint:${clientKey(req)}`, 30, 30 / 60);
+  const rl = await rateLimit(`auth-mint:${clientKey(req)}`, 30, 30 / 60);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many token requests", retry_after_seconds: rl.retryAfterSec },

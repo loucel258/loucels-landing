@@ -29,6 +29,8 @@ export type ResolvedAgent = {
   language: string;
   retentionDays: number;
   minutesPerConv: number;
+  /** Monthly token ceiling (in + out). <= 0 means unlimited. */
+  monthlyTokenBudget: number;
 };
 
 type CacheEntry = { agent: ResolvedAgent | null; cachedAt: number };
@@ -48,7 +50,7 @@ export async function resolveAgent(slug: string): Promise<ResolvedAgent | null> 
   const { data: agentData } = await sb
     .from("client_agents")
     .select(
-      "id, slug, engagement_id, workspace_id, name, agent_type, status, system_prompt, allowed_origins, tools_enabled, greeting_message, brand_color, max_tokens_per_message, conversation_retention_days, minutes_saved_per_conversation",
+      "id, slug, engagement_id, workspace_id, name, agent_type, status, system_prompt, allowed_origins, tools_enabled, greeting_message, brand_color, max_tokens_per_message, conversation_retention_days, minutes_saved_per_conversation, monthly_token_budget",
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -83,6 +85,7 @@ export async function resolveAgent(slug: string): Promise<ResolvedAgent | null> 
     max_tokens_per_message: number;
     conversation_retention_days: number;
     minutes_saved_per_conversation: number;
+    monthly_token_budget: number;
   };
 
   // Get engagement language for fallback
@@ -116,6 +119,7 @@ export async function resolveAgent(slug: string): Promise<ResolvedAgent | null> 
     language,
     retentionDays: a.conversation_retention_days ?? 90,
     minutesPerConv: a.minutes_saved_per_conversation ?? 5,
+    monthlyTokenBudget: a.monthly_token_budget ?? 2_000_000,
   };
 
   cache.set(slug, { agent, cachedAt: Date.now() });

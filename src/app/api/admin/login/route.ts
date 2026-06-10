@@ -24,7 +24,7 @@ export async function POST(req: Request): Promise<Response> {
   const ip = getClientIp(req);
 
   // 5 attempts/hour per IP. Refill = 5/3600 ≈ one token every 12 min.
-  const rl = rateLimit(`admin_login:${ip}`, 5, 5 / 3600);
+  const rl = await rateLimit(`admin_login:${ip}`, 5, 5 / 3600);
   if (!rl.allowed) {
     return NextResponse.json(
       { ok: false, error: "rate_limited" },

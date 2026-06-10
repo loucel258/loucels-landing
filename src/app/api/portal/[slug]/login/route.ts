@@ -30,7 +30,7 @@ export async function POST(
 
   // 5 attempts/hour per (slug, IP). Tighter than admin since this is
   // exposed publicly via /portal/[slug].
-  const rl = rateLimit(`portal_login:${slug}:${ip}`, 5, 5 / 3600);
+  const rl = await rateLimit(`portal_login:${slug}:${ip}`, 5, 5 / 3600);
   if (!rl.allowed) {
     return NextResponse.json(
       { ok: false, error: "rate_limited" },

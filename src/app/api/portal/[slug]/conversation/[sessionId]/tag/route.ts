@@ -32,7 +32,7 @@ function getClientIp(req: Request): string {
 async function guard(req: Request, slug: string, sessionId: string) {
   if (!(await isPortalAuthed(slug))) return { error: "unauthorized" as const, status: 401 };
   const ip = getClientIp(req);
-  const rl = rateLimit(`portal_tag:${slug}:${ip}`, 60, 60 / 3600);
+  const rl = await rateLimit(`portal_tag:${slug}:${ip}`, 60, 60 / 3600);
   if (!rl.allowed) return { error: "rate_limited" as const, status: 429 };
   const sb = getServiceClient();
   if (!sb) return { error: "service_unavailable" as const, status: 503 };

@@ -23,6 +23,7 @@ function makeAgent(allowedOrigins: string[]): ResolvedAgent {
     language: "en",
     retentionDays: 90,
     minutesPerConv: 5,
+    monthlyTokenBudget: 2_000_000,
   };
 }
 

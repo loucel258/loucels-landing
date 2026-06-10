@@ -55,7 +55,7 @@ export async function POST(req: Request): Promise<Response> {
   const ip = getClientIp(req);
   // 3 submissions burst, refill ~5/hour. Stops bulk-email flooding without
   // blocking a legitimate user who submits twice by mistake.
-  const rl = rateLimit(`subscribe:${ip}`, 3, 5 / 3600);
+  const rl = await rateLimit(`subscribe:${ip}`, 3, 5 / 3600);
   if (!rl.allowed) {
     return NextResponse.json(
       { ok: false, error: "rate_limited" },

@@ -16,6 +16,8 @@
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@studio-freight/lenis": "^1.0.42",
     "@supabase/supabase-js": "^2.106.1",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.39.0",

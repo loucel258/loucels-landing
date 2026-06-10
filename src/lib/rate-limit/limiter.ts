@@ -1,16 +1,21 @@
 import "server-only";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 /**
- * Process-local token bucket rate limiter. Best-effort only — on a
- * multi-instance deploy each instance has its own bucket and an
- * attacker hitting multiple regions can exceed the per-instance cap.
- * That's acceptable for the demo's threat model (defense in depth on
- * top of JWT auth, not the primary control); a real production cutover
- * should swap this for a Redis/Upstash bucket keyed identically.
+ * Rate limiter with two backends:
  *
- * Limits are deliberately permissive enough not to interfere with
- * normal demo usage and tight enough to stop a script from emptying
- * our Anthropic budget.
+ *   1. Upstash Redis (production) — distributed token bucket shared by
+ *      every serverless instance. Active when UPSTASH_REDIS_REST_URL +
+ *      UPSTASH_REDIS_REST_TOKEN are set.
+ *   2. Process-local token bucket (dev / fallback) — same semantics but
+ *      per-instance. On a multi-instance deploy an attacker rotating
+ *      regions can multiply the cap by the instance count, so this is
+ *      NOT acceptable as the only brake in production.
+ *
+ * If Upstash is configured but a call to it fails (network blip), we
+ * fall back to the local bucket for that request rather than failing
+ * open entirely — availability over strictness, with a floor.
  */
 
 type Bucket = {
@@ -38,16 +43,56 @@ export type RateLimitResult = {
   retryAfterSec: number;
 };
 
-/**
- * Check + decrement the bucket for `key`. Returns `allowed=false` when
- * the caller exceeded the cap; otherwise returns the remaining tokens.
- *
- * @param key      stable identity for the caller — typically
- *                 `${route}:${ip}` or `${route}:${workspace_id}`.
- * @param capacity max tokens in the bucket (= burst size).
- * @param refillPerSec how many tokens are added per second.
- */
-export function rateLimit(
+// ---------------------------------------------------------------------------
+// Upstash backend
+// ---------------------------------------------------------------------------
+
+let redis: Redis | null | undefined;
+function getRedis(): Redis | null {
+  if (redis !== undefined) return redis;
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = Redis.fromEnv();
+  } else {
+    redis = null;
+    if (process.env.NODE_ENV === "production") {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "[rate-limit] Upstash not configured — falling back to per-instance buckets. " +
+          "Set UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN before real traffic.",
+      );
+    }
+  }
+  return redis;
+}
+
+// One Ratelimit instance per (capacity, refill) config. Instances are
+// lightweight wrappers; the Map stays tiny because configs are static
+// per route.
+const limiters = new Map<string, Ratelimit>();
+function getLimiter(capacity: number, refillPerSec: number): Ratelimit | null {
+  const r = getRedis();
+  if (!r) return null;
+  const cfgKey = `${capacity}:${refillPerSec}`;
+  let limiter = limiters.get(cfgKey);
+  if (!limiter) {
+    // Convert refill/sec to tokens-per-minute for Upstash's token bucket.
+    // All current configs are sub-1/sec, so per-minute keeps integer rates.
+    const perMinute = Math.max(1, Math.round(refillPerSec * 60));
+    limiter = new Ratelimit({
+      redis: r,
+      limiter: Ratelimit.tokenBucket(perMinute, "60 s", capacity),
+      prefix: "rl",
+    });
+    limiters.set(cfgKey, limiter);
+  }
+  return limiter;
+}
+
+// ---------------------------------------------------------------------------
+// Local fallback backend (previous implementation, unchanged semantics)
+// ---------------------------------------------------------------------------
+
+function rateLimitLocal(
   key: string,
   capacity: number,
   refillPerSec: number,
@@ -61,7 +106,6 @@ export function rateLimit(
     buckets.set(key, b);
   }
 
-  // Refill based on elapsed time.
   const elapsedSec = (now - b.lastRefill) / 1000;
   if (elapsedSec > 0) {
     b.tokens = Math.min(capacity, b.tokens + elapsedSec * refillPerSec);
@@ -77,20 +121,58 @@ export function rateLimit(
     };
   }
 
-  // Time until we accumulate 1 token again.
   const retryAfterSec = Math.ceil((1 - b.tokens) / refillPerSec);
   return { allowed: false, remaining: 0, retryAfterSec };
 }
 
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
 /**
- * Derive a stable client key from a Request. Prefers x-forwarded-for,
- * falls back to the JWT workspace_id if provided, otherwise a literal
- * "unknown" bucket (which all anon callers share — intentionally
- * hostile).
+ * Check + decrement the bucket for `key`. Returns `allowed=false` when
+ * the caller exceeded the cap; otherwise returns the remaining tokens.
+ *
+ * @param key      stable identity for the caller — typically
+ *                 `${route}:${ip}` or `${route}:${workspace_id}`.
+ * @param capacity max tokens in the bucket (= burst size).
+ * @param refillPerSec how many tokens are added per second.
+ */
+export async function rateLimit(
+  key: string,
+  capacity: number,
+  refillPerSec: number,
+): Promise<RateLimitResult> {
+  const limiter = getLimiter(capacity, refillPerSec);
+  if (limiter) {
+    try {
+      const res = await limiter.limit(key);
+      return {
+        allowed: res.success,
+        remaining: res.remaining,
+        retryAfterSec: res.success
+          ? 0
+          : Math.max(1, Math.ceil((res.reset - Date.now()) / 1000)),
+      };
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn("[rate-limit] Upstash error, using local fallback:", err);
+    }
+  }
+  return rateLimitLocal(key, capacity, refillPerSec);
+}
+
+/**
+ * Derive a stable client key from a Request. Uses the LAST entry of
+ * x-forwarded-for — the hop observed by our proxy. The FIRST entry is
+ * attacker-controlled and must never be used as an identity.
  */
 export function clientKey(req: Request, workspaceId?: string): string {
-  const xff = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  if (xff) return `ip:${xff}`;
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) {
+    const parts = xff.split(",").map((p) => p.trim()).filter(Boolean);
+    if (parts.length > 0) return `ip:${parts[parts.length - 1]}`;
+  }
   if (workspaceId) return `ws:${workspaceId}`;
   return "anon";
 }

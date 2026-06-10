@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   // Rate limit: 60 record-writes per minute per IP. Each call writes one
   // audit row AND optionally hits Anthropic Layer 2; both are real cost
   // we don't want a script farming.
-  const rl = rateLimit(`dlp-record:${clientKey(req)}`, 60, 60 / 60);
+  const rl = await rateLimit(`dlp-record:${clientKey(req)}`, 60, 60 / 60);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests", retry_after_seconds: rl.retryAfterSec },

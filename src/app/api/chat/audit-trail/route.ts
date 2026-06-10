@@ -23,7 +23,7 @@ function getClientIp(req: Request): string {
 
 export async function GET(req: Request) {
   const ip = getClientIp(req);
-  const rl = rateLimit(`chat-audit:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
+  const rl = await rateLimit(`chat-audit:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
   if (!rl.allowed) {
     return NextResponse.json(
       { ok: false, error: "rate_limited" },

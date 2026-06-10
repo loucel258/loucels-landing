@@ -32,7 +32,7 @@ export async function PUT(
   if (!(await isPortalAuthed(slug))) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
-  const rl = rateLimit(`portal_note:${slug}:${ip}`, 30, 30 / 3600);
+  const rl = await rateLimit(`portal_note:${slug}:${ip}`, 30, 30 / 3600);
   if (!rl.allowed) {
     return NextResponse.json(
       { ok: false, error: "rate_limited" },
