@@ -37,3 +37,4 @@ encrypted transcripts → leads).
 | 039 | Multi-tenant table grants sweep |
 | 040–041 | Decouple audit_chain_head + audit_logs from legacy clients FK |
 | 042 | Monthly token budgets: `monthly_token_budget` column, `agent_usage_monthly` table, `increment_agent_usage` RPC (applied 2026-06-10) |
+| 043 | RLS policies for `loucels_dashboard_read` on 17 tables — closes the F11 loose end that made admin reads return zero rows (applied 2026-06-10) |
