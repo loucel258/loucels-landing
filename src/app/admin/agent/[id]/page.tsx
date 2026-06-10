@@ -18,6 +18,7 @@ import { PageHeader } from "@/components/admin/page-header";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { KpiCard } from "@/components/admin/kpi-card";
 import { EmptyState } from "@/components/admin/empty-state";
+import { ConfigPanel } from "./config-panel";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -45,6 +46,15 @@ type AgentRow = {
   live_started_at: string | null;
   archived_at: string | null;
   notes: string | null;
+  // Multi-tenant config (migrations 034/036/042)
+  slug: string | null;
+  allowed_origins: string[] | null;
+  system_prompt: string | null;
+  greeting_message: string | null;
+  brand_color: string | null;
+  tools_enabled: string[] | null;
+  monthly_token_budget: number | null;
+  max_tokens_per_message: number | null;
 };
 
 type EngagementLite = {
@@ -299,6 +309,29 @@ export default async function AgentDetailPage({
           tone={a.retainer_active ? "emerald" : "neutral"}
         />
       </section>
+
+      {/* Configuration — full agent lifecycle management without SQL */}
+      {!a.archived_at && (
+        <ConfigPanel
+          agent={{
+            id: a.id,
+            name: a.name,
+            slug: a.slug,
+            status: a.status,
+            allowedOrigins: a.allowed_origins ?? [],
+            systemPrompt: a.system_prompt,
+            greetingMessage: a.greeting_message,
+            brandColor: a.brand_color,
+            toolsEnabled: a.tools_enabled ?? [],
+            monthlyTokenBudget: a.monthly_token_budget ?? 2_000_000,
+            maxTokensPerMessage: a.max_tokens_per_message ?? 1024,
+            notes: a.notes,
+            engagementId: a.engagement_id,
+            clientName: eng?.client_legal_name ?? a.name,
+          }}
+          baseUrl={(process.env.NEXT_PUBLIC_APP_URL ?? "https://loucels.com").replace(/\/$/, "")}
+        />
+      )}
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Channels + integrations */}

@@ -10,6 +10,7 @@ import { EmptyPanel } from "@/components/workspace/empty-panel";
 import { TopBar } from "@/components/shell/topbar";
 import { formatUsdInt, formatShortDate, daysAgo } from "@/lib/admin/format";
 import { getCostBreakdown, formatUsdPrecise } from "@/lib/admin/costs";
+import { NewAgentForm } from "./new-agent-form";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -51,17 +52,19 @@ export default async function AgentsListPage() {
 
   const list = (agents as AgentRow[]) ?? [];
 
-  // Engagement → client_legal_name lookup
-  const engIds = [...new Set(list.map((a) => a.engagement_id))];
+  // Engagement → client_legal_name lookup (and full list for the wizard)
+  const { data: allEngs } = await sb
+    .from("engagements")
+    .select("id, client_legal_name, engagement_ref")
+    .order("created_at", { ascending: false })
+    .limit(100);
+  const engagementOptions =
+    ((allEngs as Array<{ id: string; client_legal_name: string; engagement_ref: string }>) ?? []).map(
+      (e) => ({ id: e.id, label: `${e.client_legal_name} (${e.engagement_ref})` }),
+    );
   const engLookup = new Map<string, string>();
-  if (engIds.length > 0) {
-    const { data: engs } = await sb
-      .from("engagements")
-      .select("id, client_legal_name")
-      .in("id", engIds);
-    for (const e of (engs as Array<{ id: string; client_legal_name: string }>) ?? []) {
-      engLookup.set(e.id, e.client_legal_name);
-    }
+  for (const e of (allEngs as Array<{ id: string; client_legal_name: string }>) ?? []) {
+    engLookup.set(e.id, e.client_legal_name);
   }
 
   // Cost per agent
@@ -110,6 +113,8 @@ export default async function AgentsListPage() {
               ),
           }}
         />
+
+        <NewAgentForm engagements={engagementOptions} />
 
         <MetricRow>
           <Metric label="Live agents" value={liveCount} tone="emerald" icon={<Bot className="size-4" />} />
