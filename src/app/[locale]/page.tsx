@@ -5,6 +5,7 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Nav } from "@/components/nav";
 import { Hero } from "@/components/sections/hero";
+import { LogosMarquee } from "@/components/sections/logos-marquee";
 import { Manifesto } from "@/components/sections/manifesto";
 import { Offer } from "@/components/sections/offer";
 import { Templates } from "@/components/sections/templates";
@@ -13,6 +14,7 @@ import { Process } from "@/components/sections/process";
 import { Architecture } from "@/components/sections/architecture";
 import { FAQ } from "@/components/sections/faq";
 import { CTA } from "@/components/sections/cta";
+import { TrustStackPdfCta } from "@/components/sections/trust-stack-pdf-cta";
 import { Footer } from "@/components/sections/footer";
 
 export default async function HomePage({
@@ -31,6 +33,7 @@ export default async function HomePage({
       <Nav locale={locale} dict={dict} />
       <main className="relative bg-bg">
         <Hero dict={dict} />
+        <LogosMarquee locale={locale} />
         <Offer dict={dict} />
         <Templates dict={dict} />
         <Manifesto dict={dict} />
@@ -39,6 +42,7 @@ export default async function HomePage({
         <Architecture dict={dict} locale={locale} />
         <FAQ dict={dict} />
         <CTA dict={dict} />
+        <TrustStackPdfCta locale={locale} />
         <Footer dict={dict} locale={locale} />
       </main>
     </>

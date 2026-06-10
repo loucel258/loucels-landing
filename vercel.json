@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/cron/chat-health-alerts",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/nurture-sequence",
+      "schedule": "0 14 * * *"
+    }
+  ]
+}

@@ -18,7 +18,7 @@ export async function generateMetadata({
   if (!isLocale(locale)) return {};
   const isES = locale === "es";
   return {
-    title: isES ? "Servicios · Loucel Labs" : "Services · Loucel Labs",
+    title: isES ? "Servicios · Loucels" : "Services · Loucels",
     description: isES
       ? "Lo que ofrecemos: web foundation y agentes de IA para SMBs en EE.UU."
       : "What we offer: web foundation and AI agents for US SMBs.",
@@ -55,7 +55,7 @@ export default async function ServicesPage({
             {isES ? "Volver" : "Back"}
           </Link>
           <span className="text-sm font-semibold tracking-tight">
-            Loucel Labs
+            Loucels
           </span>
         </div>
       </header>
@@ -145,13 +145,15 @@ function ServicesGroup({
               {s.description[locale]}
             </p>
             <span
-              className={`font-mono text-xs tabular-nums ${
+              className={`font-mono text-xs uppercase tracking-wider ${
                 accent === "cyan"
                   ? "text-accent"
                   : "text-[color:var(--accent-2)]"
               }`}
             >
-              {s.priceLabel[locale]}
+              {locale === "es"
+                ? "Precio en diagnóstico →"
+                : "Pricing in diagnostic →"}
             </span>
           </Link>
         ))}

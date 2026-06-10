@@ -6,7 +6,7 @@ import { siteConfig } from "@/lib/site-config";
 const UPDATED = "2026-05-21";
 
 export const metadata = {
-  title: "Terms of Service · Loucel Labs",
+  title: "Terms of Service · Loucels",
 };
 
 export default async function TermsPage({
@@ -33,11 +33,11 @@ export default async function TermsPage({
 
           <h2>1. Servicios</h2>
           <p>
-            Loucel Labs ofrece diseño web (Web Foundation), agentes de IA
+            Loucels ofrece diseño web (Web Foundation), agentes de IA
             especializados (Modelos SMV) y arquitectura/gobernanza de IA
             enterprise (Integration &amp; Control). El alcance específico de
             cada proyecto queda definido en la propuesta firmada (SOW) entre
-            cliente y Loucel Labs.
+            cliente y Loucels.
           </p>
 
           <h2>2. Pagos</h2>
@@ -58,7 +58,7 @@ export default async function TermsPage({
             <em> tuyo por construcción</em>.
           </p>
           <p>
-            Permanecen como propiedad de Loucel Labs: librerías internas
+            Permanecen como propiedad de Loucels: librerías internas
             reutilizables, frameworks generales de gobernanza, plantillas de
             audit logging y metodología de implementación que aplicamos
             transversalmente entre clientes.
@@ -120,11 +120,11 @@ export default async function TermsPage({
 
           <h2>1. Services</h2>
           <p>
-            Loucel Labs offers web design (Web Foundation), specialized AI
+            Loucels offers web design (Web Foundation), specialized AI
             agents (SMV Models), and enterprise AI architecture and
             governance (Integration &amp; Control). The specific scope of
             each project is defined in the signed proposal (SOW) between
-            client and Loucel Labs.
+            client and Loucels.
           </p>
 
           <h2>2. Payments</h2>
@@ -143,7 +143,7 @@ export default async function TermsPage({
             documentation. The philosophy is <em>owned by you, built by us</em>.
           </p>
           <p>
-            What remains property of Loucel Labs: internal reusable
+            What remains property of Loucels: internal reusable
             libraries, general governance frameworks, audit logging
             templates, and the implementation methodology we apply across
             clients.

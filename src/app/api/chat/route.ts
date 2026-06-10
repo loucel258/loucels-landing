@@ -2,20 +2,37 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getClaudeClient } from "@/lib/ai/claude-client";
 import { sanitize } from "@/lib/dlp/sanitizer";
+import { sanitizeWithLLM } from "@/lib/dlp/sanitizer-llm";
 import { rateLimit } from "@/lib/rate-limit/limiter";
 import { buildSystemPrompt } from "@/lib/chat/system-prompt";
-import { REQUEST_BOOKING_TOOL, handleRequestBooking } from "@/lib/chat/tools";
+import {
+  REQUEST_BOOKING_TOOL,
+  ESCALATE_TO_HUMAN_TOOL,
+  handleRequestBooking,
+  handleEscalateToHuman,
+} from "@/lib/chat/tools";
 import { logChatEvent } from "@/lib/chat/observability";
 import {
   auditAssistantReply,
   auditBookingOffered,
   auditChatFailed,
+  auditChatUnavailable,
+  auditEscalationToHuman,
+  auditOriginBlocked,
   auditPiiBlocked,
+  auditRateLimited,
   auditUserMessage,
 } from "@/lib/chat/audit";
+import { insertLead } from "@/lib/leads/leads";
 import type { BookingPayload, ChatResponse } from "@/lib/chat/types";
 import { isLocale } from "@/i18n/config";
 import { siteConfig } from "@/lib/site-config";
+import { rejectIfTooLarge } from "@/lib/http/body-guard";
+import { persistTurn } from "@/lib/portal/transcripts";
+
+const PORTAL_WORKSPACE_ID = "ws_chat_loucel_landing";
+
+const MAX_CHAT_BYTES = 32 * 1024;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -50,6 +67,19 @@ const BookingInputSchema = z.object({
   email: z.string().email().max(200),
   reason: z.string().min(1).max(500),
   preferredWindow: z.string().max(200).optional(),
+});
+
+const EscalationInputSchema = z.object({
+  reason: z.enum([
+    "out_of_scope",
+    "sensitive_topic",
+    "frustrated_visitor",
+    "ambiguous_high_stakes",
+    "agent_uncertain",
+  ]),
+  summary: z.string().min(1).max(500),
+  name: z.string().max(120).optional(),
+  email: z.string().email().max(200).optional(),
 });
 
 // PII types that, if found in user input, mean we refuse to forward to the
@@ -125,12 +155,25 @@ const ERROR_STATUS: Record<ChatErrorReason, number> = {
 };
 
 export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
+  const tooLarge = rejectIfTooLarge(req, MAX_CHAT_BYTES);
+  if (tooLarge) return tooLarge as unknown as NextResponse<ChatResponse>;
+
   const ip = getClientIp(req);
   const requestId = crypto.randomUUID();
+
+  // Pre-session synthetic id — used by any DENY that fires before we have
+  // a client-supplied sessionId (origin block, rate limit, malformed body).
+  // Same shape as the s_anon_ fallback below so the audit chain stays
+  // queryable by id pattern.
+  const preSessionId = `s_pre_${requestId.replace(/-/g, "").slice(0, 14)}`;
+  const preBase = { sessionId: preSessionId, requestId, ip };
 
   // 1) Origin check (cheap CSRF defense)
   if (!originAllowed(req)) {
     logChatEvent({ kind: "origin_blocked", ip });
+    // Permanent audit row so the "every decision logged" promise holds
+    // even when the call never made it past the door.
+    await auditOriginBlocked(preBase);
     return safeError("origin_blocked");
   }
 
@@ -138,6 +181,9 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
   const rl = rateLimit(`chat:${ip}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
   if (!rl.allowed) {
     logChatEvent({ kind: "rate_limited", ip, retryAfterSec: rl.retryAfterSec });
+    // Permanent audit row so rate-limit denies are observable cross-deploy
+    // (console-only logging gets lost on restart).
+    await auditRateLimited(preBase, { retryAfterSec: rl.retryAfterSec });
     return NextResponse.json(
       { ok: false, error: "rate_limited" },
       {
@@ -168,17 +214,34 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
   const sessionId = parsed.sessionId ?? `s_anon_${requestId.replace(/-/g, "").slice(0, 14)}`;
   const auditBase = { sessionId, requestId, ip };
 
-  // 5) Rate-limit audit (DENY) — fires after rl block above; we get here
-  // only when rl.allowed is true, so this never runs for blocked traffic.
-  // But if we want a permanent record of blocked traffic too, wire it
-  // before the early return above. For now, blocked traffic is logged
-  // only via console (cheaper). Promote later if compliance asks.
-
   // 6) PII pre-check on the latest user message
-  const dlp = sanitize(lastUserMessage.content);
-  const hasHighRiskPII = dlp.redactions.some((r) =>
+  let dlp = sanitize(lastUserMessage.content);
+  let hasHighRiskPII = dlp.redactions.some((r) =>
     HIGH_RISK_PII.has(String(r.type).toUpperCase()),
   );
+
+  // Layer 2 escalation (F12): Haiku-backed classifier catches PII patterns
+  // Layer 1 regex misses (e.g., obfuscated SSN, novel API key formats).
+  // Only run when Layer 1 cleared the message — we're paying for a second
+  // opinion only when the cheap layer was happy. Keeps Haiku cost ~bounded.
+  if (!hasHighRiskPII && lastUserMessage.content.length >= 24) {
+    try {
+      const layer2 = await sanitizeWithLLM(lastUserMessage.content);
+      if (layer2.layer2Available) {
+        const layer2HighRisk = layer2.redactions.some((r) =>
+          HIGH_RISK_PII.has(String(r.type).toUpperCase()),
+        );
+        if (layer2HighRisk) {
+          dlp = layer2;
+          hasHighRiskPII = true;
+        }
+      }
+    } catch {
+      // Layer 2 is opportunistic — never block on its failure. Layer 1
+      // already gave us a clean signal, so degrade silently.
+    }
+  }
+
   if (hasHighRiskPII) {
     const piiTypes = dlp.redactions.map((r) => r.type);
     logChatEvent({
@@ -199,6 +262,9 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
   const client = getClaudeClient();
   if (!client) {
     logChatEvent({ kind: "chat_unavailable", ip, reason: "no_api_key" });
+    // Permanent audit row so the operator dashboard can alert on a spike
+    // (used to be silent — Steven only found out from a prospect complaint).
+    await auditChatUnavailable(auditBase, { reason: "no_api_key" });
     return safeError("chat_unavailable");
   }
 
@@ -224,7 +290,7 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
       model: MODEL,
       max_tokens: MAX_TOKENS,
       system,
-      tools: [REQUEST_BOOKING_TOOL],
+      tools: [REQUEST_BOOKING_TOOL, ESCALATE_TO_HUMAN_TOOL],
       messages: parsed.messages.map((m) => ({
         role: m.role,
         content: m.content,
@@ -235,6 +301,96 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
       (block): block is Extract<typeof block, { type: "tool_use" }> =>
         block.type === "tool_use",
     );
+
+    // GAP-F3 closure: handle escalate_to_human as a distinct path.
+    // Persist the lead with status='offered' + reason prefixed 'escalation:'
+    // so the dashboard surfaces it. Write a HITL audit row. Reply with the
+    // category-specific acknowledgement.
+    if (toolUse && toolUse.name === "escalate_to_human") {
+      let escalation;
+      try {
+        escalation = EscalationInputSchema.parse(toolUse.input);
+      } catch {
+        // If schema fails, fall through to text reply
+        const text = first.content
+          .filter((b): b is Extract<typeof b, { type: "text" }> => b.type === "text")
+          .map((b) => b.text)
+          .join("\n")
+          .trim();
+        const reply = text || fallbackReply(parsed.locale);
+        await auditAssistantReply(auditBase, {
+          replyContent: reply,
+          bookingOffered: false,
+          tokensIn: first.usage?.input_tokens ?? null,
+          tokensOut: first.usage?.output_tokens ?? null,
+        });
+        await persistTurn({
+          workspaceId: PORTAL_WORKSPACE_ID,
+          sessionId,
+          userText: lastUserMessage.content,
+          assistantText: reply,
+        });
+        return NextResponse.json({ ok: true, reply });
+      }
+
+      const { acknowledgement } = handleEscalateToHuman(
+        {
+          reason: escalation.reason,
+          summary: escalation.summary,
+          name: escalation.name,
+          email: escalation.email,
+        },
+        parsed.locale,
+      );
+
+      // Persist as a lead if contact info present (so Steven sees it in the
+      // dashboard alongside booking-originated leads). Otherwise it lives
+      // only in the audit chain.
+      if (escalation.email && escalation.email.includes("@")) {
+        await insertLead({
+          sessionId,
+          auditRequestId: requestId,
+          name: escalation.name ?? "[escalation — no name]",
+          email: escalation.email,
+          reason: `escalation:${escalation.reason}|${escalation.summary}`,
+          bookingLink: "[not generated — escalation path]",
+          source: "chat_widget",
+          ip,
+        });
+      }
+
+      // Write the HITL audit row. This is the marketing-honest signal: the
+      // chat agent CAN and DOES pause and hand off, not just claim to.
+      await auditEscalationToHuman(auditBase, {
+        category: escalation.reason,
+        summary: escalation.summary,
+      });
+
+      // Also write the assistant_reply row so the conversation is queryable
+      await auditAssistantReply(auditBase, {
+        replyContent: acknowledgement,
+        bookingOffered: false,
+        tokensIn: first.usage?.input_tokens ?? null,
+        tokensOut: first.usage?.output_tokens ?? null,
+      });
+
+      logChatEvent({
+        kind: "assistant_reply",
+        ip,
+        sessionId,
+        bookingOffered: false,
+        replyPreview: `[escalated: ${escalation.reason}]`,
+      });
+
+      await persistTurn({
+        workspaceId: PORTAL_WORKSPACE_ID,
+        sessionId,
+        userText: lastUserMessage.content,
+        assistantText: acknowledgement,
+        toolSummary: `Escalated to human: ${escalation.reason}`,
+      });
+      return NextResponse.json({ ok: true, reply: acknowledgement });
+    }
 
     if (!toolUse || toolUse.name !== "request_booking") {
       const text = first.content
@@ -256,6 +412,12 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
         tokensIn: first.usage?.input_tokens ?? null,
         tokensOut: first.usage?.output_tokens ?? null,
       });
+      await persistTurn({
+        workspaceId: PORTAL_WORKSPACE_ID,
+        sessionId,
+        userText: lastUserMessage.content,
+        assistantText: reply,
+      });
       return NextResponse.json({ ok: true, reply });
     }
 
@@ -263,6 +425,40 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
     try {
       booking = BookingInputSchema.parse(toolUse.input);
     } catch {
+      // GAP-B4 closure: previously this just sent the retry reply and lost
+      // the partial info. Now we attempt to capture whatever the model DID
+      // produce so even an aborted booking leaves a breadcrumb Steven can
+      // follow up on. Partial leads land in `leads` with status='offered'
+      // and reason='partial:<what's missing>' so the dashboard distinguishes
+      // them from confirmed offers.
+      const partialInput = (toolUse.input ?? {}) as Record<string, unknown>;
+      const partialEmail =
+        typeof partialInput.email === "string" ? partialInput.email : null;
+      const partialName =
+        typeof partialInput.name === "string" ? partialInput.name : null;
+      const partialReason =
+        typeof partialInput.reason === "string"
+          ? partialInput.reason
+          : "[partial booking input — see chat history]";
+
+      if (partialEmail && partialEmail.includes("@")) {
+        // We have at least an email — worth a row even if other fields missing
+        const missing: string[] = [];
+        if (!partialName) missing.push("name");
+        if (!partialInput.reason) missing.push("reason");
+
+        await insertLead({
+          sessionId,
+          auditRequestId: requestId,
+          name: partialName ?? "[unknown]",
+          email: partialEmail,
+          reason: `partial:${missing.join(",")}|${partialReason}`,
+          bookingLink: "[not generated — schema failed]",
+          source: "chat_widget",
+          ip,
+        });
+      }
+
       return NextResponse.json({
         ok: true,
         reply: bookingRetryReply(parsed.locale),
@@ -271,11 +467,27 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
 
     const { bookingLink, prefilledFor } = handleRequestBooking(booking);
 
+    // Persist the lead the moment the booking is offered. PII (name+email)
+    // lives in `leads` table — the only place in our schema where visitor
+    // PII is plaintext. Audit chain still only hashes. Failure is silent;
+    // we won't break a discovery call over a Supabase blip.
+    await insertLead({
+      sessionId,
+      auditRequestId: requestId,
+      name: booking.name,
+      email: booking.email,
+      reason: booking.reason,
+      preferredWindow: booking.preferredWindow ?? null,
+      bookingLink,
+      source: "chat_widget",
+      ip,
+    });
+
     const followUp = await client.messages.create({
       model: MODEL,
       max_tokens: MAX_TOKENS,
       system,
-      tools: [REQUEST_BOOKING_TOOL],
+      tools: [REQUEST_BOOKING_TOOL, ESCALATE_TO_HUMAN_TOOL],
       messages: [
         ...parsed.messages.map((m) => ({
           role: m.role as "user" | "assistant",
@@ -321,6 +533,13 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
       tokensOut: (first.usage?.output_tokens ?? 0) + (followUp.usage?.output_tokens ?? 0),
     });
     await auditBookingOffered(auditBase, { reasonSummary: booking.reason });
+    await persistTurn({
+      workspaceId: PORTAL_WORKSPACE_ID,
+      sessionId,
+      userText: lastUserMessage.content,
+      assistantText: reply,
+      toolSummary: `Booked discovery call for ${booking.name}`,
+    });
 
     return NextResponse.json({
       ok: true,
@@ -328,14 +547,17 @@ export async function POST(req: Request): Promise<NextResponse<ChatResponse>> {
       bookingLink,
     });
   } catch (err) {
+    // Full message goes to logs; audit chain only sees the SDK error class
+    // name so we never leak Anthropic internals into the immutable trail.
     const errorMessage = err instanceof Error ? err.message : String(err);
+    const auditCode = err instanceof Error ? (err.name || "error") : "non_error_throw";
     logChatEvent({
       kind: "chat_failed",
       ip,
       sessionId,
       error: errorMessage,
     });
-    await auditChatFailed(auditBase, { error: errorMessage });
+    await auditChatFailed(auditBase, { error: auditCode });
     return safeError("chat_failed");
   }
 }

@@ -26,11 +26,11 @@ type DeviceOrientationEventWithPermission = typeof DeviceOrientationEvent & {
 
 export function Pseudo3DHero({
   imageSrc = "/hero/cluster-cutout.png",
-  imageAlt = "Loucel Labs — specialized AI agents",
+  imageAlt = "Loucels — specialized AI agents",
   headline,
   subhead,
   primaryCta,
-  primaryHref = "https://cal.com/loucellabs/30min",
+  primaryHref = "https://cal.com/loucels/30min",
   secondaryCta,
   secondaryHref,
 }: {

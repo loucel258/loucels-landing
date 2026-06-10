@@ -4,7 +4,8 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { siteConfig } from "@/lib/site-config";
+import { Magnetic } from "@/components/motion/magnetic";
+import { BookViaChatButton } from "@/components/chat/book-via-chat-button";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
 export function SubpageHero({
@@ -136,21 +137,15 @@ export function SubpageHero({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
           >
-            <motion.a
-              href={siteConfig.calUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="group inline-flex h-12 items-center gap-3 rounded-xl border border-cyan/40 bg-cyan/10 px-6 py-3 text-[14px] font-semibold text-cyan transition-colors duration-300 hover:border-cyan hover:bg-cyan hover:text-bg hover:shadow-[0_0_40px_-4px_var(--accent-cyan-glow)]"
-            >
-              <span>{data.primaryCta}</span>
-              <ArrowUpRight
-                className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                strokeWidth={2}
-              />
-            </motion.a>
+            <Magnetic strength={0.28}>
+              <BookViaChatButton className="group inline-flex h-12 items-center gap-3 rounded-xl border border-cyan/40 bg-cyan/10 px-6 py-3 text-[14px] font-semibold text-cyan transition-colors duration-300 hover:border-cyan hover:bg-cyan hover:text-bg hover:shadow-[0_0_40px_-4px_var(--accent-cyan-glow)] active:scale-[0.98]">
+                <span>{data.primaryCta}</span>
+                <ArrowUpRight
+                  className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  strokeWidth={2}
+                />
+              </BookViaChatButton>
+            </Magnetic>
             <a
               href="#problem"
               className="text-mono-xs text-text-tertiary underline-offset-4 transition-colors hover:text-cyan hover:underline"

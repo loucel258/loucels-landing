@@ -1,9 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Eye, Lock } from "lucide-react";
+import { ArrowUpRight, Compass, ShieldCheck, Eye, Lock } from "lucide-react";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
+import { CountUp } from "@/components/motion/count-up";
+import { Magnetic } from "@/components/motion/magnetic";
+import { TrustStackFlow } from "@/components/sections/trust-stack-flow";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
 /**
@@ -70,58 +72,33 @@ export function Architecture({
         }}
       />
 
-      {/* FLOATING IMAGE — absolute, no frame, extends into text area */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 z-0 hidden h-[100%] w-[65%] -translate-x-[82%] -translate-y-1/2 opacity-75 lg:block xl:w-[60%] xl:-translate-x-[80%]"
-        style={{
-          // Fade ALL edges — image floats freely, no card boundary anywhere
-          maskImage:
-            "radial-gradient(ellipse 65% 55% at 50% 50%, black 0%, black 45%, transparent 92%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 65% 55% at 50% 50%, black 0%, black 45%, transparent 92%)",
-        }}
-      >
-        <Image
-          src="/hero/05-audit.webp"
-          alt=""
-          fill
-          quality={90}
-          sizes="(max-width: 1024px) 100vw, 80vw"
-          className="object-cover object-center"
-        />
-      </div>
-
-      {/* MOBILE image (smaller, contained, fallback for narrow screens) */}
-      <div
-        aria-hidden
-        className="container-page relative z-0 mb-12 block lg:hidden"
-      >
-        <div
-          className="relative aspect-[16/10] w-full"
-          style={{
-            maskImage:
-              "radial-gradient(ellipse 80% 75% at 50% 50%, black 38%, transparent 92%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 80% 75% at 50% 50%, black 38%, transparent 92%)",
-          }}
-        >
-          <Image
-            src="/hero/05-audit.webp"
-            alt=""
-            fill
-            quality={85}
-            sizes="100vw"
-            className="object-cover"
-          />
-        </div>
-      </div>
-
       <div className="container-page relative z-10">
-        {/* Content sits on the RIGHT, z-10 above the floating image */}
+        {/* Stats trio — counters animate when section enters viewport */}
+        <Reveal className="mb-14 grid grid-cols-3 gap-4 border-y border-border-soft py-6 md:gap-10 md:py-8">
+          <StatCounter
+            value={1247}
+            label={es ? "Filas de auditoría" : "Audit rows"}
+            sub={es ? "esta semana" : "this week"}
+          />
+          <StatCounter
+            value={7}
+            label={es ? "Capas de Trust Stack" : "Trust Stack layers"}
+            sub={es ? "todas activas" : "all active"}
+          />
+          <StatCounter
+            value={100}
+            suffix="%"
+            label={es ? "Acciones registradas" : "Actions logged"}
+            sub={es ? "cero cajas negras" : "zero black boxes"}
+          />
+        </Reveal>
+
+        {/* Two-column: animated diagram on the left, content + pillars on the right */}
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-16">
-          {/* LEFT empty spacer — image bleeds visually into this area */}
-          <div aria-hidden className="hidden lg:block" />
+          {/* LEFT — Animated Trust Stack diagram (replaces former floating image) */}
+          <div className="relative flex flex-col justify-center">
+            <TrustStackFlow />
+          </div>
 
           {/* RIGHT — Content */}
           <div className="relative flex flex-col gap-10">
@@ -161,29 +138,103 @@ export function Architecture({
               ))}
             </StaggerGroup>
 
-            <Reveal delay={0.2}>
-              <Link
-                href="/#agents"
-                className="group inline-flex w-fit items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/10 px-4 py-2 text-mono-xs text-cyan backdrop-blur-sm transition-all duration-200 hover:border-cyan hover:bg-cyan hover:text-bg"
-              >
-                <ShieldCheck
-                  className="size-3.5 transition-colors group-hover:text-bg"
-                  strokeWidth={1.5}
-                />
-                <span>
+            {/* Gap Audit entry path — paid diagnostic for prospects not yet
+                ready to commit to a full SMV build. The price is intentionally
+                NOT shown — visitor asks the chat agent for ranges if curious. */}
+            <Reveal delay={0.15}>
+              <div className="relative flex flex-col gap-3 rounded-2xl border border-violet/30 bg-gradient-to-br from-violet/[0.08] to-transparent p-5 backdrop-blur-sm">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex size-7 items-center justify-center rounded-md border border-violet/40 bg-violet/10 text-violet">
+                    <Compass className="size-3.5" strokeWidth={1.7} />
+                  </span>
+                  <span className="text-mono-xs uppercase tracking-wider text-violet">
+                    {es ? "Por dónde empezar" : "Where to start"}
+                  </span>
+                </div>
+                <h3 className="text-[15px] font-semibold leading-snug text-text-primary">
                   {es
-                    ? "EXPLORAR MODELOS SMV"
-                    : "EXPLORE SMV MODELS"}
-                </span>
-                <ArrowUpRight
-                  className="size-3 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  strokeWidth={2}
-                />
-              </Link>
+                    ? "¿No estás seguro qué agente cierra tu cuello de botella?"
+                    : "Not sure which agent closes your bottleneck?"}
+                </h3>
+                <p className="text-body-sm text-pretty text-text-secondary">
+                  {es
+                    ? "Empieza con la Auditoría de Gaps Operativos. 1 semana. Mapeamos dónde se te están escapando leads, cotizaciones o reseñas — y qué agente cierra cada gap. Entregamos un Gap Map y un Trust Stack Risk Snapshot que son tuyos para quedártelos. Si firmas un build dentro de 30 días, 50% se acredita al precio."
+                    : "Start with an Operations Gap Audit. 1 week. We map where you're losing leads, quotes, or reviews — and which agent closes each gap. Delivered as a Gap Map and a Trust Stack Risk Snapshot, both yours to keep. If you sign for a build within 30 days, 50% credits toward the price."}
+                </p>
+              </div>
             </Reveal>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Reveal delay={0.2}>
+                <Magnetic strength={0.25}>
+                  <Link
+                    href="/#agents"
+                    className="group inline-flex w-fit items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/10 px-4 py-2 text-mono-xs text-cyan backdrop-blur-sm transition-all duration-200 hover:border-cyan hover:bg-cyan hover:text-bg"
+                  >
+                    <ShieldCheck
+                      className="size-3.5 transition-colors group-hover:text-bg"
+                      strokeWidth={1.5}
+                    />
+                    <span>
+                      {es ? "EXPLORAR MODELOS SMV" : "EXPLORE SMV MODELS"}
+                    </span>
+                    <ArrowUpRight
+                      className="size-3 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      strokeWidth={2}
+                    />
+                  </Link>
+                </Magnetic>
+              </Reveal>
+              <Reveal delay={0.25}>
+                <Magnetic strength={0.2}>
+                  <Link
+                    href={`/${locale}/services/operations-gap-audit`}
+                    className="group inline-flex w-fit items-center gap-2.5 rounded-full border border-violet/40 bg-transparent px-4 py-2 text-mono-xs text-violet backdrop-blur-sm transition-all duration-200 hover:border-violet hover:bg-violet hover:text-bg"
+                  >
+                    <Compass
+                      className="size-3.5 transition-colors group-hover:text-bg"
+                      strokeWidth={1.5}
+                    />
+                    <span>
+                      {es ? "EMPEZAR CON GAP AUDIT" : "START WITH GAP AUDIT"}
+                    </span>
+                    <ArrowUpRight
+                      className="size-3 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      strokeWidth={2}
+                    />
+                  </Link>
+                </Magnetic>
+              </Reveal>
+            </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function StatCounter({
+  value,
+  suffix,
+  label,
+  sub,
+}: {
+  value: number;
+  suffix?: string;
+  label: string;
+  sub: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <CountUp
+        end={value}
+        suffix={suffix}
+        className="text-[28px] font-semibold leading-none tracking-tight text-cyan md:text-[36px]"
+      />
+      <span className="mt-1 text-[13px] font-medium text-text-primary">
+        {label}
+      </span>
+      <span className="text-[11px] text-text-secondary">{sub}</span>
+    </div>
   );
 }

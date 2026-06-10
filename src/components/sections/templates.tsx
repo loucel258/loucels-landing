@@ -12,6 +12,8 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
+import { SectionEntry } from "@/components/motion/section-entry";
+import { TiltCard } from "@/components/motion/tilt-card";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
 /**
@@ -19,7 +21,7 @@ import type { Dictionary } from "@/i18n/dictionaries/en";
  *
  * Cards show the same SMV / Integration service applied to a real vertical
  * (MedSpas, Dental, Roofing, etc.) with the actual tools that vertical uses.
- * Clicking a card dispatches a `loucel:open-chat` custom event the chat
+ * Clicking a card dispatches a `loucels:open-chat` custom event the chat
  * widget listens for — opening the chat with the template's question
  * pre-loaded so the agent continues the conversation with context.
  *
@@ -42,7 +44,7 @@ export function Templates({ dict }: { dict: Dictionary }) {
   const openChatWithPrompt = useCallback((prompt: string) => {
     if (typeof window === "undefined") return;
     window.dispatchEvent(
-      new CustomEvent("loucel:open-chat", { detail: { prompt } }),
+      new CustomEvent("loucels:open-chat", { detail: { prompt } }),
     );
   }, []);
 
@@ -69,7 +71,7 @@ export function Templates({ dict }: { dict: Dictionary }) {
         }}
       />
 
-      <div className="container-page relative z-10 flex flex-col gap-14">
+      <SectionEntry className="container-page relative z-10 flex flex-col gap-14">
         <Reveal className="flex flex-col items-center gap-5 text-center">
           <div className="flex items-center gap-3">
             <span aria-hidden className="size-1 rounded-full bg-cyan" />
@@ -93,10 +95,11 @@ export function Templates({ dict }: { dict: Dictionary }) {
             const Icon = ICONS[tpl.slug] ?? Building2;
             return (
               <StaggerItem key={tpl.slug} preset="slideInRight">
+                <TiltCard maxTilt={6} glare className="h-full">
                 <button
                   type="button"
                   onClick={() => openChatWithPrompt(tpl.chatPrompt)}
-                  className="group relative flex h-full w-full flex-col gap-4 rounded-2xl border border-border-soft bg-surface p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:border-cyan hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                  className="group relative flex h-full w-full flex-col gap-4 rounded-2xl border border-border-soft bg-surface p-6 text-left transition-all duration-300 hover:border-cyan hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                   style={{
                     transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
                   }}
@@ -154,6 +157,7 @@ export function Templates({ dict }: { dict: Dictionary }) {
                     ))}
                   </div>
                 </button>
+                </TiltCard>
               </StaggerItem>
             );
           })}
@@ -164,7 +168,7 @@ export function Templates({ dict }: { dict: Dictionary }) {
             {dict.templates.ctaHint}
           </p>
         </Reveal>
-      </div>
+      </SectionEntry>
     </section>
   );
 }

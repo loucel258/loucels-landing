@@ -190,6 +190,9 @@ export function Cluster3D({
           }
           style={{ transform: "translateZ(60px) scale(0.92)" }}
         />
+        {/* Electric arcs — animated SVG overlay that traces sparks between nodes */}
+        {!reduce && <LightningArcs />}
+
         {/* Specular glare — travels opposite the tilt direction */}
         {!reduce && (
           <div
@@ -205,10 +208,173 @@ export function Cluster3D({
       </div>
 
       <style>{`
-        @keyframes c3d-back  { 0%,100% { transform: translateZ(-90px) scale(1.12) rotate(0deg); } 50% { transform: translateZ(-90px) scale(1.16) rotate(2deg); } }
-        @keyframes c3d-mid   { 0%,100% { transform: translateZ(0) translateY(0) scale(1) rotate(0deg); } 50% { transform: translateZ(0) translateY(-1.2%) scale(1.025) rotate(-1.5deg); } }
-        @keyframes c3d-front { 0%,100% { transform: translateZ(60px) scale(0.92) rotate(0deg); } 50% { transform: translateZ(60px) scale(0.94) rotate(3deg); } }
+        @keyframes c3d-back  {
+          0%,100% { transform: translateZ(-90px) translateY(0) scale(1.12) rotate(0deg); }
+          33%     { transform: translateZ(-90px) translateY(-0.8%) scale(1.18) rotate(2.5deg); }
+          66%     { transform: translateZ(-90px) translateY(0.6%) scale(1.14) rotate(-2deg); }
+        }
+        @keyframes c3d-mid   {
+          0%,100% { transform: translateZ(0) translateY(0) translateX(0) scale(1) rotate(0deg); }
+          25%     { transform: translateZ(0) translateY(-1.8%) translateX(0.4%) scale(1.035) rotate(-2deg); }
+          50%     { transform: translateZ(0) translateY(0.4%) translateX(-0.5%) scale(1.015) rotate(1.5deg); }
+          75%     { transform: translateZ(0) translateY(-1.2%) translateX(0.2%) scale(1.045) rotate(-1deg); }
+        }
+        @keyframes c3d-front {
+          0%,100% { transform: translateZ(60px) translateY(0) scale(0.92) rotate(0deg); }
+          50%     { transform: translateZ(60px) translateY(-2%) scale(0.96) rotate(4deg); }
+        }
       `}</style>
     </div>
+  );
+}
+
+// =============================================================================
+// LightningArcs — animated SVG sparks between cluster nodes
+// Nodes are positioned in % of the container; you can nudge them if they don't
+// align with your image's visual nodes. Each arc has its own pulse cadence so
+// the cluster reads as "alive with current" rather than mechanical.
+// =============================================================================
+
+type Node = { x: number; y: number };
+
+const NODES: Node[] = [
+  { x: 50, y: 38 },   // top-center hub
+  { x: 30, y: 50 },   // left-mid
+  { x: 70, y: 50 },   // right-mid
+  { x: 38, y: 68 },   // lower-left
+  { x: 62, y: 68 },   // lower-right
+  { x: 50, y: 80 },   // bottom-center
+  { x: 22, y: 32 },   // far top-left
+  { x: 78, y: 32 },   // far top-right
+];
+
+// Arc connections — each entry: [fromNodeIdx, toNodeIdx, durationSec, delaySec, color]
+const ARCS: Array<[number, number, number, number, string]> = [
+  [0, 1, 2.4, 0.0, "#06B6D4"],
+  [0, 2, 2.8, 0.7, "#7C3AED"],
+  [1, 3, 2.2, 1.4, "#22D3EE"],
+  [2, 4, 2.6, 0.4, "#A78BFA"],
+  [3, 5, 2.0, 1.8, "#06B6D4"],
+  [5, 4, 2.3, 0.9, "#7C3AED"],
+  [6, 0, 3.0, 1.2, "#22D3EE"],
+  [0, 7, 2.7, 2.1, "#A78BFA"],
+  [1, 2, 3.4, 2.6, "#06B6D4"],
+];
+
+function LightningArcs() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-0 h-full w-full mix-blend-screen"
+      style={{ transform: "translateZ(40px)" }}
+    >
+      <defs>
+        <filter id="c3d-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="0.6" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        <radialGradient id="c3d-node-cyan">
+          <stop offset="0%" stopColor="#06B6D4" stopOpacity="0.9" />
+          <stop offset="60%" stopColor="#06B6D4" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#06B6D4" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="c3d-node-violet">
+          <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.9" />
+          <stop offset="60%" stopColor="#7C3AED" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#7C3AED" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* Static base lines — faint connective scaffolding */}
+      <g opacity="0.18" filter="url(#c3d-glow)">
+        {ARCS.map(([a, b], i) => {
+          const A = NODES[a]!;
+          const B = NODES[b]!;
+          return (
+            <line
+              key={`base-${i}`}
+              x1={A.x}
+              y1={A.y}
+              x2={B.x}
+              y2={B.y}
+              stroke="#06B6D4"
+              strokeWidth="0.15"
+              vectorEffect="non-scaling-stroke"
+            />
+          );
+        })}
+      </g>
+
+      {/* Animated sparks — traveling current along each arc */}
+      <g filter="url(#c3d-glow)">
+        {ARCS.map(([a, b, dur, delay, color], i) => {
+          const A = NODES[a]!;
+          const B = NODES[b]!;
+          const len = Math.hypot(B.x - A.x, B.y - A.y);
+          return (
+            <line
+              key={`spark-${i}`}
+              x1={A.x}
+              y1={A.y}
+              x2={B.x}
+              y2={B.y}
+              stroke={color}
+              strokeWidth="0.35"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              strokeDasharray={`${len * 0.18} ${len}`}
+              style={{
+                animation: `c3d-spark-${i} ${dur}s linear ${delay}s infinite`,
+              }}
+            />
+          );
+        })}
+      </g>
+
+      {/* Node pulses — soft halos that breathe at each junction */}
+      <g>
+        {NODES.map((n, i) => {
+          const isViolet = i % 2 === 0;
+          const dur = 2.5 + (i % 3) * 0.4;
+          const delay = (i * 0.3) % 2;
+          return (
+            <circle
+              key={`node-${i}`}
+              cx={n.x}
+              cy={n.y}
+              r="1.2"
+              fill={isViolet ? "url(#c3d-node-violet)" : "url(#c3d-node-cyan)"}
+              style={{
+                transformOrigin: `${n.x}px ${n.y}px`,
+                animation: `c3d-pulse ${dur}s ease-in-out ${delay}s infinite`,
+              }}
+            />
+          );
+        })}
+      </g>
+
+      <style>{`
+        @keyframes c3d-pulse {
+          0%, 100% { opacity: 0.35; transform: scale(1); }
+          50%      { opacity: 0.95; transform: scale(2.2); }
+        }
+        ${ARCS.map((arc, i) => {
+          const A = NODES[arc[0]]!;
+          const B = NODES[arc[1]]!;
+          const len = Math.hypot(B.x - A.x, B.y - A.y);
+          return `@keyframes c3d-spark-${i} {
+            0%   { stroke-dashoffset: ${len}; opacity: 0; }
+            15%  { opacity: 1; }
+            85%  { opacity: 1; }
+            100% { stroke-dashoffset: -${len}; opacity: 0; }
+          }`;
+        }).join("\n")}
+      `}</style>
+    </svg>
   );
 }

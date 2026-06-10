@@ -46,7 +46,7 @@ export function StructuredData({ locale }: { locale: Locale }) {
     "@type": "Organization",
     "@id": `${siteConfig.url}#organization`,
     name: siteConfig.name,
-    legalName: "Loucel Labs",
+    legalName: "Loucels",
     url: siteConfig.url,
     logo: {
       "@type": "ImageObject",

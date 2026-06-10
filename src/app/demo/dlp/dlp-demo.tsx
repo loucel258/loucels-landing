@@ -205,7 +205,7 @@ export function DLPDemo() {
           className="inline-flex items-center gap-2 text-mono-xs text-text-tertiary transition-colors hover:text-text-secondary"
         >
           <ArrowLeft className="size-3.5" strokeWidth={1.5} />
-          Back to Loucel Labs
+          Back to Loucels
         </Link>
 
         <div className="flex flex-col gap-3">
@@ -221,7 +221,7 @@ export function DLPDemo() {
             PII and secrets stripped before the prompt touches the model.
           </h1>
           <p className="max-w-2xl text-body text-text-secondary">
-            This is the first checkpoint of the Loucel Labs Trust Stack.
+            This is the first checkpoint of the Loucels Trust Stack.
             Every prompt heading to Claude passes through a strict regex +
             Luhn validation layer that detects social security numbers, tax
             IDs, credit cards, API keys, emails, and phone numbers — and

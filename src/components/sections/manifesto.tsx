@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
+import { SectionEntry } from "@/components/motion/section-entry";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
 /**
@@ -79,7 +80,7 @@ export function Manifesto({ dict }: { dict: Dictionary }) {
         />
       </motion.div>
 
-      <div className="container-page relative z-10">
+      <SectionEntry className="container-page relative z-10">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
           {/* LEFT — empty spacer where the image visually lives */}
           <div aria-hidden className="hidden lg:block" />
@@ -108,7 +109,7 @@ export function Manifesto({ dict }: { dict: Dictionary }) {
             </StaggerGroup>
           </div>
         </div>
-      </div>
+      </SectionEntry>
     </section>
   );
 }

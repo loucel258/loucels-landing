@@ -12,14 +12,18 @@ function detectLocale(request: NextRequest): string {
 }
 
 // Paths that bypass locale routing entirely (internal sales demos, etc.)
-const LOCALE_BYPASS_PREFIXES = ["/demo"];
+const LOCALE_BYPASS_PREFIXES = ["/demo", "/admin", "/portal"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Trust Stack demos and other internal-only routes skip the locale rewrite.
   if (LOCALE_BYPASS_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
-    return NextResponse.next();
+    // Propagate pathname as a request header so Server Components can
+    // read it (Sidebar shell uses this to highlight the active item).
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-pathname", pathname);
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   const hasLocale = locales.some(

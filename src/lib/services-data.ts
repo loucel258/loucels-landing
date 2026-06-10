@@ -8,6 +8,7 @@ export type ServiceSlug =
   | "ai-front-desk"
   | "quote-accelerator"
   | "review-manager"
+  | "operations-gap-audit"
   | "agent-architecture-audit"
   | "governed-agent-implementation"
   | "ai-governance-setup";
@@ -36,14 +37,14 @@ export const services: ServiceDetail[] = [
       es: "Que te encuentren. Que confíen. Que conviertan.",
     },
     description: {
-      en: "Modern, mobile-first, bilingual landing pages that load fast, rank in Google, and turn visitors into leads. SEO and Google Business Profile included.",
-      es: "Sitios modernos, mobile-first, bilingües que cargan rápido, rankean en Google y convierten visitantes en clientes. SEO y Google Business Profile incluidos.",
+      en: "Modern, mobile-first landing pages that load fast, rank in Google, and turn visitors into leads. SEO and Google Business Profile included.",
+      es: "Sitios modernos, mobile-first, que cargan rápido, rankean en Google y convierten visitantes en clientes. SEO y Google Business Profile incluidos.",
     },
     priceLabel: { en: "From $1,500", es: "Desde $1,500" },
     timeline: { en: "2-3 weeks", es: "2-3 semanas" },
     deliverables: {
       en: [
-        "1-5 page bilingual site (EN/ES)",
+        "1-5 page site",
         "Mobile-first responsive design",
         "Technical SEO setup (meta, schema, sitemap, robots)",
         "Google Business Profile setup + optimization",
@@ -52,7 +53,7 @@ export const services: ServiceDetail[] = [
         "30 days post-launch support",
       ],
       es: [
-        "Sitio bilingüe de 1-5 páginas (EN/ES)",
+        "Sitio de 1-5 páginas",
         "Diseño responsive mobile-first",
         "Setup técnico de SEO (meta, schema, sitemap, robots)",
         "Setup y optimización de Google Business Profile",
@@ -95,7 +96,7 @@ export const services: ServiceDetail[] = [
         "Content migration + 301 redirects",
         "Core Web Vitals optimization (LCP, INP, CLS)",
         "Conversion tracking setup",
-        "Bilingual EN/ES if applicable",
+        "Single or multi-language as needed",
         "60 days post-launch support",
       ],
       es: [
@@ -104,7 +105,7 @@ export const services: ServiceDetail[] = [
         "Migración de contenido + redirects 301",
         "Optimización de Core Web Vitals (LCP, INP, CLS)",
         "Setup de tracking de conversiones",
-        "Bilingüe EN/ES si aplica",
+        "Uno o varios idiomas según necesidad",
         "60 días de soporte post-lanzamiento",
       ],
     },
@@ -220,8 +221,8 @@ export const services: ServiceDetail[] = [
     line: "agents",
     name: { en: "AI Front Desk", es: "AI Front Desk" },
     tagline: {
-      en: "24/7 bilingual receptionist that never sleeps.",
-      es: "Recepcionista bilingüe 24/7 que nunca duerme.",
+      en: "24/7 front desk that never sleeps.",
+      es: "Recepción 24/7 que nunca duerme.",
     },
     description: {
       en: "Claude-powered agent on web chat, SMS, and WhatsApp. Captures leads, qualifies, books appointments in your calendar, escalates when needed.",
@@ -234,7 +235,7 @@ export const services: ServiceDetail[] = [
     timeline: { en: "3-4 weeks", es: "3-4 semanas" },
     deliverables: {
       en: [
-        "Bilingual agent (EN/ES) trained on your business",
+        "Agent trained on your business and brand voice",
         "Web chat widget on your site",
         "SMS + WhatsApp integration",
         "Calendar integration (Cal.com/Google)",
@@ -243,7 +244,7 @@ export const services: ServiceDetail[] = [
         "Monthly tuning + improvements",
       ],
       es: [
-        "Agente bilingüe (EN/ES) entrenado en tu negocio",
+        "Agente entrenado en tu negocio y tu tono de marca",
         "Widget de chat web en tu sitio",
         "Integración SMS + WhatsApp",
         "Integración de calendario (Cal.com/Google)",
@@ -278,7 +279,7 @@ export const services: ServiceDetail[] = [
     },
     description: {
       en: "Customer uploads photos or describes the job. Agent generates a preliminary quote, sends it, follows up if no reply, escalates to you on buying signals.",
-      es: "El cliente sube fotos o describe el trabajo. El agente genera una cotización preliminar, la envía, hace seguimiento si no responde, escala a vos cuando hay señales de compra.",
+      es: "El cliente sube fotos o describe el trabajo. El agente genera una cotización preliminar, la envía, hace seguimiento si no responde, te escala el lead cuando hay señales de compra.",
     },
     priceLabel: {
       en: "$5K-$8K setup + $800/mo",
@@ -331,7 +332,7 @@ export const services: ServiceDetail[] = [
     },
     description: {
       en: "Agent monitors Google, Yelp, and Facebook reviews. Responds in your voice within minutes. Negative reviews escalate to you BEFORE they go public elsewhere.",
-      es: "El agente monitorea reseñas de Google, Yelp y Facebook. Responde en el tono de tu marca en minutos. Las negativas se escalan a vos ANTES de que se viralicen.",
+      es: "El agente monitorea reseñas de Google, Yelp y Facebook. Responde en el tono de tu marca en minutos. Las negativas se te escalan ANTES de que se viralicen.",
     },
     priceLabel: {
       en: "$2,500 setup + $400/mo",
@@ -341,14 +342,14 @@ export const services: ServiceDetail[] = [
     deliverables: {
       en: [
         "Google + Yelp + Facebook monitoring",
-        "Auto-response in your brand voice (bilingual)",
+        "Auto-response in your brand voice",
         "Negative review alerts to owner",
         "Auto-request reviews from happy customers",
         "Monthly reputation dashboard",
       ],
       es: [
         "Monitoreo de Google + Yelp + Facebook",
-        "Respuesta automática en tu tono (bilingüe)",
+        "Respuesta automática en tu tono de marca",
         "Alertas al dueño por reseñas negativas",
         "Solicitud automática de reseñas a clientes contentos",
         "Dashboard mensual de reputación",
@@ -367,12 +368,65 @@ export const services: ServiceDetail[] = [
       ],
     },
   },
+  {
+    slug: "operations-gap-audit",
+    line: "agents",
+    name: {
+      en: "Operations Gap Audit",
+      es: "Auditoría de Gaps Operativos",
+    },
+    tagline: {
+      en: "Diagnose first. Then we build the right agent.",
+      es: "Diagnóstico primero. Después construimos el agente correcto.",
+    },
+    description: {
+      en: "1 week. We map where leads, quotes, or reviews are leaking out of your operation — after-hours, weekends, slow follow-up, missing channels. Two deliverables: a 3-5 page Gap Map (operational findings + recommendations) and a 1-2 page Trust Stack Risk Snapshot (security exposures + remediation). Both documents are yours to keep, take to another vendor, or shelve. If you sign a build within 30 days, 50% of the audit fee credits toward it — the other 50% stays as payment for the diagnostic work.",
+      es: "1 semana. Mapeamos por dónde se te están escapando leads, cotizaciones o reseñas — after-hours, fines de semana, follow-up lento, canales sin cubrir. Dos entregables: Gap Map de 3-5 páginas (hallazgos operativos + recomendaciones) y un Trust Stack Risk Snapshot de 1-2 páginas (exposiciones de seguridad + remediación). Ambos documentos son tuyos para quedártelos, llevarlos a otro vendor o archivarlos. Si firmas un build dentro de 30 días, 50% del fee se acredita — el otro 50% queda como pago del trabajo diagnóstico.",
+    },
+    priceLabel: {
+      en: "From $500",
+      es: "Desde $500",
+    },
+    timeline: { en: "1 week", es: "1 semana" },
+    deliverables: {
+      en: [
+        "30-min discovery call (free) + 60-min deep-dive (paid)",
+        "Lead-flow audit across web, SMS, email, voice, social",
+        "Response-time baseline vs your vertical's cohort",
+        "Conversion drop-off map (where prospects stop)",
+        "3-5 page Gap Map with prioritized agent recommendations",
+        "Trust Stack Risk Snapshot (security findings, owner + advisor versions)",
+        "50% credit toward your SMV build if signed within 30 days",
+      ],
+      es: [
+        "Llamada de discovery 30 min (gratis) + deep-dive 60 min (pagado)",
+        "Auditoría de flujo de leads en web, SMS, email, voz, social",
+        "Baseline de tiempo de respuesta vs el cohort de tu vertical",
+        "Mapa de drop-off de conversión (dónde se caen los prospectos)",
+        "Gap Map 3-5 páginas con recomendaciones de agentes priorizadas",
+        "Trust Stack Risk Snapshot (hallazgos de seguridad, versión dueño + asesor)",
+        "50% del fee se acredita al build SMV si se firma dentro de 30 días",
+      ],
+    },
+    fitFor: {
+      en: [
+        "Prospects not ready to commit to a full SMV build yet",
+        "Businesses unsure which agent fits their bottleneck",
+        "Founders who want a paid, deliverable diagnostic before signing",
+      ],
+      es: [
+        "Prospectos que no están listos para comprometerse a un SMV completo",
+        "Negocios que no están seguros qué agente cierra su cuello de botella",
+        "Founders que quieren un diagnóstico pago y entregable antes de firmar",
+      ],
+    },
+  },
 
   // ─────────────────────────────────────────────────────────
   // LÍNEA 3 — INTEGRATION & CONTROL (Enterprise Agent Architecture)
   // Mid-sized companies that need governed AI architecture but
   // can't (or won't) pay Deloitte/Accenture rates. NIST AI RMF
-  // + SOC 2 aligned. Ships with the Loucel Trust Stack: DLP,
+  // + SOC 2 aligned. Ships with the Loucels Trust Stack: DLP,
   // RBAC, append-only audit log, human-in-the-loop. Positioning:
   // "Owned by you. Governed by us." — the retainer is continuous
   // governance. Specific revenue ranges intentionally omitted —
@@ -442,8 +496,8 @@ export const services: ServiceDetail[] = [
       es: "Un agente que tu equipo de seguridad aprueba.",
     },
     description: {
-      en: "We design, build, and deploy a production-grade AI agent on the Loucel Trust Stack: append-only audit trail, role-based access control, data loss prevention, RAG over your sources, and human-in-the-loop for sensitive decisions. Built on Claude. Multi-channel: web chat, WhatsApp Business, email, Slack. Owned by you. Governed by us.",
-      es: "Diseñamos, construimos y desplegamos un agente de IA grado producción sobre el Loucel Trust Stack: audit trail append-only, control de acceso por roles, prevención de pérdida de datos (DLP), RAG sobre tus fuentes y human-in-the-loop para decisiones sensibles. Construido sobre Claude. Multi-canal: chat web, WhatsApp Business, email, Slack. Tuyo por construcción. Gobernado por nosotros.",
+      en: "We design, build, and deploy a production-grade AI agent on the Loucels Trust Stack: append-only audit trail, role-based access control, data loss prevention, RAG over your sources, and human-in-the-loop for sensitive decisions. Built on Claude. Multi-channel: web chat, WhatsApp Business, email, Slack. Owned by you. Governed by us.",
+      es: "Diseñamos, construimos y desplegamos un agente de IA grado producción sobre el Loucels Trust Stack: audit trail append-only, control de acceso por roles, prevención de pérdida de datos (DLP), RAG sobre tus fuentes y human-in-the-loop para decisiones sensibles. Construido sobre Claude. Multi-canal: chat web, WhatsApp Business, email, Slack. Tuyo por construcción. Gobernado por nosotros.",
     },
     priceLabel: {
       en: "$20K-$45K setup + $2.5K/mo",

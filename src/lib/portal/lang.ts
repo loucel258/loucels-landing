@@ -1,0 +1,44 @@
+import "server-only";
+import { getServiceClient } from "@/lib/audit/client";
+import type { PortalLang } from "./strings";
+
+/**
+ * Resolve the portal display language for a given client slug.
+ *
+ * Resolution order:
+ *   1. client_portal_access.preferred_language  (client picked)
+ *   2. engagements.language                     (engagement default)
+ *   3. 'en'                                     (hard fallback)
+ *
+ * Cached per request via Next's data cache layer (force-dynamic pages
+ * bypass it anyway, so the worst case is one extra round-trip).
+ */
+export async function resolvePortalLang(slug: string): Promise<PortalLang> {
+  const sb = getServiceClient();
+  if (!sb) return "en";
+
+  const { data } = await sb
+    .from("client_portal_access")
+    .select("preferred_language, engagement_id")
+    .eq("client_slug", slug)
+    .maybeSingle();
+
+  if (!data) return "en";
+
+  const access = data as {
+    preferred_language: string | null;
+    engagement_id: string;
+  };
+  if (access.preferred_language === "en" || access.preferred_language === "es") {
+    return access.preferred_language;
+  }
+
+  const { data: eng } = await sb
+    .from("engagements")
+    .select("language")
+    .eq("id", access.engagement_id)
+    .maybeSingle();
+
+  const lang = (eng as { language: string } | null)?.language;
+  return lang === "es" ? "es" : "en";
+}

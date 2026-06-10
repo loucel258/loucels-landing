@@ -102,11 +102,11 @@ export function detectHardRuleEnforcement(
   // Off-topic / prompt-injection redirect. Broad enough to catch the
   // synonyms Claude paraphrases the hard-rule line into (hablar/discutir/
   // ayudar/tratar/conversar in ES; discuss/talk about/help with/address in
-  // EN), bounded enough not to false-positive on normal "Loucel..." prose.
+  // EN), bounded enough not to false-positive on normal "Loucels..." prose.
   if (
-    /s[óo]lo (puedo|me ocupo|hablo|discuto) (hablar|discutir|ayudar|tratar|conversar|asistir|orientar)[\s\S]{0,40}loucel/i.test(reply) ||
-    /\bsolamente (puedo|hablo)[\s\S]{0,40}loucel/i.test(reply) ||
-    /i can only (discuss|talk about|help with|address|advise on)[\s\S]{0,40}loucel/i.test(reply)
+    /s[óo]lo (puedo|me ocupo|hablo|discuto) (hablar|discutir|ayudar|tratar|conversar|asistir|orientar)[\s\S]{0,40}loucels/i.test(reply) ||
+    /\bsolamente (puedo|hablo)[\s\S]{0,40}loucels/i.test(reply) ||
+    /i can only (discuss|talk about|help with|address|advise on)[\s\S]{0,40}loucels/i.test(reply)
   ) {
     return "off_topic_or_injection";
   }
@@ -141,7 +141,7 @@ export function detectHardRuleEnforcement(
 
   // AI-honesty answer
   if (
-    /i'?m an? ai agent that loucel built|soy un agente.*ia que loucel.*construyó/i.test(reply)
+    /i'?m an? ai agent that loucels built|soy un agente.*ia que loucels.*construyó/i.test(reply)
   ) {
     return "ai_honesty";
   }
@@ -295,6 +295,82 @@ export async function auditRateLimited(
     decision: "DENY",
     blocked_by: "rate_limit",
     reason: `rate_limited:retry_after=${Math.ceil(args.retryAfterSec)}s`,
+    sanitized_prompt_hash: "",
+  });
+}
+
+/**
+ * Origin-blocked is a CSRF defense decision. Symmetric with rate_limit and
+ * pii_blocked — it's a system-enforced policy denial and belongs in the
+ * append-only chain so the "every decision is logged" promise holds across
+ * Loucels's own surfaces, not just the customer-facing build agents.
+ *
+ * Fires from the pre-session phase of the route (no body parsed yet, no
+ * client sessionId), so callers pass a synthetic sessionId derived from
+ * the requestId.
+ */
+export async function auditOriginBlocked(base: BaseChatAudit): Promise<void> {
+  await safeWrite({
+    request_id: base.requestId,
+    workspace_id: WORKSPACE_ID,
+    user_id: base.sessionId,
+    role: "visitor",
+    ip_address: normalizeIp(base.ip),
+    source: "chat",
+    decision: "DENY",
+    blocked_by: "origin_check",
+    reason: "origin_blocked:cross_site_post",
+    sanitized_prompt_hash: "",
+  });
+}
+
+/**
+ * Service unavailable — Anthropic key missing/rotated, or model client
+ * failed to initialize. Logged so a spike in this signal alerts the
+ * operator dashboard (a silent broken deploy used to be invisible until
+ * a prospect complained mid-call).
+ */
+export async function auditChatUnavailable(
+  base: BaseChatAudit,
+  args: { reason: string },
+): Promise<void> {
+  await safeWrite({
+    request_id: base.requestId,
+    workspace_id: WORKSPACE_ID,
+    user_id: base.sessionId,
+    role: "front_desk_agent",
+    ip_address: normalizeIp(base.ip),
+    source: "chat",
+    decision: "DENY",
+    blocked_by: "service_unavailable",
+    reason: `chat_unavailable:${args.reason.slice(0, 100)}`,
+    sanitized_prompt_hash: "",
+  });
+}
+
+/**
+ * GAP-F3 closure — HITL escalation surface. When the agent calls
+ * escalate_to_human, this writes a DENY row indicating the gate fired.
+ * Distinguishable from hard-rule DENYs by blocked_by='agent_hitl_escalation'.
+ * The reason field carries the category + the summary the agent provided.
+ *
+ * This is the audit signal that proves Loucels's HITL claim is real on
+ * Loucels's own surface (not just inside the agents we ship to customers).
+ */
+export async function auditEscalationToHuman(
+  base: BaseChatAudit,
+  args: { category: string; summary: string },
+): Promise<void> {
+  await safeWrite({
+    request_id: base.requestId,
+    workspace_id: WORKSPACE_ID,
+    user_id: base.sessionId,
+    role: "front_desk_agent",
+    ip_address: normalizeIp(base.ip),
+    source: "chat",
+    decision: "DENY",
+    blocked_by: "agent_hitl_escalation",
+    reason: `escalation:${args.category}|${args.summary.slice(0, 200)}`,
     sanitized_prompt_hash: "",
   });
 }

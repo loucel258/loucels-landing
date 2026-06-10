@@ -2,9 +2,9 @@ import type { Dictionary } from "./en";
 
 export const es: Dictionary = {
   meta: {
-    title: "Agencia de Automatización con IA para Negocios Medianos en el Sur de Florida — Loucel Labs",
+    title: "Agencia de Automatización con IA para Negocios Medianos en el Sur de Florida — Loucels",
     description:
-      "Estudio de automatización con IA bilingüe (EN/ES) que atiende negocios medianos en Miami-Dade, Broward y Palm Beach. Agentes de IA especializados, infraestructura web de conversión y gobernanza enterprise — construido sobre Anthropic Claude.",
+      "Estudio de automatización con IA que atiende negocios medianos en Miami-Dade, Broward y Palm Beach. Agentes de IA especializados e infraestructura web de conversión — construido sobre Anthropic Claude.",
   },
   nav: {
     offer: "Arquitectura",
@@ -13,16 +13,11 @@ export const es: Dictionary = {
     contact: "Diagnóstico Operativo",
   },
   hero: {
-    eyebrow: "Estudio de Automatización · EN / ES",
+    eyebrow: "Estudio de Automatización · Sur de Florida",
     titleLines: ["Arquitectura de IA", "para Escalar", "Tu Negocio."],
-    overlay: { part1: "menos chat.", part2: "más cierres." },
-    leftBlurb:
-      "No implementamos herramientas aisladas. Auditamos, diseñamos e integramos enjambres de agentes autónomos.",
-    readMore: "Ver la arquitectura",
     subtitle:
       "La IA no es solo para corporaciones gigantes. Construimos sistemas sencillos que automatizan tus tareas más repetitivas. El objetivo es simple: que tu equipo deje de funcionar como robots haciendo trabajo manual, y use ese tiempo para hacer crecer tu negocio.",
     primaryCta: "Solicitar Diagnóstico Operativo",
-    secondaryCta: "",
   },
   manifesto: {
     eyebrow: "Gobernanza",
@@ -35,7 +30,7 @@ export const es: Dictionary = {
   },
   offer: {
     eyebrow: "Arquitectura",
-    title: "Dos capas. Un resultado.",
+    title: "Dos sistemas. Un resultado.",
     intro:
       "Todo lo que construimos orbita alrededor de la automatización — la web que captura atención, los agentes que actúan sobre ella.",
     web: {
@@ -48,7 +43,7 @@ export const es: Dictionary = {
         {
           name: "Landing Page",
           price: "Desde $1,500",
-          desc: "Sitios modernos, mobile-first, bilingües que convierten. SEO y Google Business Profile incluidos.",
+          desc: "Sitios modernos, mobile-first, diseñados para convertir tráfico pagado y orgánico en leads calificados. SEO y Google Business Profile incluidos.",
         },
         {
           name: "Rediseño de Sitio",
@@ -77,17 +72,22 @@ export const es: Dictionary = {
         {
           name: "AI Front Desk",
           price: "$3,500 + $500/mes",
-          desc: "Agente especializado en un solo trabajo: capturar y calificar leads 24/7 en chat web, SMS y WhatsApp. Blindado, bilingüe, nunca se sale del guión.",
+          desc: "Agente especializado en un solo trabajo: capturar y calificar leads 24/7 en chat web, SMS y WhatsApp. Blindado, atado a tu guión, nunca improvisa.",
         },
         {
           name: "Acelerador de Cotizaciones",
           price: "$5K–$8K + $800/mes",
-          desc: "Agente especializado que convierte la foto o descripción del cliente en una cotización real, con seguimiento automático. Lógica de precios cerrada. Sin superficie de prompt injection.",
+          desc: "El cliente manda una foto o descripción. El agente arma la cotización en 10 segundos. Tú la apruebas desde tu teléfono en 1 minuto. El lead recibe la oferta mientras tu competencia todavía está agendando la visita.",
         },
         {
           name: "Gestor de Reseñas",
           price: "$2,500 + $400/mes",
           desc: "Agente especializado monitoreando Google, Yelp y Facebook. Responde en tu tono de marca, escala negativas en privado, solicita reseñas a clientes contentos.",
+        },
+        {
+          name: "Auditoría de Gaps Operativos",
+          price: "Desde $500",
+          desc: "1 semana. Mapeamos dónde se te están escapando leads, cotizaciones o reseñas — y qué agente cierra cada gap. Entregamos un Gap Map de 3-5 páginas + Trust Stack Risk Snapshot, tuyos para quedártelos pase lo que pase. Si firmas un build dentro de 30 días, 50% se acredita.",
         },
       ],
     },
@@ -118,23 +118,23 @@ export const es: Dictionary = {
   },
   why: {
     eyebrow: "Nuestros Estándares",
-    title: "IA Bilingüe. Ingeniería de Nivel Empresarial.",
+    title: "Construido Para Operar. Construido Para Durar.",
     items: [
       {
-        title: "Inglés y Español Nativo",
-        desc: "La mayoría de negocios en EE.UU. atienden una demografía diversa. Construimos agentes de IA que manejan de forma nativa y fluida interacciones con clientes en inglés y español, capturando cada lead.",
+        title: "Se Paga Solo en 90 Días",
+        desc: "Acordamos el baseline en kickoff — leads recuperados, jobs reservados, horas ahorradas. Al día 90 tu agente ha pagado su costo de build en ingresos medibles, o lo apagamos. No debés un centavo más.",
       },
       {
-        title: "Arquitectura a Medida, Sin Parches",
-        desc: "Nuestros templates verticales son puntos de partida, no el producto entero. Debajo de cada uno hay código custom — cero flows frágiles de no-code, cero parches estilo Zapier shop. Software construido para escalar con tus operaciones.",
+        title: "Construido Para Aguantar Volumen",
+        desc: "Los templates verticales son puntos de partida, no el producto entero. Debajo de cada uno hay software real ingeniado para seguir corriendo a 200 leads por día, un domingo a las 11 PM, cuando una de tus herramientas se cae.",
       },
       {
         title: "ROI Fijo, Sin Trampas por Hora",
         desc: "Vendemos resultados concretos para tu negocio, no horas facturables. Recibes alcance claro, precios predecibles y entregables exactos desde el día uno.",
       },
       {
-        title: "Privacidad de Datos Sin Concesiones",
-        desc: "La seguridad no es un complemento. Cada sistema que desplegamos incluye autenticación estricta, registros de auditoría claros y manejo seguro de la información sensible de tu negocio.",
+        title: "Tu Data, Tu Infraestructura",
+        desc: "Cada agente que desplegamos vive en tus cuentas — tu Twilio, tu CRM, tu storage. Nosotros lo gobernamos mensualmente. Puedes llevártelo cuando quieras — las llaves están a tu nombre desde el día uno.",
       },
     ],
   },
@@ -178,7 +178,7 @@ export const es: Dictionary = {
       },
       {
         q: "¿Mis datos y los datos de mis clientes están seguros?",
-        a: "Tus datos nunca entrenan un modelo público. Corremos sobre las APIs comerciales de Anthropic bajo contratos que garantizan cero retención de datos. El almacenamiento usa cifrado AES-256 en reposo y TLS 1.3 en tránsito. Los campos sensibles se enmascaran antes de tocar al LLM. Si tu equipo tiene compliance officer, va a reconocer los controles.",
+        a: "Tus datos nunca entrenan un modelo público. Corremos sobre las APIs comerciales de Anthropic bajo contratos que garantizan cero retención de datos. El almacenamiento usa cifrado AES-256 en reposo y TLS 1.3 en tránsito. Los campos sensibles se enmascaran antes de tocar al modelo. Los controles debajo son los mismos que las empresas más grandes pagan consultores para configurar — tú los recibes integrados desde el día uno.",
       },
       {
         q: "¿Qué pasa si la IA alucina o da información incorrecta?",
@@ -193,16 +193,16 @@ export const es: Dictionary = {
         a: "Gobernanza continua, no alquiler de software. Monitoreamos los outputs del agente para detectar desviaciones, actualizamos el guion cuando aparecen nuevos casos, ajustamos performance, lanzamos canales o integraciones nuevos a medida que escalas y mantenemos los controles de seguridad al día con los estándares en evolución. La arquitectura es tuya. Nosotros somos el equipo que la mantiene afilada.",
       },
       {
-        q: "¿Cuánto cuesta la automatización con IA para un negocio mediano en el sur de Florida?",
-        a: "El precio escala según qué estés automatizando. Los proyectos de Web Foundation arrancan en $1,500. Un agente AI Front Desk SMV es alrededor de $3,500 de build más $500 mensuales de gobernanza. Un Acelerador de Cotizaciones cae entre $5,000 y $8,000 más $800 al mes. Los setups de gobernanza enterprise (alineados a NIST AI RMF) arrancan en $7,500 por la auditoría y $20,000 a $45,000 más $2,500 mensuales para la implementación completa. Recibes el precio exacto en el Diagnóstico Operativo de 30 minutos, no un rango amplio.",
+        q: "¿Cuánto cuesta esto para un negocio de mi tamaño?",
+        a: "No publicamos precios acá a propósito — cada engagement se cotiza según lo que tu negocio realmente necesita y qué está realmente roto. Un contratista solo y una medspa de 30 personas reciben builds muy distintos, y el precio refleja eso. El agente de chat de esta página puede caminarte por rangos aproximados si preguntás. Para precio exacto atado a tu scope específico, eso es el Diagnóstico Operativo — 30 minutos, gratis, sin pitch.",
       },
       {
-        q: "¿Trabajan con negocios de habla hispana en Miami, Fort Lauderdale y Palm Beach?",
-        a: "Sí. Estamos basados en el sur de Florida y el bilingüismo EN/ES es núcleo de cómo construimos. Cada agente que entregamos maneja inglés y español de forma nativa, incluyendo el code-switching y Spanglish común en los negocios del tri-county. Contratos, reportes de gobernanza y soporte continuo están disponibles en cualquiera de los dos idiomas.",
+        q: "¿Cuándo veo que esto se paga solo?",
+        a: "Antes de lo que imaginas. Para un contratista: el sistema paga su propio build con los primeros 2 techos que el agente reserva el domingo a las 11 PM y tú habrías perdido por no contestar el teléfono. Para una medspa: 3 a 5 bookings de turno nocturno que no se escaparon. Para un restaurante: la primera oleada de reseñas malas manejadas antes de que se acumulen. Acordamos el baseline en kickoff para que el payback sea medido, no adivinado.",
       },
       {
         q: "¿Pueden construir agentes de IA para empresas de logística, construcción o servicios profesionales en Florida?",
-        a: "Sí. Estos son nuestros mejores casos de uso. Las empresas de logística sacan máximo provecho del Acelerador de Cotizaciones y del Front Desk para consultas de envíos. Las empresas de construcción ven el ROI más alto en el AI Front Desk para captura de leads y el Acelerador de Cotizaciones para estimados basados en fotos. Las firmas de servicios profesionales (legal, contabilidad, sector salud-adyacente) priorizan Integration & Control para despliegues con conciencia de compliance. Todo construido sobre Anthropic Claude, todo gobernado mensualmente.",
+        a: "Sí. Estos son nuestros mejores casos de uso. Las empresas de logística sacan máximo provecho del Acelerador de Cotizaciones y del Front Desk para consultas de envíos. Las empresas de construcción ven el ROI más alto en el AI Front Desk para captura de leads after-hours y el Acelerador de Cotizaciones para estimados basados en fotos. Las firmas de servicios profesionales ven ROI fuerte en automatización de intake. Todo construido sobre Anthropic Claude, todo gobernado mensualmente.",
       },
     ],
   },
@@ -226,7 +226,7 @@ export const es: Dictionary = {
     eyebrow: "Templates",
     title: "Hecho para tu industria.",
     intro:
-      "Cada engagement arranca desde un template específico para tu vertical y las herramientas que ya usás. Elegí el más cercano — calibramos desde ahí.",
+      "Cada engagement arranca desde un template específico para tu vertical y las herramientas que ya usas. Elige el más cercano — calibramos desde ahí.",
     ctaHint: "Click en cualquier template para preguntarle al AI →",
     items: [
       {
@@ -234,7 +234,7 @@ export const es: Dictionary = {
         vertical: "MedSpas & Clínicas Estéticas",
         service: "AI Front Desk",
         description:
-          "Intake bilingüe 24/7 que pre-califica pacientes antes que cualquier PHI toque el modelo.",
+          "Intake 24/7 que pre-califica pacientes antes que cualquier PHI toque el modelo.",
         tools: ["Boulevard", "Twilio", "Stripe"],
         chatPrompt: "Cuéntame sobre el template de AI Front Desk para MedSpas.",
       },
@@ -253,7 +253,7 @@ export const es: Dictionary = {
         vertical: "Roofing & HVAC",
         service: "Quote Accelerator",
         description:
-          "El cliente describe el trabajo, el agente arma la cotización desde tu price book, vos aprobás antes de enviar.",
+          "El cliente describe el trabajo, el agente arma la cotización desde tu price book, tú apruebas antes de enviar.",
         tools: ["JobNimbus", "QuickBooks", "Twilio"],
         chatPrompt:
           "Cuéntame sobre el template de Quote Accelerator para roofing y HVAC.",
@@ -263,7 +263,7 @@ export const es: Dictionary = {
         vertical: "Restaurantes & Comida",
         service: "Review Manager",
         description:
-          "Borradores bilingües de respuesta a reseñas con tu tono, aprobación HITL antes de publicar.",
+          "Borradores de respuesta a reseñas con tu tono, aprobación HITL antes de publicar.",
         tools: ["Toast", "Google Business Profile", "Mailchimp"],
         chatPrompt:
           "Cuéntame sobre el template de Review Manager para restaurantes.",
@@ -273,7 +273,7 @@ export const es: Dictionary = {
         vertical: "Hoteles Boutique",
         service: "AI Front Desk",
         description:
-          "Cobertura bilingüe nocturna en consultas y cambios de booking — audit log en cada touch a data del huésped.",
+          "Cobertura nocturna en consultas y cambios de booking — audit log en cada touch a data del huésped.",
         tools: ["Mews", "Google Business Profile", "Twilio"],
         chatPrompt:
           "Cuéntame sobre el template de AI Front Desk para hoteles boutique.",
@@ -292,10 +292,10 @@ export const es: Dictionary = {
   },
   chat: {
     bubbleLabel: "Abrir chat",
-    panelTitle: "Loucel Labs · AI Front Desk",
+    panelTitle: "Loucels · AI Front Desk",
     panelSubtitle: "Demo en vivo de lo que construimos",
     greeting:
-      "Hola — soy el AI front desk de Loucel Labs. Cuéntame de tu negocio y del dolor que quieres resolver, y te ayudo a ver si encajamos.",
+      "Hola — soy el AI front desk de Loucels. Cuéntame de tu negocio y del dolor que quieres resolver, y te ayudo a ver si encajamos.",
     placeholder: "Pregunta lo que quieras…",
     send: "Enviar",
     thinking: "Pensando…",
@@ -304,7 +304,7 @@ export const es: Dictionary = {
     privacy: "Privacidad",
     errorGeneric: "Algo salió mal. Intenta de nuevo.",
     errorUnavailable:
-      "Chat temporalmente no disponible. Escríbenos a hello@loucellabs.com.",
+      "Chat temporalmente no disponible. Escríbenos a hello@loucels.com.",
     errorRateLimited:
       "Demasiados mensajes en poco tiempo — dale un minuto e intenta de nuevo.",
     close: "Cerrar",
@@ -317,16 +317,16 @@ export const es: Dictionary = {
   },
   webFoundation: {
     meta: {
-      title: "Fundamentos Web — Loucel Labs",
+      title: "Fundamentos Web — Loucels",
       description:
-        "La infraestructura de conversión que alimenta a tus agentes de IA. Bilingüe, hecha a medida, optimizada para búsqueda con IA.",
+        "La infraestructura de conversión que alimenta a tus agentes de IA. Hecha a medida, optimizada para búsqueda con IA.",
     },
     backLabel: "Volver al inicio",
     hero: {
       eyebrow: "Fundamentos Web",
       title: "Tu vendedor digital, operando 24/7.",
       subtitle:
-        "No construimos páginas decorativas. Construimos la infraestructura de captura de leads y visibilidad local que alimenta a tus agentes de IA. Bilingüe desde el día uno.",
+        "No construimos páginas decorativas. Construimos la infraestructura de captura de leads y visibilidad local que alimenta a tus agentes de IA.",
       primaryCta: "Agenda tu Diagnóstico",
       secondaryCta: "Ver cómo funciona",
     },
@@ -346,8 +346,8 @@ export const es: Dictionary = {
         },
         {
           n: "03",
-          title: "Mitad del Mercado Perdido",
-          desc: "La mayoría de negocios en EE. UU. atienden una base de clientes bilingüe. Un sitio que sólo funciona en inglés deja la mitad del dinero sobre la mesa.",
+          title: "Desconectado De Tu Automatización",
+          desc: "La mayoría de sitios viven aislados — capturan un formulario y lo tiran en un inbox que nunca revisas. La infraestructura debajo debería entregarle el lead al agente que lo cierra.",
         },
       ],
     },
@@ -357,11 +357,11 @@ export const es: Dictionary = {
       items: [
         {
           name: "Landing Pages de Alta Conversión",
-          desc: "Páginas de un solo propósito, diseñadas para convertir tráfico pago en leads calificados. Mobile-first, bilingües, conectadas con tu AI Front Desk desde el día uno.",
+          desc: "Páginas de un solo propósito, diseñadas para convertir tráfico pago en leads calificados. Mobile-first, conectadas con tu AI Front Desk desde el día uno.",
         },
         {
           name: "Rediseño de Infraestructura Web",
-          desc: "Reconstrucción completa de tu sitio sobre un stack moderno que carga rápido, rankea y se conecta con el resto de tu capa de automatización. Sin parches de WordPress.",
+          desc: "Reconstrucción completa de tu sitio sobre un stack moderno que carga rápido, rankea y se conecta con el resto de tu capa de automatización. Sin parches legacy, sin templates inflados.",
         },
         {
           name: "Auditoría SEO Técnica",
@@ -395,36 +395,36 @@ export const es: Dictionary = {
       ],
     },
     why: {
-      eyebrow: "Por Qué Loucel",
+      eyebrow: "Por Qué Loucels",
       title: "Construido diferente.",
       items: [
         {
-          title: "Nativo EN/ES",
-          desc: "Cada página, formulario y CTA bilingüe desde la base. No atornillado después del lanzamiento.",
+          title: "Conectado a Tus Agentes",
+          desc: "Cada página, formulario y CTA está construido para entregarle el lead al agente que lo cierra — no para tirarlo en un inbox estático.",
         },
         {
           title: "Arquitectura a Medida",
-          desc: "Next.js, Claude, Supabase. Sin parches de WordPress. Software que escala contigo.",
+          desc: "Un stack moderno diseñado para velocidad y escala. Sin parches legacy, sin templates inflados. Software que crece con tu negocio.",
         },
         {
-          title: "Conectado a Tus Agentes",
-          desc: "Cada captura de leads y conexión con CRM se enchufa directamente con los agentes que entregamos. Web y automatización, un solo sistema.",
+          title: "Optimizado Para Búsqueda con IA",
+          desc: "Tu sitio no solo rankea en Google. Rankea en ChatGPT, Perplexity y Google AI Overviews — donde los compradores ahora están pidiendo recomendaciones.",
         },
       ],
     },
   },
   smvModels: {
     meta: {
-      title: "Modelos SMV — Loucel Labs",
+      title: "Modelos SMV — Loucels",
       description:
-        "No es un chatbot. Un departamento entero operando en milisegundos. Agentes de IA especializados, gobernados y bilingües. Tuyos por construcción, gobernados por nosotros.",
+        "No es un chatbot. Un departamento entero operando en milisegundos. Agentes de IA especializados y gobernados. Tuyos por construcción, gobernados por nosotros.",
     },
     backLabel: "Volver al inicio",
     hero: {
       eyebrow: "Modelos SMV",
       title: "No es un chatbot. Un departamento entero, operando en milisegundos.",
       subtitle:
-        "Cada modelo SMV es un agente especializado diseñado para un solo trabajo y blindado para no salirse del guion. Bilingüe EN/ES, multicanal y gobernado todos los días.",
+        "Cada modelo SMV es un agente especializado diseñado para un solo trabajo y blindado para no salirse del guion. Multicanal, blindado y gobernado todos los días.",
       primaryCta: "Agenda tu Diagnóstico",
       secondaryCta: "Ver los modelos",
     },
@@ -451,11 +451,11 @@ export const es: Dictionary = {
     },
     services: {
       eyebrow: "Los Modelos",
-      title: "Tres agentes especializados. Una sola capa operativa.",
+      title: "Cuatro puntos de entrada. Una sola capa operativa.",
       items: [
         {
           name: "AI Front Desk",
-          desc: "Captura y califica leads entrantes 24/7 en chat web, SMS y WhatsApp. Bilingüe, blindado, nunca improvisa. Pasa los leads calificados a tu equipo y descarta el spam sin que tú lo veas.",
+          desc: "Captura y califica leads entrantes 24/7 en chat web, SMS y WhatsApp. Blindado, atado a tu guion, nunca improvisa. Pasa los leads calificados a tu equipo y descarta el spam sin que tú lo veas.",
         },
         {
           name: "Acelerador de Cotizaciones",
@@ -464,6 +464,10 @@ export const es: Dictionary = {
         {
           name: "Gestor de Reseñas y Reputación",
           desc: "Monitorea Google, Yelp y Facebook en el tono de tu marca. Redacta respuestas para tu aprobación, escala las negativas en privado y pide reseñas a clientes contentos en el momento exacto en que es más probable que las dejen.",
+        },
+        {
+          name: "Auditoría de Gaps Operativos",
+          desc: "1 semana. Mapeamos dónde tu operación está perdiendo leads, cotizaciones o reseñas — after-hours, fines de semana, follow-up lento. Entregamos un Gap Map de 3-5 páginas + un Trust Stack Risk Snapshot identificando exposiciones de seguridad. Ambos documentos son tuyos. Si firmas un build dentro de 30 días, 50% se acredita.",
         },
       ],
     },
@@ -498,18 +502,18 @@ export const es: Dictionary = {
         },
         {
           title: "Gobernados, Sin Alucinaciones",
-          desc: "Lógica de precios bloqueada. Prompts blindados. Bilingüe sin confusión. El agente se queda en el guion, nunca inventa información y nunca revela datos que no debe.",
+          desc: "Lógica de precios bloqueada. Prompts blindados. El agente se queda en el guion, nunca inventa información y nunca revela datos que no debe.",
         },
         {
-          title: "Tuyos por Construcción. Gobernados por Nosotros.",
-          desc: "No te alquilamos bots SaaS genéricos. Construimos arquitectura de IA propia para tu negocio. Nuestra gobernanza mensual asegura que tus agentes nunca alucinen, los protocolos de seguridad se mantengan al día y las tasas de conversión se optimicen continuamente con datos reales de tus clientes.",
+          title: "Tus Cuentas. Tu Agente.",
+          desc: "El agente vive en tu Twilio, tu CRM, tu storage — tus cuentas, tus llaves, tu data. Nosotros lo construimos y lo gobernamos mensualmente, pero la infraestructura es tuya desde el día uno. Cancela cuando quieras y el agente sigue corriendo en tu stack.",
         },
       ],
     },
   },
   integrationControl: {
     meta: {
-      title: "Integración y Control — Loucel Labs",
+      title: "Integración y Control — Loucels",
       description:
         "Arquitectura y gobernanza de IA para mid-market. Agentes seguros y operando en semanas, no engagements de consultoría de 6 meses. Diseñado bajo los principios de NIST AI RMF e ISO 42001.",
     },
@@ -522,7 +526,7 @@ export const es: Dictionary = {
       primaryCta: "Agenda tu Diagnóstico",
       secondaryCta: "Ver la arquitectura",
       trustStrip:
-        "Arquitectura diseñada bajo los principios de NIST AI RMF e ISO 42001. Estructurada para apoyar un ejercicio de SOC 2 readiness liderado por el cliente. Loucel Labs no está certificada SOC 2 de forma independiente.",
+        "Arquitectura diseñada bajo los principios de NIST AI RMF e ISO 42001. Estructurada para apoyar el trabajo de SOC 2 readiness de tu equipo interno de compliance.",
     },
     problem: {
       eyebrow: "Los Riesgos",
@@ -585,8 +589,8 @@ export const es: Dictionary = {
       ],
     },
     why: {
-      eyebrow: "La Diferencia Loucel",
-      title: "Por qué los equipos bajo presión real de compliance eligen Loucel.",
+      eyebrow: "La Diferencia Loucels",
+      title: "Por qué los equipos bajo presión real de compliance eligen Loucels.",
       items: [
         {
           title: "Velocidad Boutique, Disciplina Empresarial",

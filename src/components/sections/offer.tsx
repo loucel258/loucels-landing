@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Globe, BrainCircuit, ShieldCheck } from "lucide-react";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
+import { SectionEntry } from "@/components/motion/section-entry";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
 type Column = Dictionary["offer"]["web"];
@@ -52,7 +53,7 @@ export function Offer({ dict }: { dict: Dictionary }) {
         />
       </div>
 
-      <div className="container-page relative flex flex-col gap-16 md:gap-20">
+      <SectionEntry className="container-page relative flex flex-col gap-16 md:gap-20">
         <Reveal className="flex flex-col gap-6">
           <span className="text-micro text-cyan">// {dict.offer.eyebrow}</span>
           <h2 className="text-display-1 max-w-3xl text-balance text-text-primary">
@@ -82,7 +83,12 @@ export function Offer({ dict }: { dict: Dictionary }) {
               ctaHref="./services/smv-models"
             />
           </StaggerItem>
-          <StaggerItem className="lg:col-span-2">
+          {/* Enterprise / Integration & Control tier hidden from default landing
+              per commercial pivot 2026-06-04 — its NIST/SOC 2/HIPAA language
+              scared off SMB visitors. The strings remain in dict.offer.enterprise
+              and the subpage at /services/integration-control still renders;
+              this card is shown to regulated buyers only by direct link. */}
+          {false && <StaggerItem className="lg:col-span-2">
             <BentoCard
               id="enterprise"
               data={dict.offer.enterprise}
@@ -91,9 +97,9 @@ export function Offer({ dict }: { dict: Dictionary }) {
               ctaHref="./services/integration-control"
               featured
             />
-          </StaggerItem>
+          </StaggerItem>}
         </StaggerGroup>
-      </div>
+      </SectionEntry>
     </section>
   );
 }

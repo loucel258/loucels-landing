@@ -5,7 +5,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
-import { siteConfig } from "@/lib/site-config";
+import { Magnetic } from "@/components/motion/magnetic";
+import { BookViaChatButton } from "@/components/chat/book-via-chat-button";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
 /**
@@ -93,20 +94,15 @@ export function CTA({ dict }: { dict: Dictionary }) {
               ))}
             </StaggerGroup>
             <Reveal delay={0.2}>
-              <motion.a
-                href={siteConfig.calUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="group inline-flex h-13 w-fit items-center gap-3 rounded-xl border border-cyan/40 bg-cyan/10 px-7 py-3.5 text-[15px] font-semibold text-cyan backdrop-blur-sm transition-all duration-300 hover:border-cyan hover:bg-cyan hover:text-bg hover:shadow-[0_0_40px_-4px_var(--accent-cyan-glow)]"
-              >
-                {dict.cta.button}
-                <ArrowUpRight
-                  className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  strokeWidth={2}
-                />
-              </motion.a>
+              <Magnetic strength={0.32}>
+                <BookViaChatButton className="group inline-flex h-13 w-fit items-center gap-3 rounded-xl border border-cyan/40 bg-cyan/10 px-7 py-3.5 text-[15px] font-semibold text-cyan backdrop-blur-sm transition-all duration-300 hover:border-cyan hover:bg-cyan hover:text-bg hover:shadow-[0_0_40px_-4px_var(--accent-cyan-glow)] active:scale-[0.98]">
+                  {dict.cta.button}
+                  <ArrowUpRight
+                    className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    strokeWidth={2}
+                  />
+                </BookViaChatButton>
+              </Magnetic>
             </Reveal>
             <Reveal delay={0.3}>
               <div className="flex items-center gap-3 text-mono-xs text-text-tertiary">

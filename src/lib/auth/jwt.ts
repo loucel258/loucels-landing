@@ -15,16 +15,16 @@ import { SignJWT, jwtVerify, type JWTPayload } from "jose";
  *   sub           = workspace_id (compatibility with auth.uid())
  *   sid           = a per-session UUID for log correlation
  *   role_label    = optional UX role (e.g. 'front_desk_agent', 'compliance_officer')
- *   iss           = 'loucel-labs'
+ *   iss           = 'loucels'
  *   aud           = 'workspace-runtime'
  *   iat / exp     = 5-minute TTL by default
  *
  * NEVER expose this minter to client code. It runs on the server only and
  * issues tokens after the server has already authenticated the actor (e.g.
- * verified a Twilio webhook signature, or matched a Loucel admin login).
+ * verified a Twilio webhook signature, or matched a Loucels admin login).
  */
 
-const ISSUER = "loucel-labs";
+const ISSUER = "loucels";
 const AUDIENCE = "workspace-runtime";
 const DEFAULT_TTL_SECONDS = 300; // 5 minutes — short on purpose
 

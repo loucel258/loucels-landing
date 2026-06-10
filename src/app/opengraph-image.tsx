@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Loucel Labs — AI Architecture Built to Scale Your Business";
+export const alt = "Loucels — AI Architecture Built to Scale Your Business";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -86,7 +86,7 @@ export default function OG() {
               letterSpacing: -0.5,
             }}
           >
-            Loucel Labs
+            Loucels
           </span>
         </div>
 
@@ -152,7 +152,7 @@ export default function OG() {
             letterSpacing: 2,
           }}
         >
-          <span>loucellabs.com</span>
+          <span>loucels.com</span>
           <span>Built on Anthropic Claude</span>
         </div>
       </div>

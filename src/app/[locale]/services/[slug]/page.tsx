@@ -10,6 +10,7 @@ import {
 } from "@/lib/services-data";
 import { siteConfig } from "@/lib/site-config";
 import { buttonVariants } from "@/components/ui/button";
+import { Magnetic } from "@/components/motion/magnetic";
 import { cn } from "@/lib/utils";
 
 export async function generateStaticParams() {
@@ -28,7 +29,7 @@ export async function generateMetadata({
   const service = getServiceBySlug(slug);
   if (!service) return {};
 
-  const title = `${service.name[locale]} · Loucel Labs`;
+  const title = `${service.name[locale]} · Loucels`;
   const description = service.description[locale];
 
   return {
@@ -68,7 +69,7 @@ export default async function ServicePage({
             {isES ? "Volver al sitio" : "Back to site"}
           </Link>
           <span className="text-sm font-semibold tracking-tight">
-            Loucel Labs
+            Loucels
           </span>
         </div>
       </header>
@@ -97,14 +98,16 @@ export default async function ServicePage({
           </p>
         </section>
 
-        {/* Price + Timeline */}
+        {/* Investment + Timeline */}
         <section className="grid gap-px overflow-hidden rounded-xl bg-border md:grid-cols-2">
           <div className="flex flex-col gap-2 bg-card p-6">
             <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
               {isES ? "Inversión" : "Investment"}
             </span>
-            <span className="text-2xl font-semibold tabular-nums">
-              {service.priceLabel[locale]}
+            <span className="text-lg font-medium text-muted-foreground">
+              {isES
+                ? "Definida en el Diagnóstico Operativo"
+                : "Set in the Operational Diagnosis"}
             </span>
           </div>
           <div className="flex flex-col gap-2 bg-card p-6">
@@ -162,18 +165,20 @@ export default async function ServicePage({
               : "A 30-minute call to discuss your case. No pitch, no commitment."}
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <a
-              href={siteConfig.calUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                buttonVariants(),
-                "group glow-cyan h-11 gap-2 px-5 text-base",
-              )}
-            >
-              {isES ? "Agenda llamada" : "Book a call"}
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-            </a>
+            <Magnetic strength={0.3}>
+              <a
+                href={siteConfig.calUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  buttonVariants(),
+                  "group glow-cyan h-11 gap-2 px-5 text-base",
+                )}
+              >
+                {isES ? "Agenda llamada" : "Book a call"}
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </a>
+            </Magnetic>
             <a
               href={`mailto:${siteConfig.contactEmail}?subject=${encodeURIComponent(
                 service.name[locale],

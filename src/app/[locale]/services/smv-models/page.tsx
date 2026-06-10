@@ -83,7 +83,7 @@ export default async function SmvModelsPage({
         </div>
         <SubpageHero
           data={data.hero}
-          imageSrc="/hero/09-smv-models.webp"
+          imageSrc="/hero/05-audit.webp"
           secondaryGlow="violet"
         />
         <SubpageProblem data={data.problem} />

@@ -45,7 +45,7 @@ const MAX_HISTORY = 30;
 // granularity we want for the chat's observability stream.
 function getSessionId(): string {
   if (typeof window === "undefined") return "ssr";
-  const KEY = "loucel-chat-session";
+  const KEY = "loucels-chat-session";
   let id = window.sessionStorage.getItem(KEY);
   if (!id) {
     id = `s_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
@@ -163,8 +163,8 @@ export function ChatWidget({
       // Defer send so the panel mounts before the request fires.
       setTimeout(() => sendText(detail.prompt!.trim()), 60);
     };
-    window.addEventListener("loucel:open-chat", handler);
-    return () => window.removeEventListener("loucel:open-chat", handler);
+    window.addEventListener("loucels:open-chat", handler);
+    return () => window.removeEventListener("loucels:open-chat", handler);
   }, [sendText]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -344,7 +344,7 @@ export function ChatWidget({
               </button>
             </div>
             <p className="mt-2 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-[10px] uppercase tracking-wider text-zinc-600">
-              <span>Powered by Claude · Governed by Loucel</span>
+              <span>Powered by Claude · Governed by Loucels</span>
               <span aria-hidden>·</span>
               <a
                 href={`/${locale}/privacy`}

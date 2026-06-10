@@ -1,7 +1,13 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import {
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import { Check } from "lucide-react";
+import { useRef, useState } from "react";
 import { Reveal } from "@/components/motion/reveal";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
@@ -88,14 +94,47 @@ function ProcessStep({
   const opacity = useTransform(progress, [start, end], [0.35, 1]);
   const scale = useTransform(progress, [start, end], [0.96, 1]);
 
+  // Ignition state — tracks whether scroll has crossed this step's threshold.
+  // `active` = step is currently being illuminated; `done` = scroll has passed it.
+  const [state, setState] = useState<"idle" | "active" | "done">("idle");
+  useMotionValueEvent(progress, "change", (p) => {
+    if (p >= end - 0.02) setState("done");
+    else if (p >= start) setState("active");
+    else setState("idle");
+  });
+
+  const circleCls =
+    state === "done"
+      ? "border-cyan bg-cyan text-bg shadow-[0_0_24px_-2px_var(--accent-cyan-glow)]"
+      : state === "active"
+        ? "border-cyan/70 bg-surface text-cyan shadow-[0_0_18px_-4px_var(--accent-cyan-glow)]"
+        : "border-border-soft bg-surface text-text-primary";
+
   return (
     <motion.li
       style={{ opacity, scale }}
       className="relative flex flex-col gap-4"
     >
-      <span className="relative z-10 flex size-10 items-center justify-center rounded-full border border-border-soft bg-surface text-mono-xs text-text-primary">
-        {step.n}
-      </span>
+      <motion.span
+        animate={{ scale: state === "active" ? 1.06 : 1 }}
+        transition={{ type: "spring", stiffness: 380, damping: 22 }}
+        className={`relative z-10 flex size-10 items-center justify-center rounded-full border text-mono-xs transition-colors duration-500 ${circleCls}`}
+      >
+        {state === "done" ? (
+          <Check className="size-4" strokeWidth={2.5} />
+        ) : (
+          step.n
+        )}
+        {state === "active" && (
+          <motion.span
+            aria-hidden
+            className="absolute inset-0 rounded-full border border-cyan/60"
+            initial={{ scale: 1, opacity: 0.8 }}
+            animate={{ scale: 1.8, opacity: 0 }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "easeOut" }}
+          />
+        )}
+      </motion.span>
       <h3 className="text-h4 text-text-primary">{step.title}</h3>
       <p className="text-body-sm text-pretty text-text-secondary">
         {step.desc}

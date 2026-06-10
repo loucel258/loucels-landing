@@ -1,0 +1,184 @@
+import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
+import type { ReactNode } from "react";
+
+/**
+ * Sidebar shell — server-rendered persistent left nav. Used by both the
+ * /admin layout and the /portal/[slug] layout. The visual language is
+ * deliberately calmer than HighLevel: neutral-900 base with a thin
+ * cyan→violet rail and pastel chips for active states. We want clients to
+ * feel "this is a serious operations tool" not "this is yet another SaaS
+ * dashboard".
+ */
+
+export type SidebarItem = {
+  href: string;
+  label: string;
+  icon: ReactNode;
+  /** Active rule: exact equals OR prefix-match when `prefix` true */
+  match: string;
+  prefix?: boolean;
+  badge?: number | string | null;
+  /** Show a small "soon" pill instead of treating it as enabled */
+  comingSoon?: boolean;
+};
+
+export type SidebarSection = {
+  label?: string;
+  items: SidebarItem[];
+};
+
+export type SidebarBrand = {
+  /** Top line — e.g. workspace / client name */
+  workspaceName: string;
+  /** Bottom line — e.g. city, vertical, or "Client portal" */
+  subtitle?: string;
+  /** Optional small avatar text (e.g. initials) */
+  initials?: string;
+};
+
+export function Sidebar({
+  brand,
+  sections,
+  pathname,
+  footer,
+}: {
+  brand: SidebarBrand;
+  sections: SidebarSection[];
+  pathname: string;
+  footer?: ReactNode;
+}) {
+  return (
+    <aside className="sticky top-0 hidden h-screen w-[252px] shrink-0 flex-col gap-1 border-r border-neutral-800/80 bg-neutral-950 text-neutral-200 lg:flex">
+      {/* Brand strip */}
+      <div className="relative border-b border-neutral-800/80 px-3 py-3">
+        <Link
+          href="/"
+          className="group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-neutral-900"
+        >
+          <span className="relative inline-flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-violet-600 text-white shadow-md shadow-cyan-500/20">
+            {brand.initials ? (
+              <span className="text-[11px] font-bold">{brand.initials}</span>
+            ) : (
+              <ShieldCheck className="size-4.5" />
+            )}
+            <span className="pointer-events-none absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-emerald-400 ring-2 ring-neutral-950" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[13px] font-semibold text-white">
+              {brand.workspaceName}
+            </p>
+            {brand.subtitle && (
+              <p className="truncate text-[10px] text-neutral-400">
+                {brand.subtitle}
+              </p>
+            )}
+          </div>
+        </Link>
+      </div>
+
+      {/* Search placeholder (cosmetic for v1; wire later) */}
+      <div className="px-3 pt-3">
+        <div className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900/60 px-2.5 py-1.5 text-[11px] text-neutral-500">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3.5">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <span className="flex-1">Search</span>
+          <kbd className="rounded border border-neutral-700 bg-neutral-900 px-1 py-px text-[9px] text-neutral-400">
+            ⌘K
+          </kbd>
+        </div>
+      </div>
+
+      {/* Sections */}
+      <nav className="flex-1 overflow-y-auto px-2 pt-4">
+        {sections.map((section, sIdx) => (
+          <div key={sIdx} className={sIdx === 0 ? "" : "mt-5"}>
+            {section.label && (
+              <p className="mb-1 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+                {section.label}
+              </p>
+            )}
+            <ul className="flex flex-col gap-0.5">
+              {section.items.map((item) => {
+                const active = item.prefix
+                  ? pathname.startsWith(item.match)
+                  : pathname === item.match;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-[12.5px] font-medium transition-colors ${
+                        active
+                          ? "bg-gradient-to-r from-cyan-500/10 via-violet-500/10 to-transparent text-white"
+                          : "text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100"
+                      }`}
+                    >
+                      {active && (
+                        <span
+                          className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-gradient-to-b from-cyan-400 to-violet-500"
+                          aria-hidden
+                        />
+                      )}
+                      <span
+                        className={`inline-flex size-4 items-center justify-center ${
+                          active ? "text-cyan-300" : "text-neutral-500 group-hover:text-neutral-300"
+                        }`}
+                      >
+                        {item.icon}
+                      </span>
+                      <span className="flex-1 truncate">{item.label}</span>
+                      {item.comingSoon && (
+                        <span className="rounded-full border border-neutral-700 px-1.5 py-px text-[9px] text-neutral-500">
+                          soon
+                        </span>
+                      )}
+                      {item.badge !== undefined && item.badge !== null && item.badge !== 0 && (
+                        <span
+                          className={`inline-flex min-w-[18px] items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${
+                            active
+                              ? "bg-cyan-400/20 text-cyan-200"
+                              : "bg-neutral-800 text-neutral-400"
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
+
+      {/* Footer slot */}
+      {footer && (
+        <div className="border-t border-neutral-800/80 p-3">{footer}</div>
+      )}
+    </aside>
+  );
+}
+
+/**
+ * Mobile fallback — top strip with brand only. The full sidebar is hidden
+ * below lg. For v1 the portal is desktop-first; mobile design later.
+ */
+export function MobileBrandBar({ brand }: { brand: SidebarBrand }) {
+  return (
+    <div className="lg:hidden sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-neutral-800/80 bg-neutral-950 px-4 py-3 text-neutral-100">
+      <Link href="/" className="flex items-center gap-2">
+        <span className="inline-flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-400 to-violet-500 text-white">
+          <ShieldCheck className="size-3.5" />
+        </span>
+        <span className="text-xs font-semibold">{brand.workspaceName}</span>
+      </Link>
+      <p className="text-[10px] uppercase tracking-[0.14em] text-neutral-400">
+        {brand.subtitle ?? "Loucels"}
+      </p>
+    </div>
+  );
+}

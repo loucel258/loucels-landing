@@ -2,8 +2,10 @@
 
 import { motion } from "framer-motion";
 import { ArrowUpRight, Sparkles } from "lucide-react";
-import { siteConfig } from "@/lib/site-config";
+import { useEffect, useRef } from "react";
 import { Cluster3D } from "@/components/hero/cluster-3d";
+import { Magnetic } from "@/components/motion/magnetic";
+import { BookViaChatButton } from "@/components/chat/book-via-chat-button";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 
 /**
@@ -16,17 +18,69 @@ import type { Dictionary } from "@/i18n/dictionaries/en";
  * div for <Image src={...} /> inside the card.
  */
 
-const headlineVariants = {
-  hidden: { opacity: 0, y: 28, filter: "blur(12px)" },
+const wordVariants = {
+  hidden: { opacity: 0, y: 18, filter: "blur(8px)" },
   visible: { opacity: 1, y: 0, filter: "blur(0px)" },
 };
 
 export function Hero({ dict }: { dict: Dictionary }) {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    let raf = 0;
+    let tx = 50;
+    let ty = 50;
+    let cx = 50;
+    let cy = 50;
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width) * 100;
+      ty = ((e.clientY - r.top) / r.height) * 100;
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    const tick = () => {
+      cx += (tx - cx) * 0.08;
+      cy += (ty - cy) * 0.08;
+      el.style.setProperty("--cursor-x", `${cx}%`);
+      el.style.setProperty("--cursor-y", `${cy}%`);
+      if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        raf = 0;
+      }
+    };
+    el.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      el.removeEventListener("pointermove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="top"
       className="relative isolate min-h-[100svh] overflow-hidden pt-32 md:pt-36"
+      style={
+        { "--cursor-x": "50%", "--cursor-y": "50%" } as React.CSSProperties
+      }
     >
+      {/* Cursor-reactive gradient — eased follow, sits below dot grid */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-[1] opacity-60 mix-blend-screen"
+        style={{
+          background:
+            "radial-gradient(600px circle at var(--cursor-x) var(--cursor-y), color-mix(in oklab, var(--accent-cyan) 22%, transparent), transparent 60%)",
+        }}
+      />
       {/* Ambient — sutil dot grid */}
       <div
         aria-hidden
@@ -91,61 +145,73 @@ export function Hero({ dict }: { dict: Dictionary }) {
               </span>
             </motion.div>
 
-            {/* Massive headline */}
-            <motion.h1
-              className="text-editorial-hero max-w-[20ch] text-balance text-text-primary"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: {
-                    staggerChildren: 0.12,
-                    delayChildren: 0.35,
-                  },
-                },
-              }}
-            >
-              {dict.hero.titleLines.map((line, i) => {
-                const isLast = i === dict.hero.titleLines.length - 1;
-                return (
-                  <motion.span
-                    key={i}
-                    variants={headlineVariants}
-                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                    className="block"
-                  >
-                    {isLast ? (
-                      <span>
-                        {line.split(" ").slice(0, -1).join(" ")}{" "}
-                        <span className="relative inline-block">
-                          <span className="text-cyan">
-                            {line.split(" ").slice(-1)[0]}
-                          </span>
-                          <motion.span
-                            aria-hidden
-                            className="absolute -bottom-1 left-0 h-[3px] w-full bg-cyan"
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{
-                              duration: 0.7,
-                              delay: 1.5,
-                              ease: [0.16, 1, 0.3, 1],
-                            }}
-                            style={{
-                              transformOrigin: "left",
-                              boxShadow: "0 0 12px var(--accent-cyan)",
-                            }}
-                          />
-                        </span>
+            {/* Massive headline — word-by-word cascade */}
+            {(() => {
+              // Global word counter so cascade flows across all lines, not
+              // resetting per line. Last line's final word is highlighted cyan.
+              let wordIdx = 0;
+              const baseDelay = 0.35;
+              const stepDelay = 0.07;
+              return (
+                <h1 className="text-editorial-hero max-w-[20ch] text-balance text-text-primary">
+                  {dict.hero.titleLines.map((line, lineI) => {
+                    const isLastLine =
+                      lineI === dict.hero.titleLines.length - 1;
+                    const words = line.split(" ");
+                    return (
+                      <span key={lineI} className="block">
+                        {words.map((word, wI) => {
+                          const isLastWord =
+                            isLastLine && wI === words.length - 1;
+                          const myDelay = baseDelay + wordIdx * stepDelay;
+                          wordIdx += 1;
+                          return (
+                            <span
+                              key={wI}
+                              className="relative inline-block"
+                              style={{ marginRight: "0.28em" }}
+                            >
+                              <motion.span
+                                className={`inline-block ${
+                                  isLastWord ? "text-cyan" : ""
+                                }`}
+                                variants={wordVariants}
+                                initial="hidden"
+                                animate="visible"
+                                transition={{
+                                  duration: 0.7,
+                                  delay: myDelay,
+                                  ease: [0.16, 1, 0.3, 1],
+                                }}
+                              >
+                                {word}
+                              </motion.span>
+                              {isLastWord && (
+                                <motion.span
+                                  aria-hidden
+                                  className="absolute -bottom-1 left-0 h-[3px] w-full bg-cyan"
+                                  initial={{ scaleX: 0 }}
+                                  animate={{ scaleX: 1 }}
+                                  transition={{
+                                    duration: 0.7,
+                                    delay: myDelay + 0.5,
+                                    ease: [0.16, 1, 0.3, 1],
+                                  }}
+                                  style={{
+                                    transformOrigin: "left",
+                                    boxShadow: "0 0 12px var(--accent-cyan)",
+                                  }}
+                                />
+                              )}
+                            </span>
+                          );
+                        })}
                       </span>
-                    ) : (
-                      line
-                    )}
-                  </motion.span>
-                );
-              })}
-            </motion.h1>
+                    );
+                  })}
+                </h1>
+              );
+            })()}
 
             {/* Subtitle */}
             <motion.p
@@ -171,18 +237,15 @@ export function Hero({ dict }: { dict: Dictionary }) {
                 ease: [0.16, 1, 0.3, 1],
               }}
             >
-              <a
-                href={siteConfig.calUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex h-13 w-fit items-center gap-3 rounded-xl border border-cyan/40 bg-cyan/10 px-7 py-3.5 text-[14px] font-semibold text-cyan transition-all duration-300 hover:border-cyan hover:bg-cyan hover:text-bg hover:shadow-[0_0_40px_-4px_var(--accent-cyan-glow)]"
-              >
-                <span>{dict.hero.primaryCta}</span>
-                <ArrowUpRight
-                  className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  strokeWidth={2}
-                />
-              </a>
+              <Magnetic strength={0.3}>
+                <BookViaChatButton className="group inline-flex h-13 w-fit items-center gap-3 rounded-xl border border-cyan/40 bg-cyan/10 px-7 py-3.5 text-[14px] font-semibold text-cyan transition-all duration-300 hover:border-cyan hover:bg-cyan hover:text-bg hover:shadow-[0_0_40px_-4px_var(--accent-cyan-glow)]">
+                  <span>{dict.hero.primaryCta}</span>
+                  <ArrowUpRight
+                    className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    strokeWidth={2}
+                  />
+                </BookViaChatButton>
+              </Magnetic>
             </motion.div>
 
           </div>

@@ -83,7 +83,7 @@ export default async function IntegrationControlPage({
         </div>
         <SubpageHero
           data={data.hero}
-          imageSrc="/hero/10-integration-control.webp"
+          imageSrc="/hero/06-whyus-v2.webp"
           accent="violet"
           secondaryGlow="cyan"
           trustStrip={data.hero.trustStrip}
@@ -91,7 +91,7 @@ export default async function IntegrationControlPage({
         <SubpageProblem data={data.problem} />
         <SubpageServices data={data.services} accent="violet" />
         <SubpageProcess data={data.process} accent="violet" />
-        <SubpageWhy data={data.why} />
+        <SubpageWhy data={data.why} accent="violet" />
         <CTA dict={dict} />
         <Footer dict={dict} locale={locale} />
       </main>
