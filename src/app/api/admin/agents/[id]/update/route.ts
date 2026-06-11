@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
  *   - an audit entry per config change (governance-first, also for us)
  */
 
-const KNOWN_TOOLS = ["request_booking", "escalate_to_human"] as const;
+const KNOWN_TOOLS = ["request_booking", "escalate_to_human", "request_human_approval"] as const;
 const STATUSES = ["designing", "shadow_mode", "uat", "live", "paused", "archived"] as const;
 
 const InputSchema = z.object({

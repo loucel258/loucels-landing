@@ -61,6 +61,7 @@ function buildApprovalLabels(lang: PortalLang): ApprovalLabels {
     rejected: t(lang, "ra.rejected"),
     rejectedDesc: t(lang, "ra.rejected_desc"),
     errorText: t(lang, "ra.error"),
+    editPiiError: t(lang, "ra.error_edit_pii"),
   };
 }
 

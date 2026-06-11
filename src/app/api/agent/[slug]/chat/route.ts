@@ -15,9 +15,14 @@ import { isBudgetExhausted, recordUsage } from "@/lib/agents/budget";
 import {
   REQUEST_BOOKING_TOOL,
   ESCALATE_TO_HUMAN_TOOL,
+  REQUEST_HUMAN_APPROVAL_TOOL,
+  APPROVAL_RISK_SCORE,
   handleRequestBooking,
   handleEscalateToHuman,
+  handleRequestHumanApproval,
 } from "@/lib/chat/tools";
+import { propose } from "@/lib/hitl/queue";
+import { sendInternalAlert } from "@/lib/notify/resend";
 import { insertLead } from "@/lib/leads/leads";
 import type { BookingPayload, ChatResponse } from "@/lib/chat/types";
 import { isLocale } from "@/i18n/config";
@@ -69,6 +74,13 @@ const EscalationInputSchema = z.object({
   email: z.string().email().max(200).optional(),
 });
 
+const ApprovalInputSchema = z.object({
+  actionType: z.enum(["send_quote", "send_refund", "reply_review", "send_message"]),
+  recipient: z.string().max(200).optional(),
+  proposedText: z.string().min(1).max(4000),
+  rationale: z.string().min(1).max(500),
+});
+
 const HIGH_RISK_PII = new Set([
   "SSN", "ITIN", "EIN", "CREDIT_CARD", "BANK_ACCOUNT",
   "API_KEY", "AWS_KEY", "ANTHROPIC_KEY",
@@ -77,6 +89,7 @@ const HIGH_RISK_PII = new Set([
 const TOOL_LOOKUP: Record<string, Anthropic.Tool> = {
   request_booking: REQUEST_BOOKING_TOOL,
   escalate_to_human: ESCALATE_TO_HUMAN_TOOL,
+  request_human_approval: REQUEST_HUMAN_APPROVAL_TOOL,
 };
 
 type ErrorReason =
@@ -169,6 +182,15 @@ export async function OPTIONS(
   });
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function getClientIp(req: Request): string {
   // Prefer Vercel's authoritative client IP header — it can't be spoofed
   // by the caller because Vercel sets it at the edge.
@@ -232,7 +254,7 @@ async function audit(
       redaction_count: fields.redactionCount,
     });
   } catch (err) {
-    // eslint-disable-next-line no-console
+     
     console.warn("[agent-chat] audit write failed:", err);
   }
 }
@@ -447,7 +469,11 @@ export async function POST(
     contentHash: sha256Hex(lastUserMessage.content),
   });
 
-  // 10. First Claude call
+  // 10. First Claude call. The shared client's 8s default timeout is
+  //     tuned for the DLP classifiers; a full conversational reply with
+  //     a long persona needs more headroom, so this path overrides it
+  //     per-request (SDK still retries once on 429/5xx within each try).
+  const CHAT_TIMEOUT_MS = 25_000;
   try {
     const first = await client.messages.create({
       model: process.env.ANTHROPIC_MODEL ?? "claude-haiku-4-5-20251001",
@@ -458,7 +484,7 @@ export async function POST(
         role: m.role as "user" | "assistant",
         content: m.content,
       })),
-    });
+    }, { timeout: CHAT_TIMEOUT_MS });
 
     // Track spend against the monthly budget regardless of which branch
     // the reply takes below.
@@ -466,6 +492,7 @@ export async function POST(
       agent.workspaceId,
       first.usage?.input_tokens ?? 0,
       first.usage?.output_tokens ?? 0,
+      agent.monthlyTokenBudget,
     );
 
     const toolUseRaw = first.content.find(
@@ -560,6 +587,226 @@ export async function POST(
       return NextResponse.json({ ok: true, reply: acknowledgement }, { headers: cors });
     }
 
+    // ---- Tool: request_human_approval (HITL gate) ----
+    if (toolUse && toolUse.name === "request_human_approval") {
+      let approval;
+      try {
+        approval = ApprovalInputSchema.parse(toolUse.input);
+      } catch {
+        // Schema fail → fall back to whatever text the model produced
+        const text = first.content
+          .filter((b): b is Extract<typeof b, { type: "text" }> => b.type === "text")
+          .map((b) => b.text)
+          .join("\n")
+          .trim();
+        const reply = text || (agent.language === "es" ? "Un momento por favor." : "One moment please.");
+        const interrupted = await checkPauseBeforeReply(agent, sessionId, ip, parsed.locale, cors);
+        if (interrupted) return interrupted;
+        await audit(agent, sessionId, ip, {
+          decision: "ALLOW",
+          reason: "assistant_reply",
+          contentHash: sha256Hex(reply),
+          tokensIn: first.usage?.input_tokens ?? null,
+          tokensOut: first.usage?.output_tokens ?? null,
+        });
+        await persistTurn({
+          workspaceId: agent.workspaceId,
+          sessionId,
+          userText: lastUserMessage.content,
+          assistantText: reply,
+        });
+        return NextResponse.json({ ok: true, reply }, { headers: cors });
+      }
+
+      // Risk flags: the category itself + any PII found in the draft, so
+      // the owner sees "this quote contains a phone number" before
+      // approving. This is OUTBOUND text (ships if approved), so it gets
+      // both DLP layers: regex + Haiku, same as the inbound message.
+      const draftScan = sanitize(approval.proposedText);
+      const draftPii = new Set(
+        draftScan.redactions.map((r) => `pii:${String(r.type).toLowerCase()}`),
+      );
+      if (approval.proposedText.length >= 24) {
+        try {
+          const draftLayer2 = await sanitizeWithLLM(approval.proposedText);
+          if (draftLayer2.layer2Available) {
+            for (const r of draftLayer2.redactions) {
+              draftPii.add(`pii:${String(r.type).toLowerCase()}`);
+            }
+          }
+        } catch {
+          // Layer 2 best-effort; flags-only scan must never block the proposal
+        }
+      }
+
+      // Injection-surface flags — a visitor can manipulate the agent into
+      // drafting attacker-favorable content. Neither flag blocks (the
+      // owner is the gate); both render as chips on the portal card so
+      // the risk is visible BEFORE the approve click.
+      const warningFlags: string[] = [];
+      if (/https?:\/\/|www\./i.test(approval.proposedText)) {
+        warningFlags.push("contains_link");
+      }
+      if (approval.recipient?.includes("@")) {
+        // A recipient the visitor never typed in the conversation is the
+        // classic "send my refund to this other address" move.
+        const recipientLc = approval.recipient.toLowerCase();
+        const seenInConversation = parsed.messages.some(
+          (m) => m.role === "user" && m.content.toLowerCase().includes(recipientLc),
+        );
+        if (!seenInConversation) warningFlags.push("recipient_unverified");
+      }
+      // Warnings first so the card's chip row never truncates them away.
+      const riskFlags = [...warningFlags, approval.actionType, ...draftPii];
+
+      // REFUND REDIRECT GUARD — hard DENY, not a flag. Refunds are only
+      // ever issued back to the original payment method; a refund
+      // proposal pointing at a destination the visitor never typed in
+      // this conversation is the textbook redirect attack, so it never
+      // reaches the owner's queue at all. (Even legitimate-looking
+      // destinations don't change where the money goes — execution is
+      // always against the original transaction.)
+      if (approval.actionType === "send_refund" && warningFlags.includes("recipient_unverified")) {
+        await audit(agent, sessionId, ip, {
+          decision: "DENY",
+          blocked_by: "refund_redirect_blocked",
+          reason: `hitl_refund_redirect:recipient_not_in_conversation`,
+          contentHash: sha256Hex(approval.proposedText),
+          tokensIn: first.usage?.input_tokens ?? null,
+          tokensOut: first.usage?.output_tokens ?? null,
+        });
+        const refusal = agent.language === "es"
+          ? "Los reembolsos se emiten únicamente al método de pago original de la compra — no es posible enviarlos a otra tarjeta, cuenta o correo. Si corresponde un reembolso, el equipo lo procesará directamente sobre la transacción original."
+          : "Refunds are only ever issued back to the original payment method used for the purchase — they can't be sent to a different card, account, or email. If a refund applies, the team will process it directly against the original transaction.";
+        const interruptedRefund = await checkPauseBeforeReply(agent, sessionId, ip, parsed.locale, cors);
+        if (interruptedRefund) return interruptedRefund;
+        await persistTurn({
+          workspaceId: agent.workspaceId,
+          sessionId,
+          userText: lastUserMessage.content,
+          assistantText: refusal,
+          toolSummary: "Refund redirect attempt blocked",
+        });
+        return NextResponse.json({ ok: true, reply: refusal }, { headers: cors });
+      }
+
+      // Queue-flooding guards. The real risk isn't volume — it's approval
+      // fatigue: an owner staring at 30 junk proposals stops reading
+      // before clicking. Cap pending per workspace and collapse exact
+      // duplicates (same action + recipient still pending).
+      let skipInsert: "queue_cap" | "duplicate" | null = null;
+      const sbGuard = getServiceClient();
+      if (sbGuard) {
+        const { count } = await sbGuard
+          .from("pending_approvals")
+          .select("id", { count: "exact", head: true })
+          .eq("workspace_id", agent.workspaceId)
+          .eq("status", "pending");
+        if ((count ?? 0) >= 10) {
+          skipInsert = "queue_cap";
+        } else if (approval.recipient) {
+          const { data: dup } = await sbGuard
+            .from("pending_approvals")
+            .select("id")
+            .eq("workspace_id", agent.workspaceId)
+            .eq("status", "pending")
+            .eq("action_type", approval.actionType)
+            .eq("recipient", approval.recipient)
+            .limit(1)
+            .maybeSingle();
+          if (dup) skipInsert = "duplicate";
+        }
+      }
+
+      if (skipInsert) {
+        // Visitor gets the same honest ack either way — for a duplicate
+        // the original proposal already covers it; for a capped queue the
+        // audit row is the signal Steven monitors.
+        await audit(agent, sessionId, ip, {
+          decision: skipInsert === "queue_cap" ? "DENY" : "ALLOW",
+          blocked_by: skipInsert === "queue_cap" ? "hitl_queue_cap" : null,
+          reason: `hitl_proposal_${skipInsert}:${approval.actionType}`,
+          contentHash: sha256Hex(approval.proposedText),
+          tokensIn: first.usage?.input_tokens ?? null,
+          tokensOut: first.usage?.output_tokens ?? null,
+        });
+        const { acknowledgement } = handleRequestHumanApproval(approval, parsed.locale);
+        const interruptedSkip = await checkPauseBeforeReply(agent, sessionId, ip, parsed.locale, cors);
+        if (interruptedSkip) return interruptedSkip;
+        await persistTurn({
+          workspaceId: agent.workspaceId,
+          sessionId,
+          userText: lastUserMessage.content,
+          assistantText: acknowledgement,
+          toolSummary: `Approval proposal skipped (${skipInsert}): ${approval.actionType}`,
+        });
+        return NextResponse.json({ ok: true, reply: acknowledgement }, { headers: cors });
+      }
+
+      const proposal = await propose({
+        workspace_id: agent.workspaceId,
+        proposer_id: `agent:${agent.slug}`,
+        action_type: approval.actionType,
+        recipient: approval.recipient,
+        proposed_text: approval.proposedText,
+        risk_score: APPROVAL_RISK_SCORE[approval.actionType],
+        risk_flags: riskFlags,
+      });
+
+      if (proposal.ok) {
+        // The queue insert is the system of record; the alert is the
+        // wake-up call so a pending approval never sits unseen.
+        await sendInternalAlert({
+          subject: `[HITL] Agent ${agent.slug} proposed ${approval.actionType} — approval pending`,
+          bodyHtml: `
+            <p>The live agent <strong>${agent.slug}</strong> queued a <strong>${approval.actionType}</strong> for owner approval.</p>
+            <p><strong>Rationale:</strong> ${escapeHtml(approval.rationale)}</p>
+            <p><strong>Recipient:</strong> ${escapeHtml(approval.recipient ?? "—")}</p>
+            <p>The client decides from their portal's "Requires action" page.</p>
+            <p style="color:#888;font-size:11px;">Approval id: ${proposal.data.id} · session ${sessionId}</p>
+          `,
+        });
+      } else {
+        // Queue insert failed — don't lose the draft. Steven becomes the
+        // human in the loop via email so the visitor-facing promise
+        // ("a human will review this") stays true.
+         
+        console.warn("[agent-chat] hitl propose failed:", proposal.reason);
+        await sendInternalAlert({
+          subject: `[HITL FALLBACK] ${approval.actionType} from agent ${agent.slug} — queue insert FAILED`,
+          bodyHtml: `
+            <p>The approval queue insert failed (<code>${proposal.reason}</code>). Review this draft manually:</p>
+            <p><strong>Rationale:</strong> ${escapeHtml(approval.rationale)}</p>
+            <p><strong>Recipient:</strong> ${escapeHtml(approval.recipient ?? "—")}</p>
+            <pre style="background:#f5f5f5;padding:12px;border-radius:6px;white-space:pre-wrap;font-family:inherit;">${escapeHtml(approval.proposedText)}</pre>
+            <p style="color:#888;font-size:11px;">session ${sessionId}</p>
+          `,
+        });
+      }
+
+      const { acknowledgement } = handleRequestHumanApproval(approval, parsed.locale);
+
+      const interruptedApproval = await checkPauseBeforeReply(agent, sessionId, ip, parsed.locale, cors);
+      if (interruptedApproval) return interruptedApproval;
+      await audit(agent, sessionId, ip, {
+        decision: "ALLOW",
+        reason: proposal.ok
+          ? `hitl_proposed:${approval.actionType}`
+          : `hitl_proposed_fallback:${approval.actionType}`,
+        contentHash: sha256Hex(approval.proposedText),
+        tokensIn: first.usage?.input_tokens ?? null,
+        tokensOut: first.usage?.output_tokens ?? null,
+      });
+      await persistTurn({
+        workspaceId: agent.workspaceId,
+        sessionId,
+        userText: lastUserMessage.content,
+        assistantText: acknowledgement,
+        toolSummary: `Proposed ${approval.actionType} for owner approval`,
+      });
+      return NextResponse.json({ ok: true, reply: acknowledgement }, { headers: cors });
+    }
+
     // ---- No tool call OR unsupported tool ----
     if (!toolUse || toolUse.name !== "request_booking") {
       const text = first.content
@@ -632,12 +879,13 @@ export async function POST(
           ],
         },
       ],
-    });
+    }, { timeout: CHAT_TIMEOUT_MS });
 
     await recordUsage(
       agent.workspaceId,
       followUp.usage?.input_tokens ?? 0,
       followUp.usage?.output_tokens ?? 0,
+      agent.monthlyTokenBudget,
     );
 
     const followText = followUp.content

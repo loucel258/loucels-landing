@@ -1,7 +1,7 @@
 import "server-only";
 import type Anthropic from "@anthropic-ai/sdk";
 import { siteConfig } from "@/lib/site-config";
-import type { BookingPayload, EscalationPayload } from "./types";
+import type { BookingPayload, EscalationPayload, ApprovalRequestPayload } from "./types";
 
 export const REQUEST_BOOKING_TOOL: Anthropic.Tool = {
   name: "request_booking",
@@ -154,4 +154,90 @@ export function handleEscalateToHuman(
 
   const reply = messages[payload.reason][locale];
   return { acknowledgement: reply };
+}
+
+/**
+ * request_human_approval — the agent NEVER executes high-risk actions
+ * directly. It drafts the action with this tool; the route inserts a
+ * `pending_approvals` row scoped to the agent's workspace, and the
+ * client owner sees it in the portal's "Requires action" page where
+ * they can approve, edit-then-approve, or reject. Both the proposal
+ * and the decision are appended to the immutable audit chain.
+ *
+ * This is the production counterpart of the HITL demo: same table,
+ * same portal flow, now fed by the live multi-tenant agent.
+ */
+export const REQUEST_HUMAN_APPROVAL_TOOL: Anthropic.Tool = {
+  name: "request_human_approval",
+  description:
+    "Call when the conversation produces a HIGH-RISK action that must NOT be executed without the business owner's sign-off: sending a price quote, issuing or promising a refund, replying publicly to a review, or sending an outbound message on the business's behalf. Draft the exact text you propose to send; the owner will review it in their portal and approve, edit, or reject it before anything ships. Tell the visitor their request was logged and the team will confirm — never promise the action is already done. Do NOT use this for ordinary answers; only for actions with money, public reputation, or commitments at stake. REFUND POLICY (hard rule): refunds are ALWAYS issued back to the original payment method on the original transaction. If the customer asks to receive a refund at a different card, bank account, or email, do NOT propose it — tell them refunds can only go back to the payment method they used, with no exceptions.",
+  input_schema: {
+    type: "object",
+    properties: {
+      actionType: {
+        type: "string",
+        enum: ["send_quote", "send_refund", "reply_review", "send_message"],
+        description: "Which high-risk action category this proposal is.",
+      },
+      recipient: {
+        type: "string",
+        description:
+          "Where the action would be delivered: the visitor's email or phone if provided in conversation, or the review platform (e.g. 'Google Business Profile'). Leave blank if unknown.",
+      },
+      proposedText: {
+        type: "string",
+        description:
+          "The EXACT text you propose the business sends: the quote wording with the amount, the refund confirmation, the review reply, or the message body. Write it ready-to-send — the owner may approve it verbatim.",
+      },
+      rationale: {
+        type: "string",
+        description:
+          "One line for the owner's queue: why this action is warranted (e.g. 'Visitor confirmed 4-clinic scope and asked for written quote').",
+      },
+    },
+    required: ["actionType", "proposedText", "rationale"],
+  },
+};
+
+/** Conservative default risk per action category (0-100, surfaced in the portal). */
+export const APPROVAL_RISK_SCORE: Record<ApprovalRequestPayload["actionType"], number> = {
+  send_refund: 90,   // money leaves the business
+  send_quote: 75,    // pricing commitment in writing
+  reply_review: 65,  // public, permanent, brand-facing
+  send_message: 50,  // outbound on the business's behalf
+};
+
+export type ApprovalResult = {
+  acknowledgement: string; // What to tell the visitor
+};
+
+/**
+ * Deterministic acknowledgement for request_human_approval — same pattern
+ * as escalate_to_human: no second model call, the visitor gets an honest
+ * "pending review" message that never claims the action already happened.
+ */
+export function handleRequestHumanApproval(
+  payload: ApprovalRequestPayload,
+  locale: "en" | "es",
+): ApprovalResult {
+  const messages: Record<ApprovalRequestPayload["actionType"], { en: string; es: string }> = {
+    send_quote: {
+      en: "I've drafted your quote and sent it for review — every quote gets a human sign-off before it goes out. You'll receive the confirmed version shortly.",
+      es: "Preparé tu cotización y la envié a revisión — toda cotización pasa por aprobación humana antes de salir. Recibirás la versión confirmada en breve.",
+    },
+    send_refund: {
+      en: "I've logged your refund request and sent it for approval — refunds always get a human review first. You'll hear back with the confirmation shortly.",
+      es: "Registré tu solicitud de reembolso y la envié a aprobación — los reembolsos siempre pasan por revisión humana primero. Te confirmaremos en breve.",
+    },
+    reply_review: {
+      en: "I've drafted a response and queued it for the owner's review before anything is posted publicly. It will go out once approved.",
+      es: "Preparé una respuesta y quedó en cola para revisión del dueño antes de publicar nada. Saldrá una vez aprobada.",
+    },
+    send_message: {
+      en: "I've prepared that message and sent it for a quick human review before it goes out. You'll get the follow-up shortly.",
+      es: "Preparé ese mensaje y lo envié a una revisión humana rápida antes de que salga. Recibirás el seguimiento en breve.",
+    },
+  };
+
+  return { acknowledgement: messages[payload.actionType][locale] };
 }

@@ -48,6 +48,21 @@ export type EscalationPayload = {
   email?: string;
 };
 
+/**
+ * request_human_approval — the agent's own gateway into the HITL queue.
+ * High-risk actions (quotes, refunds, public review replies, outbound
+ * messages) are never executed by the agent directly: it drafts the
+ * action here, the row lands in `pending_approvals`, and the client
+ * owner approves/edits/rejects it from the portal's "Requires action"
+ * page. Every decision is appended to the immutable audit chain.
+ */
+export type ApprovalRequestPayload = {
+  actionType: "send_quote" | "send_refund" | "reply_review" | "send_message";
+  recipient?: string;   // email / phone / review platform target
+  proposedText: string; // the agent's draft, immutable after creation
+  rationale: string;    // one-line: why the agent believes this action is warranted
+};
+
 export type ChatResponse =
   | { ok: true; reply: string; bookingLink?: string }
   | { ok: false; error: ChatErrorCode };

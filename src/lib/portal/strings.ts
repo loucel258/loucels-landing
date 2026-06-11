@@ -130,7 +130,8 @@ const EN: Dict = {
   "ra.approved_stub_desc": "Loucels is executing — confirmation within 1 business hour.",
   "ra.rejected": "Rejected",
   "ra.rejected_desc": "Your agent will not send this action.",
-  "ra.error": "We couldn't process the action ({reason}). Try again or email steven@loucels.com.",
+  "ra.error": "We couldn't process the action ({reason}). Try again or email hello@loucels.com.",
+  "ra.error_edit_pii": "Your edit contains sensitive data ({types}) that can't go out by email. Remove it and try again.",
   "ra.recipient": "Recipient",
 
   // Customers
@@ -325,7 +326,8 @@ const ES: Dict = {
   "ra.approved_stub_desc": "Loucels lo está ejecutando; confirmación en 1 hora hábil.",
   "ra.rejected": "Rechazado",
   "ra.rejected_desc": "El agente no enviará esta acción.",
-  "ra.error": "No pudimos procesar la acción ({reason}). Inténtalo de nuevo o escribe a steven@loucels.com.",
+  "ra.error": "No pudimos procesar la acción ({reason}). Inténtalo de nuevo o escribe a hello@loucels.com.",
+  "ra.error_edit_pii": "Tu edición contiene datos sensibles ({types}) que no pueden salir por email. Quítalos e inténtalo de nuevo.",
   "ra.recipient": "Destinatario",
 
   "customers.title": "Clientes",

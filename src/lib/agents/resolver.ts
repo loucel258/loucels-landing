@@ -99,7 +99,7 @@ export async function resolveAgent(slug: string): Promise<ResolvedAgent | null> 
   // Whitelist tool names at the resolver boundary so we never propagate
   // a garbage value (DB typo, future SQL inject elsewhere) into the
   // prompt context or the Anthropic tool list.
-  const KNOWN_TOOLS = new Set(["request_booking", "escalate_to_human"]);
+  const KNOWN_TOOLS = new Set(["request_booking", "escalate_to_human", "request_human_approval"]);
   const toolsEnabled = (a.tools_enabled ?? []).filter((name) => KNOWN_TOOLS.has(name));
 
   const agent: ResolvedAgent = {

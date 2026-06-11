@@ -34,6 +34,7 @@ type AgentConfig = {
 const ALL_TOOLS = [
   { id: "request_booking", label: "Request booking (Cal.com link)" },
   { id: "escalate_to_human", label: "Escalate to human (HITL queue)" },
+  { id: "request_human_approval", label: "Request human approval (quotes/refunds/reviews → portal)" },
 ];
 
 const STATUS_FLOW: Array<{ key: string; label: string }> = [

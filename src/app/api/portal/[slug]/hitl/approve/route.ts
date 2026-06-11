@@ -61,25 +61,35 @@ export async function POST(
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 
-  const { data: agent } = await sb
+  // ALL of this client's agent workspaces — the approvals page lists
+  // approvals across every agent the engagement runs, so the decision
+  // endpoint must accept the same scope (not just the first agent).
+  const { data: agents } = await sb
     .from("client_agents")
     .select("workspace_id")
-    .eq("engagement_id", (access as { engagement_id: string }).engagement_id)
-    .limit(1)
-    .maybeSingle();
-  if (!agent) {
+    .eq("engagement_id", (access as { engagement_id: string }).engagement_id);
+  const workspaceIds = ((agents as Array<{ workspace_id: string }>) ?? []).map(
+    (a) => a.workspace_id,
+  );
+  if (workspaceIds.length === 0) {
     return NextResponse.json({ ok: false, error: "no_agent" }, { status: 404 });
   }
 
   const result = await approveAction({
     approvalId: body.approvalId,
-    workspaceId: (agent as { workspace_id: string }).workspace_id,
+    workspaceIds,
     decider: `portal:${slug}`,
     editedText: body.editedText,
     clientSlug: slug,
   });
 
   if (!result.ok) {
+    if (result.reason === "edit_introduces_pii") {
+      return NextResponse.json(
+        { ok: false, error: result.reason, piiTypes: result.piiTypes },
+        { status: 422 },
+      );
+    }
     const code = result.reason === "not_found" ? 404 : result.reason === "already_decided" ? 409 : 500;
     return NextResponse.json({ ok: false, error: result.reason }, { status: code });
   }

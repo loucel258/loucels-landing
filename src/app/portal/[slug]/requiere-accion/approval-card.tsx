@@ -15,7 +15,10 @@ type Approval = {
   created_at: string;
 };
 
-const REAL_TIME_ACTIONS = new Set(["send_message"]);
+// Mirrors REAL_HANDLERS in src/lib/portal/hitl.ts — email-deliverable
+// actions execute the moment the owner approves; the rest queue for
+// manual execution until the per-client integration exists.
+const REAL_TIME_ACTIONS = new Set(["send_message", "send_quote"]);
 
 /**
  * Labels arrive pre-translated from the server page (strings.ts is
@@ -47,6 +50,7 @@ export type ApprovalLabels = {
   rejected: string;
   rejectedDesc: string;
   errorText: string;
+  editPiiError: string;
 };
 
 export function ApprovalCard({
@@ -66,7 +70,7 @@ export function ApprovalCard({
     | null
     | { kind: "approved"; realtime: boolean }
     | { kind: "rejected" }
-    | { kind: "error"; message: string }
+    | { kind: "error"; message: string; verbatim?: boolean }
   >(null);
   const [pending, startTransition] = useTransition();
 
@@ -87,6 +91,17 @@ export function ApprovalCard({
       if (data.ok) {
         setResult({ kind: "approved", realtime: !!data.executedRealtime });
         startTransition(() => router.refresh());
+      } else if (data.error === "edit_introduces_pii") {
+        // The owner's edit pasted PII into outbound text — keep them in
+        // edit mode with a specific explanation instead of a generic error.
+        setResult({
+          kind: "error",
+          message: labels.editPiiError.replace(
+            "{types}",
+            (data.piiTypes ?? []).join(", ") || "PII",
+          ),
+          verbatim: true,
+        });
       } else {
         setResult({ kind: "error", message: data.error ?? "unknown" });
       }
@@ -183,7 +198,7 @@ export function ApprovalCard({
               {labels.riskMedium}
             </span>
           )}
-          {approval.risk_flags.slice(0, 3).map((f) => (
+          {approval.risk_flags.slice(0, 4).map((f) => (
             <span key={f} className="rounded-md bg-violet-50 px-1.5 py-0.5 text-[10px] font-medium text-violet-700">
               {f}
             </span>
@@ -317,7 +332,9 @@ export function ApprovalCard({
 
         {result?.kind === "error" && (
           <p className="mt-2 text-xs text-rose-600">
-            {labels.errorText.replace("{reason}", result.message)}
+            {result.verbatim
+              ? result.message
+              : labels.errorText.replace("{reason}", result.message)}
           </p>
         )}
       </footer>

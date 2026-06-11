@@ -55,17 +55,21 @@ export async function POST(
     .maybeSingle();
   if (!access) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
 
-  const { data: agent } = await sb
+  // Same multi-agent scope as the approve endpoint.
+  const { data: agents } = await sb
     .from("client_agents")
     .select("workspace_id")
-    .eq("engagement_id", (access as { engagement_id: string }).engagement_id)
-    .limit(1)
-    .maybeSingle();
-  if (!agent) return NextResponse.json({ ok: false, error: "no_agent" }, { status: 404 });
+    .eq("engagement_id", (access as { engagement_id: string }).engagement_id);
+  const workspaceIds = ((agents as Array<{ workspace_id: string }>) ?? []).map(
+    (a) => a.workspace_id,
+  );
+  if (workspaceIds.length === 0) {
+    return NextResponse.json({ ok: false, error: "no_agent" }, { status: 404 });
+  }
 
   const result = await rejectAction({
     approvalId: body.approvalId,
-    workspaceId: (agent as { workspace_id: string }).workspace_id,
+    workspaceIds,
     decider: `portal:${slug}`,
     reason: body.reason,
     clientSlug: slug,
