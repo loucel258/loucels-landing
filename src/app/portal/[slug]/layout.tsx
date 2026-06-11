@@ -158,7 +158,7 @@ export default async function PortalLayout({
           prefix: true,
         },
         {
-          href: `mailto:steven@loucels.com`,
+          href: `mailto:hello@loucels.com`,
           label: t(lang, "nav.support"),
           icon: <HelpCircle className="size-4" />,
           match: "_never_",

@@ -230,7 +230,7 @@ function BillingTab({
             />
           </dl>
           <a
-            href="mailto:steven@loucels.com?subject=Update%20my%20account%20info"
+            href="mailto:hello@loucels.com?subject=Update%20my%20account%20info"
             className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-200"
           >
             <Mail className="size-3.5" /> {t(lang, "settings.account_update")}

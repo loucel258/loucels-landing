@@ -33,10 +33,10 @@ export default function PortalError({
           Your agent keeps working and nothing is lost. Try again, and if it
           persists email{" "}
           <a
-            href="mailto:steven@loucels.com"
+            href="mailto:hello@loucels.com"
             className="font-medium text-cyan-700 underline underline-offset-2"
           >
-            steven@loucels.com
+            hello@loucels.com
           </a>
           .
         </p>

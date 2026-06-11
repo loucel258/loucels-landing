@@ -21,8 +21,8 @@ export function ServiceUnavailable() {
           We can&apos;t reach your data right now. Your agent keeps working and
           nothing is lost; this page will recover on its own. If it persists,
           email{" "}
-          <a href="mailto:steven@loucels.com" className="font-medium text-cyan-700 underline underline-offset-2">
-            steven@loucels.com
+          <a href="mailto:hello@loucels.com" className="font-medium text-cyan-700 underline underline-offset-2">
+            hello@loucels.com
           </a>
           .
         </p>

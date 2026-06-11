@@ -10,8 +10,8 @@ import { timingSafeEqual } from "node:crypto";
  */
 
 const RESEND_API_URL = "https://api.resend.com/emails";
-const FROM_DEFAULT = "Steven @ Loucels <steven@loucels.com>";
-const INTERNAL_INBOX = "steven@loucels.com";
+const FROM_DEFAULT = "Steven @ Loucels <hello@loucels.com>";
+const INTERNAL_INBOX = "hello@loucels.com";
 
 export type SendEmailInput = {
   to: string | string[];

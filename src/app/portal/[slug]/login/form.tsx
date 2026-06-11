@@ -23,7 +23,7 @@ export function PortalLoginForm({ slug }: { slug: string }) {
       }
       if (res.status === 429) setError("Too many attempts. Please try again in a few minutes.");
       else if (res.status === 401) setError("That passcode doesn't match. Double-check the message Loucels sent you.");
-      else setError("We couldn't sign you in. Try again or email steven@loucels.com.");
+      else setError("We couldn't sign you in. Try again or email hello@loucels.com.");
     } catch {
       setError("Network error. Check your connection and try again.");
     } finally {
