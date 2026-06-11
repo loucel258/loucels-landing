@@ -7,7 +7,8 @@ import {
   DollarSign,
   Activity,
   ShieldCheck,
-  Zap,
+  Clock,
+  Moon,
 } from "lucide-react";
 import { isPortalAuthed } from "@/lib/portal/auth";
 import { getServiceClient } from "@/lib/audit/client";
@@ -17,8 +18,7 @@ import { Panel, PanelGrid } from "@/components/workspace/panel";
 import { Metric, MetricRow } from "@/components/workspace/metric";
 import { Sparkline, BarStrip } from "@/components/workspace/sparkline";
 import { EmptyPanel } from "@/components/workspace/empty-panel";
-import { getCostBreakdown, formatUsdPrecise } from "@/lib/admin/costs";
-import { formatUsdInt, formatShortDate, daysAgo } from "@/lib/admin/format";
+import { formatUsdInt, daysAgo } from "@/lib/admin/format";
 import type { AgentRow, AuditLogRow } from "@/app/admin/engagement/[id]/types";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +55,7 @@ export default async function PortalAgentDetailPage({
     integrations: Record<string, unknown> | null;
     baseline_escalation_rate_pct: number | null;
     baseline_avg_response_ms: number | null;
+    minutes_saved_per_conversation: number | null;
   };
 
   const isLive = a.status === "live";
@@ -72,17 +73,7 @@ export default async function PortalAgentDetailPage({
         .limit(300)
     : Promise.resolve({ data: [] as AuditLogRow[] });
 
-  const cost30dPromise = isLive
-    ? getCostBreakdown(sb, a.workspace_id, "30d")
-    : Promise.resolve({
-        inputTokens: 0,
-        outputTokens: 0,
-        estimatedUsd: 0,
-        conversations: 0,
-        trendDaily: [],
-      });
-
-  const [auditRes, cost30d] = await Promise.all([auditQuery, cost30dPromise]);
+  const auditRes = await auditQuery;
   const audit = (auditRes.data as AuditLogRow[]) ?? [];
 
   const sessions = new Set<string>();
@@ -94,7 +85,42 @@ export default async function PortalAgentDetailPage({
   }
   const resolutionRate =
     totalSessions > 0 ? ((totalSessions - escalatedSessions.size) / totalSessions) * 100 : 0;
-  const trendData = cost30d.trendDaily.map((p) => p.usd);
+
+  // Value metrics the OWNER cares about — never infra cost (we bill a
+  // flat retainer; spend is internal and lives in /admin only).
+  const minutesPerConv = a.minutes_saved_per_conversation ?? 5;
+  const hoursRecovered = (totalSessions * minutesPerConv) / 60;
+
+  // After-hours coverage: sessions whose FIRST event landed outside
+  // 8am-6pm Eastern (our ICP is Florida SMBs). The strongest retainer
+  // argument there is: these are leads nobody was awake to answer.
+  const firstSeen = new Map<string, string>();
+  for (const r of audit) {
+    if (!r.user_id) continue;
+    const prev = firstSeen.get(r.user_id);
+    if (!prev || r.inserted_at < prev) firstSeen.set(r.user_id, r.inserted_at);
+  }
+  const hourFmt = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    hour12: false,
+    timeZone: "America/New_York",
+  });
+  let afterHoursSessions = 0;
+  for (const ts of firstSeen.values()) {
+    const h = Number(hourFmt.format(new Date(ts)));
+    if (h < 8 || h >= 18) afterHoursSessions++;
+  }
+  const afterHoursPct = totalSessions > 0 ? (afterHoursSessions / totalSessions) * 100 : 0;
+
+  // Daily activity trend (events per day) straight from the audit chain.
+  const dayCounts = new Map<string, number>();
+  for (const r of audit) {
+    const day = r.inserted_at.slice(0, 10);
+    dayCounts.set(day, (dayCounts.get(day) ?? 0) + 1);
+  }
+  const trendData = [...dayCounts.entries()]
+    .sort(([d1], [d2]) => (d1 < d2 ? -1 : 1))
+    .map(([, n]) => n);
 
   return (
     <div className="space-y-7">
@@ -147,21 +173,22 @@ export default async function PortalAgentDetailPage({
           icon={<ShieldCheck className="size-4" />}
         />
         <Metric
-          label="Est. monthly spend"
-          value={formatUsdPrecise(cost30d.estimatedUsd)}
-          sub="Anthropic tokens · 30d"
+          label="Hours recovered · 30d"
+          value={hoursRecovered.toFixed(1)}
+          sub={`~${minutesPerConv} min saved per conversation`}
           tone="violet"
-          icon={<Zap className="size-4" />}
+          icon={<Clock className="size-4" />}
         />
         <Metric
-          label="Avg cost / conversation"
-          value={
-            cost30d.conversations > 0
-              ? formatUsdPrecise(cost30d.estimatedUsd / cost30d.conversations)
-              : "$0"
+          label="After-hours leads · 30d"
+          value={afterHoursSessions}
+          sub={
+            totalSessions > 0
+              ? `${afterHoursPct.toFixed(0)}% arrived while you were closed`
+              : "Outside 8am-6pm ET"
           }
-          tone="neutral"
-          icon={<Activity className="size-4" />}
+          tone={afterHoursSessions > 0 ? "emerald" : "neutral"}
+          icon={<Moon className="size-4" />}
         />
       </MetricRow>
 
@@ -224,7 +251,7 @@ export default async function PortalAgentDetailPage({
           )}
         </Panel>
 
-        <Panel title="Daily spend trend" eyebrow="30 days">
+        <Panel title="Daily activity" eyebrow="30 days">
           {trendData.length >= 2 ? (
             <div className="text-cyan-600">
               <Sparkline data={trendData} width={420} height={70} fill="#06B6D4" />
@@ -233,7 +260,7 @@ export default async function PortalAgentDetailPage({
             <p className="text-xs italic text-neutral-500">Not enough data yet to draw a trend.</p>
           )}
           <p className="mt-3 text-[10px] text-neutral-500">
-            Our infra cost — you pay the flat retainer. This panel exists so you see exactly what your dollar buys.
+            Agent decisions per day, pulled live from your audit chain. Every point is verifiable.
           </p>
         </Panel>
 

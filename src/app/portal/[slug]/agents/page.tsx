@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
-import { Bot, ExternalLink, Activity, MessageSquare, DollarSign } from "lucide-react";
+import { Bot, ExternalLink, Clock, MessageSquare, DollarSign } from "lucide-react";
 import { isPortalAuthed } from "@/lib/portal/auth";
 import { getServiceClient } from "@/lib/audit/client";
 import { ServiceUnavailable } from "@/components/workspace/service-unavailable";
@@ -8,7 +8,7 @@ import { HeroCard } from "@/components/shell/hero-card";
 import { Panel } from "@/components/workspace/panel";
 import { Metric, MetricRow } from "@/components/workspace/metric";
 import { EmptyPanel } from "@/components/workspace/empty-panel";
-import { getCostBreakdown, formatUsdPrecise } from "@/lib/admin/costs";
+import { getCostBreakdown } from "@/lib/admin/costs";
 import { formatUsdInt, daysAgo } from "@/lib/admin/format";
 import type { AgentRow } from "@/app/admin/engagement/[id]/types";
 
@@ -37,7 +37,7 @@ export default async function PortalAgentsPage({
 
   const { data: agents } = await sb
     .from("client_agents")
-    .select("id, name, agent_type, status, workspace_id, monthly_retainer_cents, retainer_active, live_started_at")
+    .select("id, name, agent_type, status, workspace_id, monthly_retainer_cents, retainer_active, live_started_at, minutes_saved_per_conversation")
     .eq("engagement_id", engagementId);
 
   const list = (agents as AgentRow[]) ?? [];
@@ -50,6 +50,15 @@ export default async function PortalAgentsPage({
     }),
   );
   const costByAgent = new Map(costEntries);
+
+  // Hours-recovered per agent: conversations x minutes saved. We NEVER
+  // show infra spend in the portal — the retainer is flat and our token
+  // cost is internal (it lives in /admin only).
+  const minutesFor = (agent: AgentRow & { minutes_saved_per_conversation?: number | null }) =>
+    agent.minutes_saved_per_conversation ?? 5;
+  const hoursFor = (agent: AgentRow & { minutes_saved_per_conversation?: number | null }) =>
+    ((costByAgent.get(agent.id)?.conversations ?? 0) * minutesFor(agent)) / 60;
+  const totalHours = list.reduce((sum, a) => sum + hoursFor(a), 0);
 
   const totalMonthlyRetainer = list.reduce(
     (sum, a) => sum + (a.retainer_active ? a.monthly_retainer_cents : 0),
@@ -64,7 +73,7 @@ export default async function PortalAgentsPage({
         title="Agents at a glance"
         description={
           <>
-            Each agent below runs against your stack — your Twilio, your CRM, your booking tool. Click any agent to see its conversations, costs, and what powers it.
+            Each agent below runs against your stack — your Twilio, your CRM, your booking tool. Click any agent to see its conversations, outcomes, and what powers it.
           </>
         }
         actions={
@@ -99,13 +108,11 @@ export default async function PortalAgentsPage({
           icon={<MessageSquare className="size-4" />}
         />
         <Metric
-          label="30d est. spend"
-          value={formatUsdPrecise(
-            [...costByAgent.values()].reduce((sum, c) => sum + c.estimatedUsd, 0),
-          )}
-          sub="Anthropic tokens"
-          tone="neutral"
-          icon={<Activity className="size-4" />}
+          label="Hours recovered · 30d"
+          value={totalHours.toFixed(1)}
+          sub="Work your team didn't do"
+          tone="emerald"
+          icon={<Clock className="size-4" />}
         />
       </MetricRow>
 
@@ -114,7 +121,7 @@ export default async function PortalAgentsPage({
           <EmptyPanel
             icon={<Bot className="size-5" />}
             title="No agents deployed yet"
-            description="When Loucels deploys an agent for you, it'll appear here with full transparency on what it does, what it costs, and where it lives."
+            description="When Loucels deploys an agent for you, it'll appear here with full transparency on what it does, the outcomes it drives, and where it lives."
           />
         </Panel>
       ) : (
@@ -163,9 +170,9 @@ export default async function PortalAgentsPage({
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-[10px] uppercase tracking-wider text-neutral-500">Est. spend · 30d</dt>
+                      <dt className="text-[10px] uppercase tracking-wider text-neutral-500">Hours saved · 30d</dt>
                       <dd className="mt-0.5 font-semibold tabular-nums text-neutral-900">
-                        {formatUsdPrecise(cost?.estimatedUsd ?? 0)}
+                        {hoursFor(a).toFixed(1)}
                       </dd>
                     </div>
                     <div>
