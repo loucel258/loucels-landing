@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import Lenis from "@studio-freight/lenis";
+import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -21,9 +21,14 @@ export function SmoothScroll() {
     ).matches;
     if (reduced) return;
 
+    // lerp mode instead of duration+easing: trackpads emit hundreds of
+    // fine-grained wheel events with their own OS inertia. A fixed
+    // 1s-duration ease on top double-smooths that input — the scroll
+    // feels ignored, then the accumulated momentum dumps all at once.
+    // lerp applies a per-frame fraction, so the page tracks the fingers
+    // almost 1:1 while still feeling buttery on discrete mouse wheels.
     const lenis = new Lenis({
-      duration: 1.0,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.14,
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.2,
@@ -32,10 +37,15 @@ export function SmoothScroll() {
     // Tell ScrollTrigger to update when Lenis scrolls
     lenis.on("scroll", ScrollTrigger.update);
 
-    // Drive Lenis with GSAP ticker so both share one rAF loop
-    gsap.ticker.add((time) => {
+    // Drive Lenis with GSAP ticker so both share one rAF loop.
+    // The callback MUST be removed on cleanup: without it, StrictMode
+    // double-mount and HMR remounts stack tickers that each call
+    // lenis.raf() per frame — the scroll integrates 2-3x per frame and
+    // trackpad input turns into "ignored, then jumps" jank.
+    const onTick = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
+    gsap.ticker.add(onTick);
     gsap.ticker.lagSmoothing(0);
 
     // ScrollTrigger uses Lenis's scroll value
@@ -60,6 +70,7 @@ export function SmoothScroll() {
     ScrollTrigger.refresh();
 
     return () => {
+      gsap.ticker.remove(onTick);
       lenis.destroy();
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
