@@ -53,6 +53,7 @@
   }
 
   var SESSION_KEY = "loucels-session-" + slug;
+  var HISTORY_KEY = "loucels-chat-" + slug;
   var sessionId =
     sessionStorage.getItem(SESSION_KEY) ||
     "s_" +
@@ -67,9 +68,41 @@
     greetingMessage: null,
     language: "en",
   };
-  var messages = []; // [{ role: "user" | "assistant", content }]
+  // Conversation history persists in sessionStorage (same lifetime as
+  // the sessionId: survives refresh and in-site navigation, dies with
+  // the tab). Without this, a refresh mid-conversation gave the agent
+  // total amnesia — the context window is client-held.
+  var messages = loadHistory(); // [{ role: "user" | "assistant", content }]
   var isOpen = false;
   var isSending = false;
+
+  function loadHistory() {
+    try {
+      var raw = sessionStorage.getItem(HISTORY_KEY);
+      if (!raw) return [];
+      var parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter(function (m) {
+          return (
+            m &&
+            (m.role === "user" || m.role === "assistant") &&
+            typeof m.content === "string"
+          );
+        })
+        .slice(-40);
+    } catch {
+      return [];
+    }
+  }
+
+  function saveHistory() {
+    try {
+      sessionStorage.setItem(HISTORY_KEY, JSON.stringify(messages.slice(-40)));
+    } catch {
+      // Storage full or blocked — degrade to in-memory only.
+    }
+  }
 
   // ── DOM scaffolding (Shadow DOM root) ───────────────────────────────
   var host = document.createElement("div");
@@ -269,6 +302,11 @@
     if (config.greetingMessage) {
       pushBubble("assistant", config.greetingMessage);
     }
+
+    // Re-render the persisted conversation after a refresh / navigation.
+    for (var i = 0; i < messages.length; i++) {
+      pushBubble(messages[i].role, messages[i].content);
+    }
   }
 
   function togglePanel() {
@@ -432,6 +470,7 @@
     panel._refs.sendBtn.disabled = true;
     pushBubble("user", text);
     messages.push({ role: "user", content: text });
+    saveHistory();
     var typing = pushTyping();
 
     fetch(apiOrigin + "/api/agent/" + encodeURIComponent(slug) + "/chat", {
@@ -454,6 +493,7 @@
         if (resp.body && resp.body.ok && resp.body.reply) {
           pushBubble("assistant", resp.body.reply);
           messages.push({ role: "assistant", content: resp.body.reply });
+          saveHistory();
         } else {
           var errMsg = friendlyError(resp.status, resp.body && resp.body.error);
           var b = pushBubble("error", errMsg);
