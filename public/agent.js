@@ -76,6 +76,11 @@
   host.id = "loucels-agent-root";
   host.style.cssText =
     "position:fixed;bottom:0;right:0;z-index:2147483646;width:0;height:0;";
+  // Smooth-scroll libraries (Lenis, Locomotive) hijack wheel events at
+  // the page level and would scroll the HOST page instead of the chat.
+  // Lenis honors this attribute; shadow retargeting makes the host the
+  // visible event target, so marking it covers everything inside.
+  host.setAttribute("data-lenis-prevent", "");
   var shadow = host.attachShadow({ mode: "closed" });
   // Mount after DOMContentLoaded so we don't trip frameworks that
   // re-hydrate <body> on first paint.
@@ -139,7 +144,7 @@
       ".header-sub{font-size:11px;opacity:.85;margin-top:2px}" +
       ".close{background:rgba(255,255,255,.15);border:none;color:white;width:30px;height:30px;border-radius:9999px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}" +
       ".close:hover{background:rgba(255,255,255,.25)}" +
-      ".messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#fafafa}" +
+      ".messages{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:16px;display:flex;flex-direction:column;gap:10px;background:#fafafa}" +
       ".bubble{max-width:85%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word;animation:fade .18s ease}" +
       "@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}" +
       ".bubble.user{align-self:flex-end;background:" +
@@ -208,6 +213,24 @@
       t("Powered by Loucels — Trust Stack", "Hecho con Loucels — Trust Stack") +
       "</a></div>";
     shadow.appendChild(panel);
+
+    // Keep wheel/touch gestures inside the panel from bubbling out to
+    // page-level smooth-scroll listeners (belt and suspenders alongside
+    // the data-lenis-prevent attribute on the host).
+    panel.addEventListener(
+      "wheel",
+      function (e) {
+        e.stopPropagation();
+      },
+      { passive: true },
+    );
+    panel.addEventListener(
+      "touchmove",
+      function (e) {
+        e.stopPropagation();
+      },
+      { passive: true },
+    );
 
     panel.querySelector(".close").addEventListener("click", togglePanel);
     var form = panel.querySelector("#form");
@@ -325,8 +348,15 @@
       // User content always plain text — even if the user types HTML.
       bubble.textContent = text;
     }
-    panel._refs.messages.appendChild(bubble);
-    panel._refs.messages.scrollTop = panel._refs.messages.scrollHeight;
+    var msgs = panel._refs.messages;
+    msgs.appendChild(bubble);
+    if (role === "assistant") {
+      // Long replies: park the scroll at the TOP of the new message so
+      // the visitor reads from the start instead of landing at the end.
+      msgs.scrollTop = Math.max(0, bubble.offsetTop - msgs.offsetTop - 8);
+    } else {
+      msgs.scrollTop = msgs.scrollHeight;
+    }
     return bubble;
   }
 
