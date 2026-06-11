@@ -34,7 +34,7 @@ const InputSchema = z.object({
     .nullable()
     .optional(),
   allowedOrigins: z.array(z.string().max(300)).max(20).optional(),
-  systemPrompt: z.string().max(4000).nullable().optional(),
+  systemPrompt: z.string().max(12_000).nullable().optional(),
   greetingMessage: z.string().max(500).nullable().optional(),
   brandColor: z
     .string()

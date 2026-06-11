@@ -35,13 +35,19 @@
     return;
   }
 
+  // Optional UI language override. Useful for bilingual host sites that
+  // know the visitor's locale (e.g. /es/* routes) better than the agent
+  // config does.
+  var forcedLang = script.getAttribute("data-lang");
+  if (forcedLang !== "en" && forcedLang !== "es") forcedLang = null;
+
   // Derive API origin from the script src so the widget always talks to
   // the same host that served it (no cross-host surprises if the file is
   // mirrored on a CDN).
   var apiOrigin;
   try {
     apiOrigin = new URL(script.src).origin;
-  } catch (e) {
+  } catch {
     console.error("[loucels] could not parse script src");
     return;
   }
@@ -96,9 +102,10 @@
         config.name = data.config.name || config.name;
         config.brandColor = data.config.brandColor || config.brandColor;
         config.greetingMessage = data.config.greetingMessage || null;
-        config.language = data.config.language || "en";
+        config.language = forcedLang || data.config.language || "en";
       }
       render();
+      flushPending();
     })
     .catch(function (err) {
       // Don't surface to the page — log and skip render. This is the
@@ -242,9 +249,13 @@
   }
 
   function togglePanel() {
+    setPanelOpen(!isOpen);
+  }
+
+  function setPanelOpen(next) {
     var panel = shadow._panel;
     if (!panel) return;
-    isOpen = !isOpen;
+    isOpen = next;
     panel.classList.toggle("open", isOpen);
     if (isOpen) {
       setTimeout(function () {
@@ -252,6 +263,52 @@
       }, 200);
     }
   }
+
+  // ── Public API ──────────────────────────────────────────────────────
+  // Host pages can open the chat programmatically — e.g. a "Book via
+  // chat" CTA that pre-sends a booking-intent prompt. Two surfaces:
+  //
+  //   window.LoucelsAgent.open("optional prompt to auto-send")
+  //   window.dispatchEvent(new CustomEvent("loucels:open-chat",
+  //     { detail: { prompt: "..." } }))
+  //
+  // Calls made before the widget finishes hydrating are queued and
+  // flushed after first render.
+  var pendingPrompt = null;
+  var pendingOpen = false;
+
+  function openWithPrompt(prompt) {
+    if (!shadow._panel) {
+      pendingOpen = true;
+      if (prompt) pendingPrompt = String(prompt);
+      return;
+    }
+    setPanelOpen(true);
+    if (prompt && !isSending) sendMessage(String(prompt).slice(0, 4000));
+  }
+
+  function flushPending() {
+    if (pendingOpen) {
+      var p = pendingPrompt;
+      pendingOpen = false;
+      pendingPrompt = null;
+      openWithPrompt(p);
+    }
+  }
+
+  window.addEventListener("loucels:open-chat", function (e) {
+    var prompt = e && e.detail ? e.detail.prompt : null;
+    openWithPrompt(prompt);
+  });
+
+  window.LoucelsAgent = {
+    open: function (prompt) {
+      openWithPrompt(prompt);
+    },
+    close: function () {
+      setPanelOpen(false);
+    },
+  };
 
   function pushBubble(role, text) {
     var panel = shadow._panel;

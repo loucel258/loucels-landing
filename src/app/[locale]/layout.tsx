@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { locales, isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import Script from "next/script";
 import { siteConfig } from "@/lib/site-config";
 import { StructuredData } from "@/components/structured-data";
-import { ChatWidget } from "@/components/chat/chat-widget";
 
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -79,13 +79,23 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const dict = getDictionary(locale);
+  // Dogfood: the marketing site embeds the SAME widget we ship to
+  // clients, pointed at the multi-tenant agent. The slug is env-driven
+  // so dev uses the localhost-allowed agent while prod uses the real
+  // one. CTA buttons keep working: agent.js listens for the same
+  // `loucels:open-chat` event the legacy chat used.
+  const agentSlug = process.env.NEXT_PUBLIC_AGENT_SLUG ?? "loucels-landing";
 
   return (
     <>
       <StructuredData locale={locale} />
       {children}
-      <ChatWidget locale={locale} dict={dict.chat} />
+      <Script
+        src="/agent.js"
+        data-agent={agentSlug}
+        data-lang={locale}
+        strategy="afterInteractive"
+      />
     </>
   );
 }

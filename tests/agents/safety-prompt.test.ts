@@ -51,14 +51,14 @@ describe("buildAgentSystemPrompt", () => {
     expect(inner).toContain("[/persona]");
   });
 
-  it("caps a runaway persona at 4000 chars", () => {
+  it("caps a runaway persona at 12000 chars", () => {
     const huge = "x".repeat(20_000);
     const prompt = buildAgentSystemPrompt(makeAgent(huge), "en");
     // Search for the actual tag with newline — the instruction text above
     // it also mentions "<persona>" in prose.
     const personaStart = prompt.indexOf("<persona>\n") + "<persona>\n".length;
     const personaEnd = prompt.indexOf("\n</persona>");
-    expect(personaEnd - personaStart).toBeLessThanOrEqual(4000);
+    expect(personaEnd - personaStart).toBeLessThanOrEqual(12_000);
   });
 
   it("omits the persona block entirely when systemPrompt is null", () => {

@@ -31,7 +31,7 @@ const InputSchema = z.object({
   agentType: z.enum(AGENT_TYPES),
   slug: z.string().regex(/^[a-z0-9-]{2,80}$/, "lowercase letters, digits, dashes"),
   allowedOrigins: z.array(z.string().max(300)).max(20).default([]),
-  systemPrompt: z.string().max(4000).optional(),
+  systemPrompt: z.string().max(12_000).optional(),
   greetingMessage: z.string().max(500).optional(),
   brandColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   monthlyTokenBudget: z.number().int().min(0).max(1_000_000_000).optional(),

@@ -347,12 +347,12 @@ export function ConfigPanel({ agent, baseUrl }: { agent: AgentConfig; baseUrl: s
         <div className="space-y-4">
           <div>
             <label className={labelCls}>
-              Persona (system prompt) · {persona.length}/4000
+              Persona (system prompt) · {persona.length}/12000
             </label>
             <textarea
               className={`${inputCls} min-h-[160px] font-mono text-xs leading-relaxed`}
               value={persona}
-              maxLength={4000}
+              maxLength={12000}
               onChange={(e) => setPersona(e.target.value)}
               placeholder="You are the AI assistant for…"
             />

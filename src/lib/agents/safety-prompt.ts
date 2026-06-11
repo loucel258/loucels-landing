@@ -132,11 +132,15 @@ export function buildAgentSystemPrompt(agent: ResolvedAgent, locale: "en" | "es"
  * Defensive cleanup of a client-provided persona before it reaches the
  * system prompt. Strips literal `</persona>` so the client cannot break
  * out of our wrapper, and caps the length so a runaway prompt cannot
- * burn the context window.
+ * burn the context window. 12K chars ≈ 3K tokens: generous enough for a
+ * full service catalog + behavioral rules (the Loucels landing persona
+ * runs ~11K), while the per-tenant monthly budget bounds real spend.
  */
+export const PERSONA_MAX_CHARS = 12_000;
+
 function sanitizePersona(raw: string): string {
   const noEscape = raw.replace(/<\/persona>/gi, "[/persona]");
-  return noEscape.slice(0, 4000);
+  return noEscape.slice(0, PERSONA_MAX_CHARS);
 }
 
 function buildContextBlock(agent: ResolvedAgent, locale: "en" | "es"): string {
