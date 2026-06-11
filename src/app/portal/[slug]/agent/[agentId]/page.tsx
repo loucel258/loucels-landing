@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { isPortalAuthed } from "@/lib/portal/auth";
 import { getServiceClient } from "@/lib/audit/client";
+import { ServiceUnavailable } from "@/components/workspace/service-unavailable";
 import { HeroCard } from "@/components/shell/hero-card";
 import { Panel, PanelGrid } from "@/components/workspace/panel";
 import { Metric, MetricRow } from "@/components/workspace/metric";
@@ -32,7 +33,7 @@ export default async function PortalAgentDetailPage({
   if (!(await isPortalAuthed(slug))) redirect(`/portal/${slug}/login`);
 
   const sb = getServiceClient();
-  if (!sb) return null;
+  if (!sb) return <ServiceUnavailable />;
 
   const { data: access } = await sb
     .from("client_portal_access")

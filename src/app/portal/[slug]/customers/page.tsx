@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Users, ExternalLink } from "lucide-react";
 import { isPortalAuthed } from "@/lib/portal/auth";
 import { getServiceClient } from "@/lib/audit/client";
+import { ServiceUnavailable } from "@/components/workspace/service-unavailable";
 import { resolvePortalLang } from "@/lib/portal/lang";
 import { t } from "@/lib/portal/strings";
 import { Panel } from "@/components/workspace/panel";
@@ -32,7 +33,7 @@ export default async function CustomersPage({
   if (!(await isPortalAuthed(slug))) redirect(`/portal/${slug}/login`);
 
   const sb = getServiceClient();
-  if (!sb) return null;
+  if (!sb) return <ServiceUnavailable />;
   const lang = await resolvePortalLang(slug);
 
   const { data: access } = await sb

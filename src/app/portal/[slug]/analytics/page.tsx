@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { BarChart3, TrendingUp, MessageCircle, CheckCircle2 } from "lucide-react";
 import { isPortalAuthed } from "@/lib/portal/auth";
 import { getServiceClient } from "@/lib/audit/client";
+import { ServiceUnavailable } from "@/components/workspace/service-unavailable";
 import { resolvePortalLang } from "@/lib/portal/lang";
 import { decryptMessage, encryptionAvailable } from "@/lib/portal/encrypt";
 import { t } from "@/lib/portal/strings";
@@ -42,7 +43,7 @@ export default async function AnalyticsPage({
   if (!(await isPortalAuthed(slug))) redirect(`/portal/${slug}/login`);
 
   const sb = getServiceClient();
-  if (!sb) return null;
+  if (!sb) return <ServiceUnavailable />;
   const lang = await resolvePortalLang(slug);
 
   const { data: access } = await sb
