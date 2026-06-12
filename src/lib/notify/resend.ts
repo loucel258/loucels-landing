@@ -11,7 +11,11 @@ import { timingSafeEqual } from "node:crypto";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 const FROM_DEFAULT = "Steven @ Loucells Core <contact@loucellscore.com>";
-const INTERNAL_INBOX = "contact@loucellscore.com";
+// Where internal alerts (HITL, escalations, budget) land. Env-overridable
+// because the contact@ MAILBOX doesn't exist yet — sending FROM it only
+// needs domain verification, but receiving needs a real inbox. Until the
+// mailbox is provisioned, point this at Steven's Gmail via Vercel env.
+const INTERNAL_INBOX = process.env.INTERNAL_ALERT_INBOX ?? "contact@loucellscore.com";
 
 export type SendEmailInput = {
   to: string | string[];
