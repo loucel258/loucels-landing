@@ -21,7 +21,7 @@ import { SignJWT, jwtVerify, type JWTPayload } from "jose";
  *
  * NEVER expose this minter to client code. It runs on the server only and
  * issues tokens after the server has already authenticated the actor (e.g.
- * verified a Twilio webhook signature, or matched a Loucels admin login).
+ * verified a Twilio webhook signature, or matched a Loucells Core admin login).
  */
 
 const ISSUER = "loucels";

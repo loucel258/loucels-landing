@@ -14,7 +14,7 @@ import { getPathname } from "@/lib/shell/pathname";
 import { AdminSignOutButton } from "./sign-out";
 
 export const metadata = {
-  title: "Loucels admin",
+  title: "Loucells Core admin",
   robots: { index: false, follow: false },
 };
 
@@ -55,7 +55,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     <div className="flex min-h-screen bg-neutral-50 text-neutral-900">
       <Sidebar
         brand={{
-          workspaceName: "Loucels HQ",
+          workspaceName: "Loucells Core HQ",
           subtitle: "Admin operations",
           initials: "L",
         }}
@@ -71,7 +71,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <div className="flex min-w-0 flex-1 flex-col">
         <MobileBrandBar
           brand={{
-            workspaceName: "Loucels HQ",
+            workspaceName: "Loucells Core HQ",
             subtitle: "Admin",
             initials: "L",
           }}

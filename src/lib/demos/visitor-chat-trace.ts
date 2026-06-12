@@ -170,7 +170,7 @@ function buildTurnTrace(
     {
       layer: "webhook",
       label: "Channel · web chat",
-      detail: `Inbound from Loucels landing chat widget · ${userChars} chars`,
+      detail: `Inbound from Loucells Core landing chat widget · ${userChars} chars`,
       durationMs: 6,
       status: "ok",
       result: "received",
@@ -199,7 +199,7 @@ function buildTurnTrace(
       label: `Agent reasoning · ${assistantRow.model_version ?? "claude-haiku"}`,
       detail: hardRule
         ? `System prompt enforced hard rule: ${hardRule.replace(/_/g, " ")}`
-        : "Claude generated the visitor's reply with full Loucels system prompt + tools",
+        : "Claude generated the visitor's reply with full Loucells Core system prompt + tools",
       durationMs: 1450,
       status: "ok",
       result: `${assistantRow.token_usage_in ?? 0} tokens in · ${assistantRow.token_usage_out ?? 0} tokens out`,

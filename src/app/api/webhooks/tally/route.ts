@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
  *
  * Setup (Steven, one-time):
  *   1. Tally form → Integrations → Webhooks → Add webhook
- *   2. URL: https://loucels.com/api/webhooks/tally
+ *   2. URL: https://loucellscore.com/api/webhooks/tally
  *   3. Set signing secret in env: TALLY_WEBHOOK_SECRET
  *      (Tally signs with HMAC-SHA256, header: tally-signature)
  *
@@ -185,7 +185,7 @@ async function notifyIntake(engagementId: string): Promise<void> {
     bodyHtml: `
       <p><strong>${escapeHtmlT(eng.client_legal_name as string)}</strong> submitted the intake questionnaire (<code>${escapeHtmlT(eng.engagement_ref as string)}</code>).</p>
       <p><strong>Next:</strong> review answers, prep kickoff agenda, send access checklist if not already sent.</p>
-      <p><a href="https://loucels.com/admin/engagement/${engagementId}">Open in admin</a></p>
+      <p><a href="https://loucellscore.com/admin/engagement/${engagementId}">Open in admin</a></p>
     `,
   });
 }

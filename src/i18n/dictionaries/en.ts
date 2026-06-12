@@ -1,6 +1,6 @@
 export const en: Dictionary = {
   meta: {
-    title: "AI Automation Agency for Mid-Sized Businesses in South Florida — Loucels",
+    title: "AI Automation Agency for Mid-Sized Businesses in South Florida — Loucells Core",
     description:
       "AI automation studio for mid-sized businesses across Miami-Dade, Broward, and Palm Beach. Specialized AI agents and conversion web infrastructure — built on Anthropic Claude.",
   },
@@ -287,10 +287,10 @@ export const en: Dictionary = {
   },
   chat: {
     bubbleLabel: "Open chat",
-    panelTitle: "Loucels · AI Front Desk",
+    panelTitle: "Loucells Core · AI Front Desk",
     panelSubtitle: "Live demo of what we build for clients",
     greeting:
-      "Hi — I'm the AI front desk for Loucels. Tell me about your business and the pain you're trying to fix, and I'll help you figure out if we're a fit.",
+      "Hi — I'm the AI front desk for Loucells Core. Tell me about your business and the pain you're trying to fix, and I'll help you figure out if we're a fit.",
     placeholder: "Ask anything…",
     send: "Send",
     thinking: "Thinking…",
@@ -299,7 +299,7 @@ export const en: Dictionary = {
     privacy: "Privacy",
     errorGeneric: "Something went wrong. Please try again.",
     errorUnavailable:
-      "Chat is temporarily unavailable. Please email hello@loucels.com.",
+      "Chat is temporarily unavailable. Please email contact@loucellscore.com.",
     errorRateLimited:
       "Too many messages in a short time — give it a minute and try again.",
     close: "Close",
@@ -312,7 +312,7 @@ export const en: Dictionary = {
   },
   webFoundation: {
     meta: {
-      title: "Web Foundation — Loucels",
+      title: "Web Foundation — Loucells Core",
       description:
         "The conversion infrastructure that feeds your AI agents. Custom-built, optimized for AI search.",
     },
@@ -390,7 +390,7 @@ export const en: Dictionary = {
       ],
     },
     why: {
-      eyebrow: "Why Loucels",
+      eyebrow: "Why Loucells Core",
       title: "Built different.",
       items: [
         {
@@ -410,7 +410,7 @@ export const en: Dictionary = {
   },
   smvModels: {
     meta: {
-      title: "SMV Models — Loucels",
+      title: "SMV Models — Loucells Core",
       description:
         "Not a chatbot. An entire department operating in milliseconds. Specialized, governed AI agents owned by you and governed by us.",
     },
@@ -488,7 +488,7 @@ export const en: Dictionary = {
       ],
     },
     why: {
-      eyebrow: "Why Loucels Agents",
+      eyebrow: "Why Loucells Core Agents",
       title: "Owned by you. Governed by us.",
       items: [
         {
@@ -508,7 +508,7 @@ export const en: Dictionary = {
   },
   integrationControl: {
     meta: {
-      title: "Integration & Control — Loucels",
+      title: "Integration & Control — Loucells Core",
       description:
         "Mid-market AI architecture and governance. Secure, functioning agents in weeks, not 6-month consulting engagements. Designed under the principles of NIST AI RMF and ISO 42001.",
     },
@@ -584,8 +584,8 @@ export const en: Dictionary = {
       ],
     },
     why: {
-      eyebrow: "The Loucels Difference",
-      title: "Why teams under real compliance pressure pick Loucels.",
+      eyebrow: "The Loucells Core Difference",
+      title: "Why teams under real compliance pressure pick Loucells Core.",
       items: [
         {
           title: "Boutique Speed, Enterprise Discipline",

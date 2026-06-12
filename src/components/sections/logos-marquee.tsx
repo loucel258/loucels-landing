@@ -2,7 +2,7 @@
 
 
 /**
- * LogosMarquee — horizontal infinite scroll of the tools Loucels agents talk to.
+ * LogosMarquee — horizontal infinite scroll of the tools Loucells Core agents talk to.
  *
  * Wordmarks-only (no logo asset files) — keeps repo light, dodges trademark
  * issues, and matches the "your tools stay, the AI joins them" framing.

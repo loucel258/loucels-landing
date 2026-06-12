@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata = {
-  title: "Loucels admin",
+  title: "Loucells Core admin",
   robots: { index: false, follow: false },
 };
 

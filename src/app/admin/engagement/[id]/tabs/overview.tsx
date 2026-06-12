@@ -265,7 +265,7 @@ export function OverviewTab({
           <p className="mt-3 text-[10px] text-neutral-500">
             Engagement folder lives at{" "}
             <code className="rounded bg-neutral-100 px-1 py-0.5">
-              ~/Documents/Loucels-engagements/{e.engagement_ref}-…
+              ~/Documents/LoucellsCore-engagements/{e.engagement_ref}-…
             </code>
           </p>
         </Panel>

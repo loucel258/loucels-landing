@@ -20,7 +20,7 @@ import { t } from "@/lib/portal/strings";
 import { PortalSignOutButton } from "./sign-out";
 
 export const metadata = {
-  title: "Client portal — Loucels",
+  title: "Client portal — Loucells Core",
   robots: { index: false, follow: false },
 };
 
@@ -158,7 +158,7 @@ export default async function PortalLayout({
           prefix: true,
         },
         {
-          href: `mailto:hello@loucels.com`,
+          href: `mailto:contact@loucellscore.com`,
           label: t(lang, "nav.support"),
           icon: <HelpCircle className="size-4" />,
           match: "_never_",
@@ -190,7 +190,7 @@ export default async function PortalLayout({
         <MobileNav
           brand={{
             workspaceName: displayName,
-            subtitle: "Loucels portal",
+            subtitle: "Loucells Core portal",
             initials,
           }}
           sections={sections}
@@ -206,7 +206,7 @@ export default async function PortalLayout({
                 ? "Cada decisión queda registrada en nuestra cadena de auditoría inmutable."
                 : "Every decision is logged in our append-only audit chain."}
             </p>
-            <p>Loucels · loucels.com</p>
+            <p>Loucells Core · loucellscore.com</p>
           </div>
         </footer>
       </div>

@@ -30,7 +30,7 @@ export type LeadInsertInput = {
   /**
    * Multi-tenant scoping. Populated by /api/agent/[slug]/chat from the
    * resolved agent's engagement_id. Leaving this undefined produces a
-   * Loucels-landing lead (legacy chat route).
+   * Loucells Core-landing lead (legacy chat route).
    */
   engagementId?: string | null;
 };
@@ -90,7 +90,7 @@ export async function insertLead(
  *   2. else by `email` + `booking_status='offered'` + most recent (best-effort)
  *
  * Both lookup paths are used because BOOKING_CREATED webhooks may arrive
- * BEFORE we've stored the cal_event_id (since Loucels never saw the booking
+ * BEFORE we've stored the cal_event_id (since Loucells Core never saw the booking
  * happen until Cal.com tells us about it).
  */
 export type WebhookUpdateInput = {

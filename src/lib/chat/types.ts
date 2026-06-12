@@ -33,7 +33,7 @@ export type BookingPayload = {
 };
 
 /**
- * GAP-F3 closure — escalate_to_human surfaces the HITL pattern that Loucels's
+ * GAP-F3 closure — escalate_to_human surfaces the HITL pattern that Loucells Core's
  * marketing claims, *within this very chat* (not only inside builds for
  * customers). When the agent encounters a situation it can't or shouldn't
  * handle alone (sensitive vertical, edge case beyond scope, customer

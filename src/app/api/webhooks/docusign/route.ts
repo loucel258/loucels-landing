@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
  *
  * Setup (Steven, one-time):
  *   1. DocuSign Admin → Connect → Add Configuration → Custom Configuration
- *   2. URL: https://loucels.com/api/webhooks/docusign
+ *   2. URL: https://loucellscore.com/api/webhooks/docusign
  *   3. Format: JSON
  *   4. Enable HMAC: yes; generate a secret, copy it to Vercel env as
  *      DOCUSIGN_HMAC_SECRET
@@ -188,7 +188,7 @@ async function notifySigned(engagementId: string): Promise<void> {
     bodyHtml: `
       <p><strong>${escapeHtmlDS(eng.client_legal_name as string)}</strong> just signed the SOW (<code>${escapeHtmlDS(eng.engagement_ref as string)}</code>).</p>
       <p><strong>Next:</strong> verify Stripe payment cleared (or that the invoice is sent). Once paid, the playbook kickoff sequence starts.</p>
-      <p><a href="https://loucels.com/admin/engagement/${engagementId}">Open in admin</a></p>
+      <p><a href="https://loucellscore.com/admin/engagement/${engagementId}">Open in admin</a></p>
     `,
   });
 }

@@ -27,7 +27,7 @@ export function Footer({
                 <span className="absolute inset-0 animate-ping rounded-full bg-cyan opacity-50" />
               </span>
               <span className="text-[15px] font-semibold tracking-tight text-text-primary">
-                Loucels
+                Loucells Core
               </span>
             </div>
             <p className="max-w-sm text-body-sm text-text-secondary">

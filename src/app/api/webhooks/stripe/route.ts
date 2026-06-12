@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
  *
  * Setup (Steven, one-time):
  *   1. Stripe Dashboard → Developers → Webhooks → Add endpoint
- *   2. URL: https://loucels.com/api/webhooks/stripe
+ *   2. URL: https://loucellscore.com/api/webhooks/stripe
  *   3. Events to send: payment_intent.succeeded, payment_intent.payment_failed,
  *      checkout.session.completed (in case Payment Link is used vs Invoice)
  *   4. Copy the signing secret (starts with whsec_) into Vercel env as
@@ -252,7 +252,7 @@ async function notifyPayment(
         <li>Send the intake questionnaire (Tally link) to the client</li>
         <li>Propose 3 kickoff slots via Cal.com</li>
       </ol>
-      <p><a href="https://loucels.com/admin/engagement/${engagementId}">Open in admin</a></p>
+      <p><a href="https://loucellscore.com/admin/engagement/${engagementId}">Open in admin</a></p>
     `,
   });
 }

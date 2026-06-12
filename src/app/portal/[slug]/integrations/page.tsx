@@ -87,10 +87,10 @@ export default async function IntegrationsPage({
   const agentName = primaryAgent?.name ?? "Your agent";
 
   // Build embed snippet from the first agent with a public slug. The
-  // base URL comes from env; we fall back to loucels.com so the snippet
+  // base URL comes from env; we fall back to loucellscore.com so the snippet
   // is still useful in preview deploys.
   const embedAgent = agentList.find((a) => a.slug);
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://loucels.com").replace(/\/$/, "");
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://loucellscore.com").replace(/\/$/, "");
   const embedSnippet = embedAgent?.slug
     ? `<script src="${baseUrl}/agent.js" data-agent="${embedAgent.slug}" defer></script>`
     : null;

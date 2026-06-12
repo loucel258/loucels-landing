@@ -4,7 +4,7 @@ import { isLocale } from "@/i18n/config";
 import { Pseudo3DHero } from "@/components/hero/pseudo-3d-hero";
 
 export const metadata = {
-  title: "Hero preview — Loucels",
+  title: "Hero preview — Loucells Core",
   robots: { index: false, follow: false },
 };
 

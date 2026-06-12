@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 /**
  * HeroCard — the marquee surface at the top of /portal and /admin/clients
  * etc. Two-column split with a gradient backdrop, a "live" eyebrow chip,
- * and an optional Loucels-AI-Summary panel on the right. Designed to
+ * and an optional Loucells Core-AI-Summary panel on the right. Designed to
  * deliver the "wow" you saw in the inspiration capture without copying
  * the blue. We use cyan→violet (brand palette).
  */

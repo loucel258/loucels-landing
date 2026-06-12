@@ -87,7 +87,7 @@ export function AuditDemo() {
           className="inline-flex items-center gap-2 text-mono-xs text-text-tertiary transition-colors hover:text-text-secondary"
         >
           <ArrowLeft className="size-3.5" strokeWidth={1.5} />
-          Back to Loucels
+          Back to Loucells Core
         </Link>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">

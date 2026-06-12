@@ -163,7 +163,7 @@ export function MobileBrandBar({ brand }: { brand: SidebarBrand }) {
         <span className="text-xs font-semibold">{brand.workspaceName}</span>
       </Link>
       <p className="text-[10px] uppercase tracking-[0.14em] text-neutral-400">
-        {brand.subtitle ?? "Loucels"}
+        {brand.subtitle ?? "Loucells Core"}
       </p>
     </div>
   );

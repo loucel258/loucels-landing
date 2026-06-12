@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { DLPDemo } from "./dlp-demo";
 
 export const metadata: Metadata = {
-  title: "DLP Middleware Demo · Loucels Trust Stack",
+  title: "DLP Middleware Demo · Loucells Core Trust Stack",
   description:
-    "Loucels DLP middleware — PII and secret detection that strips sensitive data from prompts before they reach the language model.",
+    "Loucells Core DLP middleware — PII and secret detection that strips sensitive data from prompts before they reach the language model.",
   robots: { index: false, follow: false },
 };
 

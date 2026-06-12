@@ -130,5 +130,5 @@ if (updated && updated.length > 0) {
 
 console.log(`  row_id:    ${rowId}`);
 console.log(`  passcode:  ${passcode}`);
-console.log(`  URL:       https://loucels.com/portal/${slug}  (or http://localhost:3000/portal/${slug} for dev)`);
+console.log(`  URL:       https://loucellscore.com/portal/${slug}  (or http://localhost:3000/portal/${slug} for dev)`);
 console.log("\nGive the passcode to the client securely. We do not store it in plaintext.");

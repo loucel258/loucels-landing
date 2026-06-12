@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata = {
-  title: "Sign in — Loucels admin",
+  title: "Sign in — Loucells Core admin",
   robots: { index: false, follow: false },
 };
 

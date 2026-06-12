@@ -73,7 +73,7 @@ async function handleCron(req: Request): Promise<Response> {
       `🔴 Chat unavailable — ${r1.count} events in last 15 min`,
       `<p>The chat agent has returned <strong>chat_unavailable</strong> ${r1.count} time(s) in the last 15 minutes.</p>
        <p>This typically means <code>ANTHROPIC_API_KEY</code> is missing, rotated, or the Anthropic client failed to initialize.</p>
-       <p><strong>Action:</strong> Check Vercel env vars and the most recent deploy. Visit <a href="https://loucels.com/admin/chat-pulse">/admin/chat-pulse</a> for context.</p>`,
+       <p><strong>Action:</strong> Check Vercel env vars and the most recent deploy. Visit <a href="https://loucellscore.com/admin/chat-pulse">/admin/chat-pulse</a> for context.</p>`,
       dedupeCutoff,
     );
     results.push({ rule: "chat_unavailable", fired: true, sent, detail: `${r1.count} events` });
@@ -100,7 +100,7 @@ async function handleCron(req: Request): Promise<Response> {
       `<p>The chat endpoint returned <strong>chat_failed</strong> ${r2.count} time(s) in the last hour.</p>
        <p>This usually indicates either an Anthropic API issue, a Supabase outage, or a deploy regression.</p>
        <p>Sample reason: <code>${escapeHtml(sampleReason.slice(0, 200))}</code></p>
-       <p><strong>Action:</strong> Visit <a href="https://loucels.com/admin/chat-pulse">/admin/chat-pulse</a> for full context.</p>`,
+       <p><strong>Action:</strong> Visit <a href="https://loucellscore.com/admin/chat-pulse">/admin/chat-pulse</a> for full context.</p>`,
       dedupeCutoff,
     );
     results.push({ rule: "chat_failed_spike", fired: true, sent, detail: `${r2.count} events` });
@@ -132,7 +132,7 @@ async function handleCron(req: Request): Promise<Response> {
         `🟠 PII attack pattern — ${worst[1]} blocks in one session`,
         `<p>Session <code>${escapeHtml(worst[0])}</code> triggered <strong>${worst[1]}</strong> DLP blocks in the last 15 minutes.</p>
          <p>This pattern typically indicates a visitor probing the chat for PII handling, attempting prompt injection, or a scripted attack.</p>
-         <p><strong>Action:</strong> Inspect the session in <a href="https://loucels.com/admin/chat-pulse">/admin/chat-pulse</a>. If malicious, consider IP-blocking via Vercel firewall.</p>`,
+         <p><strong>Action:</strong> Inspect the session in <a href="https://loucellscore.com/admin/chat-pulse">/admin/chat-pulse</a>. If malicious, consider IP-blocking via Vercel firewall.</p>`,
         dedupeCutoff,
       );
       results.push({
@@ -201,7 +201,7 @@ async function handleCron(req: Request): Promise<Response> {
         <p><strong>${escapeHtml(lead.name)}</strong> (<a href="mailto:${escapeHtml(lead.email)}">${escapeHtml(lead.email)}</a>) has rescheduled <strong>${lead.reschedule_count}</strong> times.</p>
         <p>${slotInfo}</p>
         <p>This pattern usually indicates a prospect who's losing momentum and will probably ghost. Consider sending a brief manual email asking if they want to keep trying or step back.</p>
-        <p><a href="https://loucels.com/admin/chat-pulse">Open chat-pulse</a></p>
+        <p><a href="https://loucellscore.com/admin/chat-pulse">Open chat-pulse</a></p>
       `,
     });
 
@@ -279,7 +279,7 @@ async function handleCron(req: Request): Promise<Response> {
         `🟡 Zero user messages in 24h — chat may be regressed`,
         `<p>The chat agent has logged <strong>zero</strong> user_message events in the last 24 hours during business hours.</p>
          <p>This usually means: the chat widget isn't loading, the API route is broken, or traffic dried up.</p>
-         <p><strong>Action:</strong> Test the chat manually at <a href="https://loucels.com">loucels.com</a>. Check <a href="https://loucels.com/admin/chat-pulse">/admin/chat-pulse</a> for fresh data.</p>`,
+         <p><strong>Action:</strong> Test the chat manually at <a href="https://loucellscore.com">loucellscore.com</a>. Check <a href="https://loucellscore.com/admin/chat-pulse">/admin/chat-pulse</a> for fresh data.</p>`,
         dedupeCutoff,
       );
       results.push({ rule: "no_user_messages_24h", fired: true, sent });

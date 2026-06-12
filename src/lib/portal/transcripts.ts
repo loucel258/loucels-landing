@@ -8,7 +8,7 @@ import { encryptMessage, encryptionAvailable } from "./encrypt";
  *
  * Skips silently when:
  *   - the workspace_id isn't tied to any client_agents row (e.g. the
- *     loucels.com landing chat itself — there's no "client" to inspect)
+ *     loucellscore.com landing chat itself — there's no "client" to inspect)
  *   - CONVERSATION_ENCRYPTION_KEY is missing (fail closed: we'd rather
  *     have no transcript than plaintext in DB)
  *

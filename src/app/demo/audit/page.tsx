@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { AuditDemo } from "./audit-demo";
 
 export const metadata: Metadata = {
-  title: "Audit Trail Demo · Loucels Trust Stack",
+  title: "Audit Trail Demo · Loucells Core Trust Stack",
   description:
-    "Loucels append-only audit log demo — every agent decision recorded immutably, even our team can't rewrite it.",
+    "Loucells Core append-only audit log demo — every agent decision recorded immutably, even our team can't rewrite it.",
   robots: { index: false, follow: false },
 };
 

@@ -18,7 +18,7 @@ export async function generateMetadata({
   if (!isLocale(locale)) return {};
   const isES = locale === "es";
   return {
-    title: isES ? "Servicios · Loucels" : "Services · Loucels",
+    title: isES ? "Servicios · Loucells Core" : "Services · Loucells Core",
     description: isES
       ? "Lo que ofrecemos: web foundation y agentes de IA para SMBs en EE.UU."
       : "What we offer: web foundation and AI agents for US SMBs.",
@@ -55,7 +55,7 @@ export default async function ServicesPage({
             {isES ? "Volver" : "Back"}
           </Link>
           <span className="text-sm font-semibold tracking-tight">
-            Loucels
+            Loucells Core
           </span>
         </div>
       </header>

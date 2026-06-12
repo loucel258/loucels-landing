@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { HitlDemo } from "./hitl-demo";
 
 export const metadata: Metadata = {
-  title: "Human-in-the-Loop Demo · Loucels Trust Stack",
+  title: "Human-in-the-Loop Demo · Loucells Core Trust Stack",
   description:
-    "Loucels HITL demo — high-risk agent actions pause for human review, edit, and approval before they execute.",
+    "Loucells Core HITL demo — high-risk agent actions pause for human review, edit, and approval before they execute.",
   robots: { index: false, follow: false },
 };
 

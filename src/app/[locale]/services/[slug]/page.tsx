@@ -29,7 +29,7 @@ export async function generateMetadata({
   const service = getServiceBySlug(slug);
   if (!service) return {};
 
-  const title = `${service.name[locale]} · Loucels`;
+  const title = `${service.name[locale]} · Loucells Core`;
   const description = service.description[locale];
 
   return {
@@ -69,7 +69,7 @@ export default async function ServicePage({
             {isES ? "Volver al sitio" : "Back to site"}
           </Link>
           <span className="text-sm font-semibold tracking-tight">
-            Loucels
+            Loucells Core
           </span>
         </div>
       </header>

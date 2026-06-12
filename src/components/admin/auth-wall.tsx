@@ -11,7 +11,7 @@ export function AuthWall() {
       <div className="inline-flex size-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
         <Lock className="size-5" />
       </div>
-      <h1 className="mt-4 text-lg font-semibold">Loucels admin</h1>
+      <h1 className="mt-4 text-lg font-semibold">Loucells Core admin</h1>
       <p className="mt-2 text-sm text-neutral-600">
         Session expired or not signed in. Go to{" "}
         <Link

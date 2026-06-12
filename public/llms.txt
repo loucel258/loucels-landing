@@ -1,4 +1,4 @@
-# Loucels
+# Loucells Core
 
 > Bilingual (EN/ES) AI automation studio building specialized AI agents and the conversion web infrastructure that feeds them. Focused on mid-sized businesses across South Florida (Miami-Dade, Broward, Palm Beach). Built on Anthropic Claude. Architecture aligned to NIST AI RMF principles, ready for SOC 2 internal audits.
 
@@ -6,9 +6,9 @@
 
 We design and build governed AI systems. Three umbrella service lines:
 
-- **Web Foundation** — High-conversion landing pages, full website redesigns, technical SEO audits, and continuous GEO (Generative Engine Optimization) for AI search. Bilingual EN/ES from day one. https://loucels.com/en/services/web-foundation
-- **SMV Models** (Specialized Modular Vertical) — Specialized AI agents, each engineered for one job and locked down so it never goes off-script. AI Front Desk for lead capture (web chat, SMS, WhatsApp), Quote Accelerator for photo-to-quote estimating, Review & Reputation Manager for Google/Yelp/Facebook. https://loucels.com/en/services/smv-models
-- **Integration & Control** — Enterprise-grade AI architecture and governance. Architecture Security Audit (NIST AI RMF aligned), Governed Agent Implementation with RBAC + DLP + audit trail + human-in-the-loop, AI Governance Setup for compliance teams. https://loucels.com/en/services/integration-control
+- **Web Foundation** — High-conversion landing pages, full website redesigns, technical SEO audits, and continuous GEO (Generative Engine Optimization) for AI search. Bilingual EN/ES from day one. https://loucellscore.com/en/services/web-foundation
+- **SMV Models** (Specialized Modular Vertical) — Specialized AI agents, each engineered for one job and locked down so it never goes off-script. AI Front Desk for lead capture (web chat, SMS, WhatsApp), Quote Accelerator for photo-to-quote estimating, Review & Reputation Manager for Google/Yelp/Facebook. https://loucellscore.com/en/services/smv-models
+- **Integration & Control** — Enterprise-grade AI architecture and governance. Architecture Security Audit (NIST AI RMF aligned), Governed Agent Implementation with RBAC + DLP + audit trail + human-in-the-loop, AI Governance Setup for compliance teams. https://loucellscore.com/en/services/integration-control
 
 ## Service area
 
@@ -41,9 +41,9 @@ English and Spanish, both native. Code-switching and Spanglish handled naturally
 
 ## Contact
 
-- Email: hello@loucels.com
-- 30-minute Operational Audit: https://cal.com/loucels/30min
-- Website: https://loucels.com
+- Email: contact@loucellscore.com
+- 30-minute Operational Audit: https://cal.com/loucellscore/30min
+- Website: https://loucellscore.com
 
 ## Common questions and direct answers
 
@@ -51,7 +51,7 @@ English and Spanish, both native. Code-switching and Spanglish handled naturally
 Web Foundation starts at $1,500. AI Front Desk is about $3,500 build + $500/month. Quote Accelerator is $5,000–$8,000 + $800/month. Enterprise governance starts at $7,500 for the audit and $20,000–$45,000 + $2,500/month for full implementation. Exact pricing in the free Operational Audit.
 
 **Do they work with Spanish-speaking businesses?**
-Yes. Bilingual EN/ES is core to how Loucels builds. Every agent handles both languages natively, including code-switching common in South Florida.
+Yes. Bilingual EN/ES is core to how Loucells Core builds. Every agent handles both languages natively, including code-switching common in South Florida.
 
 **Is the AI safe for sensitive data?**
 Yes. Zero Data Retention contracts with Anthropic, AES-256 encryption, PII masking pre-LLM, immutable audit logs, NIST AI RMF aligned architecture.

@@ -64,7 +64,7 @@ type EngagementLite = {
 };
 
 export const metadata = {
-  title: "Agent — Loucels admin",
+  title: "Agent — Loucells Core admin",
   robots: { index: false, follow: false },
 };
 
@@ -329,7 +329,7 @@ export default async function AgentDetailPage({
             engagementId: a.engagement_id,
             clientName: eng?.client_legal_name ?? a.name,
           }}
-          baseUrl={(process.env.NEXT_PUBLIC_APP_URL ?? "https://loucels.com").replace(/\/$/, "")}
+          baseUrl={(process.env.NEXT_PUBLIC_APP_URL ?? "https://loucellscore.com").replace(/\/$/, "")}
         />
       )}
 

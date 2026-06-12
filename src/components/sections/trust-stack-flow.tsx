@@ -13,7 +13,7 @@ import {
 
 /**
  * TrustStackFlow — animated 7-layer diagram showing a message passing through
- * Loucels's Trust Stack. One layer "ignites" at a time on a 7-second loop,
+ * Loucells Core's Trust Stack. One layer "ignites" at a time on a 7-second loop,
  * mimicking the journey of a single request: Ingress → Identity → Governance →
  * Knowledge → Reasoning → Execution → Audit.
  *

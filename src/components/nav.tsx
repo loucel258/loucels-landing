@@ -53,7 +53,7 @@ export function Nav({
             <span className="absolute inset-0 rounded-full bg-cyan" />
             <span className="absolute inset-0 animate-ping rounded-full bg-cyan opacity-60" />
           </span>
-          Loucels
+          Loucells Core
         </Link>
 
         {/* Center nav */}

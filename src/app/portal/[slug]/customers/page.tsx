@@ -48,7 +48,7 @@ export default async function CustomersPage({
   // Scope leads to THIS engagement only. Migration 036 added the
   // engagement_id column; legacy leads from before the multi-tenant
   // chat route have engagement_id=null and are intentionally invisible
-  // to the portal (they belong to Loucels' own landing chat).
+  // to the portal (they belong to Loucells Core's own landing chat).
   const since = new Date(Date.now() - 90 * 86400_000).toISOString();
   const { data: leadsData } = await sb
     .from("leads")

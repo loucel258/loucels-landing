@@ -344,7 +344,7 @@ export function ChatWidget({
               </button>
             </div>
             <p className="mt-2 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-[10px] uppercase tracking-wider text-zinc-600">
-              <span>Powered by Claude · Governed by Loucels</span>
+              <span>Powered by Claude · Governed by Loucells Core</span>
               <span aria-hidden>·</span>
               <a
                 href={`/${locale}/privacy`}

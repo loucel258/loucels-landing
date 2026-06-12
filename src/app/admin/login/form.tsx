@@ -38,7 +38,7 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
         <div className="inline-flex size-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
           <Lock className="size-4" />
         </div>
-        <h1 className="mt-4 text-lg font-semibold">Loucels admin</h1>
+        <h1 className="mt-4 text-lg font-semibold">Loucells Core admin</h1>
         <p className="mt-1 text-sm text-neutral-600">Single-operator sign in.</p>
 
         <form className="mt-5 space-y-3" onSubmit={onSubmit}>

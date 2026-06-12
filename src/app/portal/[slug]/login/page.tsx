@@ -41,7 +41,7 @@ export default async function PortalLoginPage({
           Welcome back
         </h1>
         <p className="mt-2 text-sm text-neutral-600">
-          Enter the passcode Loucels shared with you to access your portal.
+          Enter the passcode Loucells Core shared with you to access your portal.
         </p>
       </div>
 

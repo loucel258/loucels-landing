@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata = {
-  title: "Clients — Loucels admin",
+  title: "Clients — Loucells Core admin",
   robots: { index: false, follow: false },
 };
 

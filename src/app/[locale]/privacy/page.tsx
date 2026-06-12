@@ -6,7 +6,7 @@ import { siteConfig } from "@/lib/site-config";
 const UPDATED = "2026-05-21";
 
 export const metadata = {
-  title: "Privacy Policy · Loucels",
+  title: "Privacy Policy · Loucells Core",
 };
 
 export default async function PrivacyPage({
@@ -27,7 +27,7 @@ export default async function PrivacyPage({
       {isES ? (
         <>
           <p>
-            En Loucels respetamos tu privacidad. Esta política explica
+            En Loucells Core respetamos tu privacidad. Esta política explica
             qué datos recopilamos, cómo los usamos y tus derechos.
           </p>
 
@@ -99,7 +99,7 @@ export default async function PrivacyPage({
 
           <h2>Datos procesados por sistemas de IA (clientes activos)</h2>
           <p>
-            Cuando Loucels opera agentes de IA para un cliente, los datos
+            Cuando Loucells Core opera agentes de IA para un cliente, los datos
             de ese cliente y sus clientes finales se procesan bajo principios
             estrictos de gobernanza:
           </p>
@@ -152,7 +152,7 @@ export default async function PrivacyPage({
       ) : (
         <>
           <p>
-            At Loucels we respect your privacy. This policy explains what
+            At Loucells Core we respect your privacy. This policy explains what
             data we collect, how we use it, and your rights.
           </p>
 
@@ -222,7 +222,7 @@ export default async function PrivacyPage({
 
           <h2>Data processed by AI systems (active clients)</h2>
           <p>
-            When Loucels operates AI agents for a client, the client&apos;s
+            When Loucells Core operates AI agents for a client, the client&apos;s
             data and end-customer data are processed under strict governance
             principles:
           </p>

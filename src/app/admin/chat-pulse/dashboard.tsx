@@ -65,7 +65,7 @@ export function ChatPulseDashboard({
           Chat-pulse
         </h1>
         <p className="mt-1 text-sm text-neutral-600">
-          Loucels's own landing chat · ws_chat_loucel_landing · server time{" "}
+          Loucells Core's own landing chat · ws_chat_loucel_landing · server time{" "}
           {new Date().toLocaleString()}
         </p>
       </div>

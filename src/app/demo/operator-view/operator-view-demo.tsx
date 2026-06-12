@@ -149,7 +149,7 @@ export function OperatorViewDemo() {
               className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
             >
               <ArrowLeft size={13} />
-              Loucels
+              Loucells Core
             </Link>
             <span aria-hidden className="text-slate-300">/</span>
             <div className="flex items-center gap-2">

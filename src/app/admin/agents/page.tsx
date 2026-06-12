@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata = {
-  title: "Agents — Loucels admin",
+  title: "Agents — Loucells Core admin",
   robots: { index: false, follow: false },
 };
 
@@ -97,7 +97,7 @@ export default async function AgentsListPage() {
           title="Fleet overview"
           description="Every agent you've deployed across every engagement. Drill into any row for the full conversations, costs, and decision chain."
           aiSummary={{
-            title: "Loucels recap",
+            title: "Loucells Core recap",
             body: (
               <p>
                 Blended margin across the fleet: <strong>{blendedMargin.toFixed(0)}%</strong>. {liveCount} agent{liveCount === 1 ? " is" : "s are"} actively serving traffic, handling{" "}

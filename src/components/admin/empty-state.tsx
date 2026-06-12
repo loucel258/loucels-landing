@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 /**
  * EmptyState — diseñado como demo de "lo que aparece cuando hay data".
  *
- * Critical for Loucels pre-launch: half the pages are empty for a while.
+ * Critical for Loucells Core pre-launch: half the pages are empty for a while.
  * Each empty state should explain what the page does + next action.
  */
 export function EmptyState({

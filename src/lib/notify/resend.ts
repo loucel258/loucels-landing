@@ -10,8 +10,8 @@ import { timingSafeEqual } from "node:crypto";
  */
 
 const RESEND_API_URL = "https://api.resend.com/emails";
-const FROM_DEFAULT = "Steven @ Loucels <hello@loucels.com>";
-const INTERNAL_INBOX = "hello@loucels.com";
+const FROM_DEFAULT = "Steven @ Loucells Core <contact@loucellscore.com>";
+const INTERNAL_INBOX = "contact@loucellscore.com";
 
 export type SendEmailInput = {
   to: string | string[];
@@ -76,7 +76,7 @@ export async function sendInternalAlert(args: {
 }): Promise<SendEmailResult> {
   return sendEmail({
     to: INTERNAL_INBOX,
-    subject: `[Loucels ops] ${args.subject}`,
+    subject: `[Loucells Core ops] ${args.subject}`,
     html: args.bodyHtml,
     text: args.bodyText ?? stripHtml(args.bodyHtml),
   });

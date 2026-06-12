@@ -22,8 +22,8 @@ export function PortalLoginForm({ slug }: { slug: string }) {
         return;
       }
       if (res.status === 429) setError("Too many attempts. Please try again in a few minutes.");
-      else if (res.status === 401) setError("That passcode doesn't match. Double-check the message Loucels sent you.");
-      else setError("We couldn't sign you in. Try again or email hello@loucels.com.");
+      else if (res.status === 401) setError("That passcode doesn't match. Double-check the message Loucells Core sent you.");
+      else setError("We couldn't sign you in. Try again or email contact@loucellscore.com.");
     } catch {
       setError("Network error. Check your connection and try again.");
     } finally {

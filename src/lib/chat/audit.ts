@@ -102,7 +102,7 @@ export function detectHardRuleEnforcement(
   // Off-topic / prompt-injection redirect. Broad enough to catch the
   // synonyms Claude paraphrases the hard-rule line into (hablar/discutir/
   // ayudar/tratar/conversar in ES; discuss/talk about/help with/address in
-  // EN), bounded enough not to false-positive on normal "Loucels..." prose.
+  // EN), bounded enough not to false-positive on normal "Loucells Core..." prose.
   if (
     /s[óo]lo (puedo|me ocupo|hablo|discuto) (hablar|discutir|ayudar|tratar|conversar|asistir|orientar)[\s\S]{0,40}loucels/i.test(reply) ||
     /\bsolamente (puedo|hablo)[\s\S]{0,40}loucels/i.test(reply) ||
@@ -303,7 +303,7 @@ export async function auditRateLimited(
  * Origin-blocked is a CSRF defense decision. Symmetric with rate_limit and
  * pii_blocked — it's a system-enforced policy denial and belongs in the
  * append-only chain so the "every decision is logged" promise holds across
- * Loucels's own surfaces, not just the customer-facing build agents.
+ * Loucells Core's own surfaces, not just the customer-facing build agents.
  *
  * Fires from the pre-session phase of the route (no body parsed yet, no
  * client sessionId), so callers pass a synthetic sessionId derived from
@@ -354,8 +354,8 @@ export async function auditChatUnavailable(
  * Distinguishable from hard-rule DENYs by blocked_by='agent_hitl_escalation'.
  * The reason field carries the category + the summary the agent provided.
  *
- * This is the audit signal that proves Loucels's HITL claim is real on
- * Loucels's own surface (not just inside the agents we ship to customers).
+ * This is the audit signal that proves Loucells Core's HITL claim is real on
+ * Loucells Core's own surface (not just inside the agents we ship to customers).
  */
 export async function auditEscalationToHuman(
   base: BaseChatAudit,

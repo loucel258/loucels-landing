@@ -26,7 +26,7 @@ export function LegalShell({
             {isES ? "Volver" : "Back"}
           </Link>
           <span className="text-sm font-semibold tracking-tight">
-            Loucels
+            Loucells Core
           </span>
         </div>
       </header>

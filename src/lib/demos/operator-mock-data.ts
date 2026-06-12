@@ -596,7 +596,7 @@ export const KNOWLEDGE_GAPS: KnowledgeGap[] = [
 ];
 
 // Funnel — weekly flow from inbound to completed work. Benchmark = your
-// vertical's average per Loucels's anonymized cohort data.
+// vertical's average per Loucells Core's anonymized cohort data.
 export const FUNNEL_DATA: FunnelStage[] = [
   { stage: "Inbound",   value: 423, benchmark: 380 },
   { stage: "Qualified", value: 287, benchmark: 240 },

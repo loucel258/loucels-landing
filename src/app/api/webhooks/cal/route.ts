@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
  *
  * Setup (Steven, do once):
  *   1. Cal.com Dashboard → Settings → Developer → Webhooks
- *   2. Add webhook URL: https://loucels.com/api/webhooks/cal
+ *   2. Add webhook URL: https://loucellscore.com/api/webhooks/cal
  *   3. Select event triggers: BOOKING_CREATED, BOOKING_RESCHEDULED,
  *      BOOKING_CANCELLED
  *   4. Set a webhook secret (any strong random string); copy it into your

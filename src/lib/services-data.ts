@@ -426,7 +426,7 @@ export const services: ServiceDetail[] = [
   // LÍNEA 3 — INTEGRATION & CONTROL (Enterprise Agent Architecture)
   // Mid-sized companies that need governed AI architecture but
   // can't (or won't) pay Deloitte/Accenture rates. NIST AI RMF
-  // + SOC 2 aligned. Ships with the Loucels Trust Stack: DLP,
+  // + SOC 2 aligned. Ships with the Loucells Core Trust Stack: DLP,
   // RBAC, append-only audit log, human-in-the-loop. Positioning:
   // "Owned by you. Governed by us." — the retainer is continuous
   // governance. Specific revenue ranges intentionally omitted —
@@ -496,8 +496,8 @@ export const services: ServiceDetail[] = [
       es: "Un agente que tu equipo de seguridad aprueba.",
     },
     description: {
-      en: "We design, build, and deploy a production-grade AI agent on the Loucels Trust Stack: append-only audit trail, role-based access control, data loss prevention, RAG over your sources, and human-in-the-loop for sensitive decisions. Built on Claude. Multi-channel: web chat, WhatsApp Business, email, Slack. Owned by you. Governed by us.",
-      es: "Diseñamos, construimos y desplegamos un agente de IA grado producción sobre el Loucels Trust Stack: audit trail append-only, control de acceso por roles, prevención de pérdida de datos (DLP), RAG sobre tus fuentes y human-in-the-loop para decisiones sensibles. Construido sobre Claude. Multi-canal: chat web, WhatsApp Business, email, Slack. Tuyo por construcción. Gobernado por nosotros.",
+      en: "We design, build, and deploy a production-grade AI agent on the Loucells Core Trust Stack: append-only audit trail, role-based access control, data loss prevention, RAG over your sources, and human-in-the-loop for sensitive decisions. Built on Claude. Multi-channel: web chat, WhatsApp Business, email, Slack. Owned by you. Governed by us.",
+      es: "Diseñamos, construimos y desplegamos un agente de IA grado producción sobre el Loucells Core Trust Stack: audit trail append-only, control de acceso por roles, prevención de pérdida de datos (DLP), RAG sobre tus fuentes y human-in-the-loop para decisiones sensibles. Construido sobre Claude. Multi-canal: chat web, WhatsApp Business, email, Slack. Tuyo por construcción. Gobernado por nosotros.",
     },
     priceLabel: {
       en: "$20K-$45K setup + $2.5K/mo",

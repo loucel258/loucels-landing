@@ -17,7 +17,7 @@ import { sanitize } from "@/lib/dlp/sanitizer";
  *     so until that per-client integration is built, approval flips
  *     status to 'approved' and pings Steven with full context to
  *     execute the upstream side-effect manually. Portal UI tells the
- *     client: "Approved. Loucels is executing — confirmation in 1
+ *     client: "Approved. Loucells Core is executing — confirmation in 1
  *     business hour."
  */
 

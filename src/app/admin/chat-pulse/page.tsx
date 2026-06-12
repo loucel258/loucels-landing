@@ -27,7 +27,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata = {
-  title: "chat-pulse — Loucels",
+  title: "chat-pulse — Loucells Core",
   robots: { index: false, follow: false },
 };
 

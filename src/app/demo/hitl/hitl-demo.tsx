@@ -44,7 +44,7 @@ Per our conversation this morning, here is the quote for the warehouse repaint a
 Timeline: 4 business days starting Monday. Quote valid for 30 days.
 
 Best,
-Acme Painting · Loucels AI Front Desk`,
+Acme Painting · Loucells Core AI Front Desk`,
     risk_score: 4,
     risk_flags: ["financial_action", "customer_facing"],
   },
@@ -58,7 +58,7 @@ We have reviewed your dispute on invoice INV-2089. Approving full refund of $1,2
 
 Sorry for the inconvenience.
 
-Acme Painting · Loucels AI`,
+Acme Painting · Loucells Core AI`,
     risk_score: 7,
     risk_flags: ["financial_action", "irreversible", "customer_facing"],
   },
@@ -252,7 +252,7 @@ export function HitlDemo() {
           className="inline-flex items-center gap-2 text-mono-xs text-text-tertiary transition-colors hover:text-text-secondary"
         >
           <ArrowLeft className="size-3.5" strokeWidth={1.5} />
-          Back to Loucels
+          Back to Loucells Core
         </Link>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">

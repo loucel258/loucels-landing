@@ -1,8 +1,8 @@
 /*!
- * Loucels Agent Widget
- * Embed a Loucels-powered chat agent on any allowlisted site.
+ * Loucells Core Agent Widget
+ * Embed a Loucells Core-powered chat agent on any allowlisted site.
  *
- *   <script src="https://loucels.com/agent.js"
+ *   <script src="https://loucellscore.com/agent.js"
  *           data-agent="acme-medspa"
  *           defer></script>
  *
@@ -12,7 +12,7 @@
  *   - Style + DOM are scoped via Shadow DOM — parent page CSS cannot
  *     leak in, and our styles cannot leak out.
  *   - Session id lives in sessionStorage keyed by slug.
- *   - All network traffic flows through Loucels' Trust Stack (DLP,
+ *   - All network traffic flows through Loucells Core's Trust Stack (DLP,
  *     audit log, rate limit, origin allowlist, encryption at rest).
  */
 (function () {
@@ -225,7 +225,7 @@
       '<div><div class="header-title">' +
       escapeHtml(config.name) +
       '</div><div class="header-sub">' +
-      t("Powered by Loucels", "Hecho con Loucels") +
+      t("Powered by Loucells Core", "Hecho con Loucells Core") +
       "</div></div>" +
       '<button class="close" aria-label="' +
       t("Close", "Cerrar") +
@@ -242,8 +242,8 @@
       t("Send", "Enviar") +
       "</button>" +
       "</form>" +
-      '<div class="footer"><a href="https://loucels.com" target="_blank" rel="noopener">' +
-      t("Powered by Loucels — Trust Stack", "Hecho con Loucels — Trust Stack") +
+      '<div class="footer"><a href="https://loucellscore.com" target="_blank" rel="noopener">' +
+      t("Powered by Loucells Core — Trust Stack", "Hecho con Loucells Core — Trust Stack") +
       "</a></div>";
     shadow.appendChild(panel);
 

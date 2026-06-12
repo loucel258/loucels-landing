@@ -72,8 +72,8 @@ export function handleRequestBooking(payload: BookingPayload): {
  *   2. Write a permanent audit row marking the HITL gate firing
  *   3. Return a graceful message telling the visitor a human will follow up
  *
- * This makes Loucels's marketing claim ("HITL on high-risk actions") visible
- * on Loucels's own surface, not just inside builds we ship to customers.
+ * This makes Loucells Core's marketing claim ("HITL on high-risk actions") visible
+ * on Loucells Core's own surface, not just inside builds we ship to customers.
  */
 export const ESCALATE_TO_HUMAN_TOOL: Anthropic.Tool = {
   name: "escalate_to_human",

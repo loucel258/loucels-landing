@@ -121,7 +121,7 @@ export default async function PortalAgentsPage({
           <EmptyPanel
             icon={<Bot className="size-5" />}
             title="No agents deployed yet"
-            description="When Loucels deploys an agent for you, it'll appear here with full transparency on what it does, the outcomes it drives, and where it lives."
+            description="When Loucells Core deploys an agent for you, it'll appear here with full transparency on what it does, the outcomes it drives, and where it lives."
           />
         </Panel>
       ) : (
