@@ -78,12 +78,20 @@ export async function sendInternalAlert(args: {
   bodyHtml: string;
   bodyText?: string;
 }): Promise<SendEmailResult> {
-  return sendEmail({
+  const result = await sendEmail({
     to: INTERNAL_INBOX,
     subject: `[Loucells Core ops] ${args.subject}`,
     html: args.bodyHtml,
     text: args.bodyText ?? stripHtml(args.bodyHtml),
   });
+  if (!result.ok) {
+    // Alerts are best-effort by design, but a silent failure here means
+    // Steven is blind to escalations/HITL — make the cause greppable in
+    // Vercel runtime logs. Never log the subject body (may carry PII).
+    // eslint-disable-next-line no-console
+    console.warn(`[notify] internal alert failed: ${result.reason}${"error" in result && result.error ? ` — ${result.error}` : ""}`);
+  }
+  return result;
 }
 
 function stripHtml(html: string): string {
