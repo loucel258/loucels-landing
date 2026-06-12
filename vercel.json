@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/cron/chat-health-alerts",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 13 * * *"
     },
     {
       "path": "/api/cron/nurture-sequence",
