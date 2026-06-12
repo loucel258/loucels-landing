@@ -37,7 +37,10 @@ export type SendEmailResult =
   | { ok: false; reason: "no_api_key" | "send_failed"; error?: string };
 
 export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
-  const apiKey = process.env.RESEND_API_KEY;
+  // trim + unquote: a key pasted into a dashboard with a stray newline,
+  // space, or wrapping quotes corrupts the Authorization header and
+  // Resend reports it as "API key is invalid".
+  const apiKey = process.env.RESEND_API_KEY?.trim().replace(/^["']|["']$/g, "");
   if (!apiKey) return { ok: false, reason: "no_api_key" };
 
   const payload: Record<string, unknown> = {
