@@ -14,7 +14,7 @@ function detectLocale(request: NextRequest): string {
 // Paths that bypass locale routing entirely (internal sales demos, etc.)
 const LOCALE_BYPASS_PREFIXES = ["/demo", "/admin", "/portal"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Trust Stack demos and other internal-only routes skip the locale rewrite.
