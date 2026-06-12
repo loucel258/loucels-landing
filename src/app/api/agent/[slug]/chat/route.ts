@@ -564,6 +564,21 @@ export async function POST(
         });
       }
 
+      // Immediate alert — the acknowledgement literally promises the
+      // visitor "Steven gets a notification right now", so an email must
+      // actually go out now, not on the daily health cron. Best-effort:
+      // the lead + audit rows above are the durable record either way.
+      await sendInternalAlert({
+        subject: `[Escalation] ${escalation.reason} — agent ${agent.slug}`,
+        bodyHtml: `
+          <p>The agent <strong>${agent.slug}</strong> escalated a conversation to a human.</p>
+          <p><strong>Reason:</strong> ${escalation.reason}</p>
+          <p><strong>Summary:</strong> ${escapeHtml(escalation.summary)}</p>
+          <p><strong>Visitor:</strong> ${escapeHtml(escalation.name ?? "(no name)")} · ${escapeHtml(escalation.email ?? "(no email)")}</p>
+          <p style="color:#888;font-size:11px;">session ${sessionId} · transcript in /admin</p>
+        `,
+      });
+
       const interruptedEsc = await checkPauseBeforeReply(agent, sessionId, ip, parsed.locale, cors);
       if (interruptedEsc) return interruptedEsc;
       await audit(agent, sessionId, ip, {
