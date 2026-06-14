@@ -169,7 +169,11 @@
       ".launcher svg{width:26px;height:26px}" +
       ".panel{position:fixed;bottom:100px;right:24px;width:380px;max-width:calc(100vw - 32px);height:580px;max-height:calc(100vh - 120px);background:white;border-radius:20px;box-shadow:0 25px 60px -15px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden;opacity:0;transform:translateY(8px) scale(.98);pointer-events:none;transition:opacity .18s ease,transform .18s ease}" +
       ".panel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}" +
-      "@media (max-width: 480px){.panel{position:fixed;inset:0;width:100vw;height:100vh;max-width:100vw;max-height:100vh;border-radius:0;bottom:0;right:0}.launcher{bottom:16px;right:16px}}" +
+      // Mobile: fill the screen. height is driven by JS via the
+      // visualViewport API (see syncViewport) so the composer rides
+      // above the on-screen keyboard instead of being buried under it.
+      // dvh is the static fallback before/without that sync.
+      "@media (max-width: 480px){.panel{position:fixed;top:0;left:0;right:0;width:100vw;height:100dvh;max-width:100vw;max-height:100dvh;border-radius:0;bottom:auto}.launcher{bottom:16px;right:16px}}" +
       ".header{padding:16px 20px;background:" +
       config.brandColor +
       ";color:white;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}" +
@@ -194,7 +198,10 @@
       ".typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}" +
       "@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}" +
       ".composer{display:flex;gap:8px;padding:12px;border-top:1px solid #e5e5e5;background:white;flex-shrink:0}" +
-      ".composer textarea{flex:1;border:1px solid #d4d4d4;border-radius:12px;padding:10px 12px;font-size:14px;resize:none;outline:none;font-family:inherit;color:#171717;background:white;min-height:42px;max-height:120px}" +
+      // font-size MUST be >=16px: iOS Safari auto-zooms the whole page
+      // when focusing an input under 16px, which is the "everything got
+      // big" effect on phones. 16px keeps the page put.
+      ".composer textarea{flex:1;border:1px solid #d4d4d4;border-radius:12px;padding:10px 12px;font-size:16px;resize:none;outline:none;font-family:inherit;color:#171717;background:white;min-height:42px;max-height:120px}" +
       ".composer textarea:focus{border-color:" +
       config.brandColor +
       ";box-shadow:0 0 0 3px " +
@@ -313,15 +320,48 @@
     setPanelOpen(!isOpen);
   }
 
+  // On mobile the on-screen keyboard shrinks the *visual* viewport but
+  // not the layout viewport, so a 100dvh panel keeps its bottom (the
+  // composer) hidden behind the keyboard. We pin the panel to the
+  // visual viewport instead: its height becomes the visible area and it
+  // offsets down by however far the page scrolled under the keyboard.
+  // Desktop and the non-open state clear the overrides.
+  function syncViewport() {
+    var panel = shadow._panel;
+    if (!panel) return;
+    var vv = window.visualViewport;
+    var isMobile = window.matchMedia("(max-width: 480px)").matches;
+    if (!isMobile || !vv || !panel.classList.contains("open")) {
+      panel.style.height = "";
+      panel.style.top = "";
+      return;
+    }
+    panel.style.height = vv.height + "px";
+    panel.style.top = vv.offsetTop + "px";
+    // keep the latest message in view as the area shrinks
+    var msgs = panel._refs && panel._refs.messages;
+    if (msgs) msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  if (typeof window !== "undefined" && window.visualViewport) {
+    window.visualViewport.addEventListener("resize", syncViewport);
+    window.visualViewport.addEventListener("scroll", syncViewport);
+  }
+
   function setPanelOpen(next) {
     var panel = shadow._panel;
     if (!panel) return;
     isOpen = next;
     panel.classList.toggle("open", isOpen);
     if (isOpen) {
+      syncViewport();
       setTimeout(function () {
         panel._refs.input.focus();
+        // focus pops the keyboard; re-sync once it has animated in
+        setTimeout(syncViewport, 300);
       }, 200);
+    } else {
+      syncViewport();
     }
   }
 
