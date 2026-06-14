@@ -25,7 +25,7 @@ export type LeadInsertInput = {
   reason: string;
   preferredWindow?: string | null;
   bookingLink: string;
-  source?: "chat_widget" | "footer_cta" | "template_card" | "other";
+  source?: "chat_widget" | "footer_cta" | "template_card" | "contact_form" | "other";
   ip?: string | null;
   /**
    * Multi-tenant scoping. Populated by /api/agent/[slug]/chat from the

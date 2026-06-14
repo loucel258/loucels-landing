@@ -14,6 +14,7 @@ import { Process } from "@/components/sections/process";
 import { Architecture } from "@/components/sections/architecture";
 import { FAQ } from "@/components/sections/faq";
 import { CTA } from "@/components/sections/cta";
+import { ContactForm } from "@/components/sections/contact-form";
 import { TrustStackPdfCta } from "@/components/sections/trust-stack-pdf-cta";
 import { Footer } from "@/components/sections/footer";
 
@@ -42,6 +43,7 @@ export default async function HomePage({
         <Architecture dict={dict} locale={locale} />
         <FAQ dict={dict} />
         <CTA dict={dict} />
+        <ContactForm locale={locale} />
         <TrustStackPdfCta locale={locale} />
         <Footer dict={dict} locale={locale} />
       </main>
