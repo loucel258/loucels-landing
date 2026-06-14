@@ -10,6 +10,6 @@ export const metadata = {
 };
 
 export default async function AdminIndex() {
-  if (await isAdminAuthed()) redirect("/admin/chat-pulse");
+  if (await isAdminAuthed()) redirect("/admin/dashboard");
   redirect("/admin/login");
 }

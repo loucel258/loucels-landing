@@ -1,4 +1,5 @@
 import {
+  LayoutDashboard,
   Users,
   TrendingUp,
   Activity,
@@ -30,6 +31,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     {
       label: "Operations",
       items: [
+        { href: "/admin/dashboard",   label: "Dashboard",   icon: <LayoutDashboard className="size-4" />, match: "/admin/dashboard", prefix: true },
         { href: "/admin/crm",         label: "CRM",         icon: <Users className="size-4" />,       match: "/admin/crm",         prefix: true },
         { href: "/admin/agents",      label: "Agents",      icon: <Bot className="size-4" />,         match: "/admin/agents",      prefix: true },
         { href: "/admin/revenue",     label: "Revenue",     icon: <TrendingUp className="size-4" />,  match: "/admin/revenue",     prefix: true },
