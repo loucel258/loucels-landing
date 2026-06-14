@@ -30,7 +30,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     {
       label: "Operations",
       items: [
-        { href: "/admin/clients",     label: "Clients",     icon: <Users className="size-4" />,       match: "/admin/clients",     prefix: true },
+        { href: "/admin/crm",         label: "CRM",         icon: <Users className="size-4" />,       match: "/admin/crm",         prefix: true },
         { href: "/admin/agents",      label: "Agents",      icon: <Bot className="size-4" />,         match: "/admin/agents",      prefix: true },
         { href: "/admin/revenue",     label: "Revenue",     icon: <TrendingUp className="size-4" />,  match: "/admin/revenue",     prefix: true },
         { href: "/admin/chat-pulse",  label: "Chat pulse",  icon: <Activity className="size-4" />,    match: "/admin/chat-pulse",  prefix: true },

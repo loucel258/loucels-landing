@@ -77,25 +77,61 @@ export async function POST(req: Request): Promise<Response> {
 
   const engagementRef = buildReference(input.clientLegalName);
 
+  // CRM: every engagement rolls up to an account. Find-or-create by email
+  // so a returning client (Gap Audit → build → 2nd agent) keeps one account
+  // — the land-and-expand shape. Best-effort: a CRM hiccup must not block
+  // the engagement insert, so account_id stays nullable on failure.
+  const email = input.clientEmail.toLowerCase();
+  let accountId: string | null = null;
+  try {
+    const { data: existing } = await sb
+      .from("crm_accounts")
+      .select("id")
+      .ilike("primary_contact_email", email)
+      .maybeSingle();
+    if (existing) {
+      accountId = (existing as { id: string }).id;
+    } else {
+      const { data: created } = await sb
+        .from("crm_accounts")
+        .insert({
+          account_name: input.clientLegalName,
+          primary_contact_name: input.clientLegalName,
+          primary_contact_email: email,
+          vertical: input.vertical ?? null,
+          language: input.language,
+          lifecycle: "prospect",
+        })
+        .select("id")
+        .single();
+      accountId = created ? (created as { id: string }).id : null;
+    }
+  } catch {
+    accountId = null;
+  }
+
+  const engagementRow = {
+    engagement_ref: engagementRef,
+    account_id: accountId,
+    lead_id: input.leadId ?? null,
+    client_legal_name: input.clientLegalName,
+    client_email: email,
+    vertical: input.vertical ?? null,
+    language: input.language,
+    engagement_type: input.engagementType,
+    audit_fee_cents: input.auditFeeCents,
+    notes: input.notes ?? null,
+    status: "prospect_signed_up",
+  };
+
   const { data, error } = await sb
     .from("engagements")
-    .insert({
-      engagement_ref: engagementRef,
-      lead_id: input.leadId ?? null,
-      client_legal_name: input.clientLegalName,
-      client_email: input.clientEmail.toLowerCase(),
-      vertical: input.vertical ?? null,
-      language: input.language,
-      engagement_type: input.engagementType,
-      audit_fee_cents: input.auditFeeCents,
-      notes: input.notes ?? null,
-      status: "prospect_signed_up",
-    })
+    .insert(engagementRow)
     .select("id, engagement_ref")
     .single();
 
   if (error) {
-    // eslint-disable-next-line no-console
+     
     console.warn("[engagements/create] insert failed:", error.message);
     // Unique constraint on engagement_ref means we tried to insert two on
     // the same day for the same initials — append a suffix and retry once.
@@ -103,18 +139,7 @@ export async function POST(req: Request): Promise<Response> {
       const retryRef = `${engagementRef}-2`;
       const retry = await sb
         .from("engagements")
-        .insert({
-          engagement_ref: retryRef,
-          lead_id: input.leadId ?? null,
-          client_legal_name: input.clientLegalName,
-          client_email: input.clientEmail.toLowerCase(),
-          vertical: input.vertical ?? null,
-          language: input.language,
-          engagement_type: input.engagementType,
-          audit_fee_cents: input.auditFeeCents,
-          notes: input.notes ?? null,
-          status: "prospect_signed_up",
-        })
+        .insert({ ...engagementRow, engagement_ref: retryRef })
         .select("id, engagement_ref")
         .single();
       if (retry.error) {

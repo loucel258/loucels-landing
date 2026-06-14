@@ -1,6 +1,7 @@
 export type EngagementRow = {
   id: string;
   engagement_ref: string;
+  account_id: string | null;
   lead_id: string | null;
   client_legal_name: string;
   client_email: string;

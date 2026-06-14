@@ -223,11 +223,11 @@ export default async function EngagementWorkspacePage({
       <PageHeader
         breadcrumb={
           <Link
-            href="/admin/clients"
+            href={e.account_id ? `/admin/crm/${e.account_id}` : "/admin/crm"}
             className="inline-flex items-center gap-1 hover:text-cyan-700"
           >
             <ArrowLeft className="size-3" />
-            Clients
+            {e.account_id ? "Account" : "CRM"}
           </Link>
         }
         title={e.client_legal_name}
