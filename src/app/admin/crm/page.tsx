@@ -75,7 +75,7 @@ export default async function CrmHubPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-7 px-6 py-6 lg:px-8 lg:py-8">
       <PageHeader
         title="CRM"
         subtitle="Client portfolio, pipeline & follow-ups"

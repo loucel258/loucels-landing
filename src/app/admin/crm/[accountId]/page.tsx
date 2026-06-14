@@ -56,7 +56,7 @@ export default async function AccountDetailPage({
   const doneTasks = tasks.filter((t) => t.status === "done");
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-7 px-6 py-6 lg:px-8 lg:py-8">
       {/* Header */}
       <div className="space-y-4">
         <Link href="/admin/crm" className="inline-flex items-center gap-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900">
