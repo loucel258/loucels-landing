@@ -32,11 +32,15 @@ export function Cluster3D({
   imageSrc = "/hero/01-cluster.webp",
   className = "",
   glareIntensity = 0.35,
+  showArcs = true,
 }: {
   imageSrc?: string;
   className?: string;
   /** 0..1, white specular opacity. Lower on already-bright backgrounds. */
   glareIntensity?: number;
+  /** Electric arcs are tuned for the multi-node cluster. Turn off for a
+   *  single centerpiece (e.g. the audit cube) that has its own glow. */
+  showArcs?: boolean;
 }) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -191,7 +195,7 @@ export function Cluster3D({
           style={{ transform: "translateZ(60px) scale(0.92)" }}
         />
         {/* Electric arcs — animated SVG overlay that traces sparks between nodes */}
-        {!reduce && <LightningArcs />}
+        {!reduce && showArcs && <LightningArcs />}
 
         {/* Specular glare — travels opposite the tilt direction */}
         {!reduce && (

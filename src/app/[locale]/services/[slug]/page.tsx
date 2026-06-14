@@ -12,6 +12,7 @@ import { siteConfig } from "@/lib/site-config";
 import { buttonVariants } from "@/components/ui/button";
 import { Magnetic } from "@/components/motion/magnetic";
 import { cn } from "@/lib/utils";
+import { GapAuditSections, GapAuditHeroVisual } from "./gap-audit-sections";
 
 export async function generateStaticParams() {
   return locales.flatMap((locale) =>
@@ -56,6 +57,10 @@ export default async function ServicePage({
   if (!service) notFound();
 
   const isES = locale === "es";
+  // The audit is the entry product — it gets a dedicated showcase
+  // (3-lens explorer, 7-day track, the two documents, credit split)
+  // while the other services keep the generic template.
+  const isGapAudit = service.slug === "operations-gap-audit";
 
   return (
     <main className="relative flex min-h-screen flex-col bg-background">
@@ -76,27 +81,38 @@ export default async function ServicePage({
 
       <article className="container-page flex max-w-4xl flex-col gap-16 py-16 md:py-24">
         {/* Hero */}
-        <section className="flex flex-col gap-6">
-          <span className="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-accent">
-            //{" "}
-            {service.line === "web"
-              ? isES
-                ? "Base Web"
-                : "Web Foundation"
-              : isES
-                ? "Agentes IA"
-                : "AI Agents"}
-          </span>
-          <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight md:text-6xl">
-            {service.name[locale]}
-          </h1>
-          <p className="text-balance text-xl leading-relaxed text-foreground/80 md:text-2xl">
-            {service.tagline[locale]}
-          </p>
-          <p className="max-w-2xl text-pretty leading-relaxed text-muted-foreground">
-            {service.description[locale]}
-          </p>
+        <section
+          className={
+            isGapAudit
+              ? "grid items-center gap-10 md:grid-cols-[1fr_0.9fr]"
+              : "flex flex-col gap-6"
+          }
+        >
+          <div className="flex flex-col gap-6">
+            <span className="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-accent">
+              {"// "}
+              {service.line === "web"
+                ? isES
+                  ? "Base Web"
+                  : "Web Foundation"
+                : isES
+                  ? "Agentes IA"
+                  : "AI Agents"}
+            </span>
+            <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight md:text-6xl">
+              {service.name[locale]}
+            </h1>
+            <p className="text-balance text-xl leading-relaxed text-foreground/80 md:text-2xl">
+              {service.tagline[locale]}
+            </p>
+            <p className="max-w-2xl text-pretty leading-relaxed text-muted-foreground">
+              {service.description[locale]}
+            </p>
+          </div>
+          {isGapAudit && <GapAuditHeroVisual locale={locale} />}
         </section>
+
+        {isGapAudit && <GapAuditSections locale={locale} />}
 
         {/* Investment + Timeline */}
         <section className="grid gap-px overflow-hidden rounded-xl bg-border md:grid-cols-2">
@@ -105,9 +121,13 @@ export default async function ServicePage({
               {isES ? "Inversión" : "Investment"}
             </span>
             <span className="text-lg font-medium text-muted-foreground">
-              {isES
-                ? "Definida en el Diagnóstico Operativo"
-                : "Set in the Operational Diagnosis"}
+              {isGapAudit
+                ? isES
+                  ? "Fee fijo único — cotizado en la discovery call"
+                  : "One fixed fee — quoted on the discovery call"
+                : isES
+                  ? "Definida en el Diagnóstico Operativo"
+                  : "Set in the Operational Diagnosis"}
             </span>
           </div>
           <div className="flex flex-col gap-2 bg-card p-6">
